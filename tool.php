@@ -20,6 +20,7 @@ require_once(!file_exists($lang) ? (dirname(__FILE__)) . '/languages/EN.php' : $
 
 require_once 'info.php';
 require_once __DIR__ . '/core/Stats.php';
+require_once __DIR__ . '/core/Request.php';
 
 $baseURL = ADMIN_URL . '/admintools/tool.php?tool=wbstats';
 
@@ -36,12 +37,11 @@ $module_help_link     = $baseURL . '&show=help';
 
 require_once "head.php";
 
-$toShow = filter_input(INPUT_GET, "show") ?? "";
+$toShow = wbstats\core\Request::getValue("show");
 
-if (!$check = $database->get_one("SELECT sum(user) visitors FROM " . wbstats\core\Config::TABLE_DAY))
+if (!$check = $database->get_one("SELECT sum(user) visitors FROM `" . wbstats\core\Config::TABLE_DAY . "`"))
 {
     $toShow = "help";
-
 }
 
 switch ($toShow)
