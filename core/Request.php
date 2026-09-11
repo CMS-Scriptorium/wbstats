@@ -20,10 +20,26 @@ namespace wbstats\core;
 
 defined('WB_PATH') OR die(header('Location: ../index.php'));
 
+/**
+ * This is only a temporäty solution here - until WBCE 1.7.0 is official.
+ *
+ */
 class Request
 {
-
-    public static function getValue(string $name, string $what = "str", string $where='GET'): string
+    /**
+     * Get a value from the $_GET, $_POST, etc. superglobal var.
+     *
+     * @param string $name      A valid name of the var.
+     * @param string $what      What type of expected value (e.g. "str")
+     * @param string $where     $_POST or $_GET, default is "get" - at this time.
+     *
+     * @return string           The value as string.
+     */
+    public static function getValue(
+        string $name,
+        string $what  = "str",
+        string $where = "GET"
+    ): string
     {
         $filter = self::getFilter($where);
 
@@ -39,6 +55,11 @@ class Request
             ) ?? "";
     }
 
+    /**
+     * 
+     * @param string $what
+     * @return string
+     */
     static protected function getPatternByWhat(string $what): string
     {
         $retVal = "//";
@@ -57,6 +78,11 @@ class Request
         return $retVal;
     }
 
+    /**
+     * 
+     * @param string $where
+     * @return int
+     */
     static protected function getFilter(string $where): int 
     {
         switch (strtolower($where))
