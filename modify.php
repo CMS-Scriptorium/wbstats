@@ -27,6 +27,7 @@ require_once (!file_exists($lang) ? $mpath . '/languages/EN.php' : $lang );
 
 require_once $mpath . '/info.php';
 require_once $mpath . '/core/Stats.php';
+require_once $mpath . '/core/Request.php';
 
 $stats = new wbstats\core\Stats();
 
@@ -47,7 +48,7 @@ $module_log_link        = '?page_id=' . $page_id . '&show=logbook';
 </div>
 <?php 
 
-$toShow = filter_input(INPUT_GET, "show") ?? "";
+$toShow = wbstats\core\Request::getValue("show");
 
 switch ($toShow)
 {

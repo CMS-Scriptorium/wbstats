@@ -28,6 +28,7 @@ require_once $mpath .'/info.php';
 
 // This one is obsolet in 1.7.0?
 require_once $mpath . '/core/Stats.php';
+require_once $mpath . '/core/Request.php';
 
 $stats = new wbstats\core\Stats();
 
@@ -49,7 +50,7 @@ $module_log_link        = '?show=logbook';
 </div>
 <?php
 
-$toShow = filter_input(INPUT_GET, "show") ?? "";
+$toShow = wbstats\core\Request::getValue("show");
 
 switch ($toShow)
 {
