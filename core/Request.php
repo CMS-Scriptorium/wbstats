@@ -85,12 +85,12 @@ class Request
     /**
      * Apply min/max range constraints to a value
      *
-     * @param  string|int  $value  Call by reference!
-     * @param  array       $range
+     * @param  string|int|null  $value  Call by reference!
+     * @param  array            $range
      *
      * @return void
      */
-    private static function applyRange(string|int &$value, array $range): void
+    private static function applyRange(string|int|null &$value, array $range): void
     {
         $numValue = (int) $value;
 
