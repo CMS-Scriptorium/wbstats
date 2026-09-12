@@ -30,7 +30,9 @@ class Request
     private static array $filterMap = [
         'get'     => INPUT_GET,
         'post'    => INPUT_POST,
-        'server'  => INPUT_SERVER
+        'server'  => INPUT_SERVER,
+        'cookie'  => INPUT_COOKIE,
+        'env'     => INPUT_ENV
     ];
 
     /**
