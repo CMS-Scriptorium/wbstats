@@ -11,8 +11,8 @@ declare(strict_types=1);
  * @license         http://www.gnu.org/licenses/gpl.html
  * @platform        WebsiteBaker 2.8.x / WBCE 1.6.x
  * @requirements    PHP 8.3 and higher
- * @version         0.2.6.0
- * @lastmodified    September 11, 2026
+ * @version         0.2.7.0
+ * @lastmodified    September 12, 2026
  *
  */
 
@@ -25,138 +25,90 @@ namespace wbstats\core;
 class Request
 {
     /**
+     * Filter type constants for memoization
+     */
+    private static array $filterMap = [
+        'get'     => INPUT_GET,
+        'post'    => INPUT_POST,
+        'server'  => INPUT_SERVER,
+      //  'session' => INPUT_SESSION,
+    ];
+
+    /**
+     * Regex pattern cache
+     */
+    private static array $patternCache = [
+        'str'     => '/^[a-z0-9]{4,}$/',
+        'int'     => '/^[0-9\+\-]+$/',
+        'default' => '/^[A-Za-z0-9]{2,}$/',
+    ];
+
+    /**
      * Get a value from the $_GET, $_POST, etc. superglobal var.
      *
      * @param string $name      A valid name of the var.
      * @param string $what      What type of expected value (e.g. "str")
      * @param string $where     $_POST or $_GET, default is "get" - at this time.
+     * @param array  $range     Optional min/max constraints
      *
-     * @return string           The value as string.
+     * @return string|int|null  The validated value or null if invalid.
      */
     public static function getValue(
         string $name,
-        string $what  = "str",
+        string $what = "str",
         string $where = "GET",
-        array  $range = []
-    ): mixed
+        array $range = []
+    ): string|int|null
     {
-        $filter = self::getFilter($where);
+        $filter = self::$filterMap[strtolower($where)] ?? INPUT_GET;
+        $pattern = self::$patternCache[strtolower($what)] ?? self::$patternCache['default'];
 
         $result = filter_input(
             $filter,
             $name,
-            FILTER_VALIDATE_REGEXP, 
-                ['options' => [
-                        "regexp" => self::getPatternByWhat($what),
-                        "default" => null
-                    ] 
-                ]
-            ) ?? "";
+            FILTER_VALIDATE_REGEXP,
+            ['options' => [
+                'regexp' => $pattern,
+                'default' => null
+            ]]
+        );
 
-        if (!empty($range))
-        {
-            self::handleRange($result, $range);
+        if ($result === null || $result === '') {
+            return null;
+        }
+
+        if (!empty($range)) {
+            self::applyRange($result, $range);
         }
 
         return self::coerceReturn($result, $what);
     }
 
-    static protected function handleRange(string|int &$value, array $range): void
+    /**
+     * Apply min/max range constraints to a value
+     */
+    private static function applyRange(string|int &$value, array $range): void
     {
-        if (isset($range['min']))
-        {
-            if ($value < $range['min'])
-            {
-                $value = $range['default'] ?? $range['min'];
-            }
-        }
+        $numValue = (int) $value;
 
-        if (isset($range['max']))
-        {
-            if ($value > $range['max'])
-            {
-                $value = $range['default'] ?? $range['max'];
-            }
-        }
-    }
-
-    static protected function coerceReturn(mixed $value, string $type): mixed
-    {
-        switch ($type)
-        {
-            case 's':
-            case 'str':
-            case 'string':
-                return (string) $value;
-
-            case 'i':
-            case 'int':
-            case 'integer':
-                return (int) $value;
-            
-            default:
-                return $value;
+        if (isset($range['min']) && $numValue < $range['min']) {
+            $value = $range['default'] ?? $range['min'];
+        } elseif (isset($range['max']) && $numValue > $range['max']) {
+            $value = $range['default'] ?? $range['max'];
         }
     }
 
     /**
-     * 
-     * @param string $what
-     * @return string
+     * Coerce return value to the specified type
      */
-    static protected function getPatternByWhat(string $what): string
+    private static function coerceReturn(mixed $value, string $what): string|int
     {
-        $retVal = "//";
-        switch (strtolower($what))
-        {
-            case "string":
-            case "str":
-                $retVal = "/^[a-z0-9]{4,}$/";
-                break;
+        $type = strtolower($what);
 
-            case "int":
-            case "integer":
-                $retVal = "/^[0-9\+\-]+$/";
-                break;
-
-            default:
-                $retVal = "/^[A-Za-z0-9]{2,}$/";
-                break;
+        if ($type === 'i' || $type === 'int' || $type === 'integer') {
+            return (int) $value;
         }
-        
-        return $retVal;
-    }
 
-    /**
-     * 
-     * @param string $where
-     * @return int
-     */
-    static protected function getFilter(string $where): int 
-    {
-        switch (strtolower($where))
-        {
-            case 'get':
-                $filter = INPUT_GET;
-                break;
-
-            case 'post':
-                $filter = INPUT_POST;
-                break;
-
-            case 'server':
-                $filter = INPUT_SERVER;
-                break;
-
-            case 'session':
-                $filter = INPUT_SESSION;
-                break;
-
-            default:
-                $filter = INPUT_GET;
-                break;
-        }
-        
-        return $filter;
+        return (string) $value;
     }
 }
