@@ -11,7 +11,7 @@ declare(strict_types=1);
  * @license         http://www.gnu.org/licenses/gpl.html
  * @platform        WebsiteBaker 2.8.x / WBCE 1.6.x
  * @requirements    PHP 8.3 and higher
- * @version         0.2.7.0
+ * @version         0.2.6.0
  * @lastmodified    September 12, 2026
  *
  */
@@ -30,8 +30,7 @@ class Request
     private static array $filterMap = [
         'get'     => INPUT_GET,
         'post'    => INPUT_POST,
-        'server'  => INPUT_SERVER,
-      //  'session' => INPUT_SESSION,
+        'server'  => INPUT_SERVER
     ];
 
     /**
@@ -55,9 +54,9 @@ class Request
      */
     public static function getValue(
         string $name,
-        string $what = "str",
+        string $what  = "str",
         string $where = "GET",
-        array $range = []
+        array  $range = []
     ): string|int|null
     {
         $filter = self::$filterMap[strtolower($where)] ?? INPUT_GET;
@@ -73,11 +72,8 @@ class Request
             ]]
         );
 
-        if ($result === null || $result === '') {
-            return null;
-        }
-
-        if (!empty($range)) {
+        if (!empty($range))
+        {
             self::applyRange($result, $range);
         }
 
@@ -86,26 +82,40 @@ class Request
 
     /**
      * Apply min/max range constraints to a value
+     *
+     * @param  string|int  $value  Call by reference!
+     * @param  array       $range
+     *
+     * @return void
      */
     private static function applyRange(string|int &$value, array $range): void
     {
         $numValue = (int) $value;
 
-        if (isset($range['min']) && $numValue < $range['min']) {
+        if (isset($range['min']) && $numValue < $range['min'])
+        {
             $value = $range['default'] ?? $range['min'];
-        } elseif (isset($range['max']) && $numValue > $range['max']) {
+        
+        } elseif (isset($range['max']) && $numValue > $range['max'])
+        {
             $value = $range['default'] ?? $range['max'];
         }
     }
 
     /**
      * Coerce return value to the specified type
+     * 
+     * @param  mixed     $value  Any valid value
+     * @param  string    $what   Any valid "type" - keep in mind  
+     *                           we can only handle integer and string here
+     * @return string|int
      */
     private static function coerceReturn(mixed $value, string $what): string|int
     {
         $type = strtolower($what);
 
-        if ($type === 'i' || $type === 'int' || $type === 'integer') {
+        if ($type === 'i' || $type === 'int' || $type === 'integer')
+        {
             return (int) $value;
         }
 
