@@ -1,4 +1,5 @@
 <?php
+
 /**
  *
  * @category        admintool
@@ -20,7 +21,7 @@ $module_version     = '0.2.6.0';
 $module_function    = 'tool';
 $module_platform    = '2.8';
 
-if(defined('WBCE_VERSION'))
+if (defined('WBCE_VERSION'))
 {
     $module_function = 'tool,initialize,page';
     $module_platform = '1.6.0';

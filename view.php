@@ -1,4 +1,5 @@
 <?php
+
 /**
  *
  * @category        admintool
@@ -14,9 +15,9 @@
  */
 
 /**
-*	Must include code to stop this file being access directly
-*/
-if(defined('WB_PATH') == false) die("Cannot access this file directly");
+ *	Must include code to stop this file being access directly
+ */
+if (defined('WB_PATH') == false) die("Cannot access this file directly");
 
 global $WS;
 $mpath = WB_PATH.'/modules/wbstats/';
@@ -70,20 +71,5 @@ switch ($toShow)
 
 require __DIR__ . "/tabs/" . $requireFile;
 
-// Nope
-/*
-if (isset($_GET['overview'])) {
-	require ($mpath."overview.php");
-} elseif (isset($_GET['visitors'])) {
-	require ($mpath."visitors.php");
-} elseif (isset($_GET['history'])) {
-	require ($mpath."history.php");
-} elseif (isset($_GET['live'])) {
-	require ($mpath."live.php");
-} elseif (isset($_GET['logbook'])) {
-	require ($mpath."logbook.php");
-} else {
-	require_once ($mpath."overview.php");
-}
-*/?>
+?>
 </div>

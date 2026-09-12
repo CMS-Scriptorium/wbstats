@@ -18,10 +18,8 @@ declare(strict_types=1);
 
 namespace wbstats\core;
 
-defined('WB_PATH') OR die(header('Location: ../index.php'));
-
 /**
- * This is only a temporäty solution here - until WBCE 1.7.0 is official.
+ * This is just a temporary solution — until WBCE 1.7.0 is officially released!
  *
  */
 class Request
@@ -38,12 +36,13 @@ class Request
     public static function getValue(
         string $name,
         string $what  = "str",
-        string $where = "GET"
-    ): string
+        string $where = "GET",
+        array  $range = []
+    ): mixed
     {
         $filter = self::getFilter($where);
 
-        return filter_input(
+        $result = filter_input(
             $filter,
             $name,
             FILTER_VALIDATE_REGEXP, 
@@ -53,6 +52,51 @@ class Request
                     ] 
                 ]
             ) ?? "";
+
+        if (!empty($range))
+        {
+            self::handleRange($result, $range);
+        }
+
+        return self::coerceReturn($result, $what);
+    }
+
+    static protected function handleRange(string|int &$value, array $range): void
+    {
+        if (isset($range['min']))
+        {
+            if ($value < $range['min'])
+            {
+                $value = $range['default'] ?? $range['min'];
+            }
+        }
+
+        if (isset($range['max']))
+        {
+            if ($value > $range['max'])
+            {
+                $value = $range['default'] ?? $range['max'];
+            }
+        }
+    }
+
+    static protected function coerceReturn(mixed $value, string $type): mixed
+    {
+        switch ($type)
+        {
+            case 's':
+            case 'str':
+            case 'string':
+                return (string) $value;
+
+            case 'i':
+            case 'int':
+            case 'integer':
+                return (int) $value;
+            
+            default:
+                return $value;
+        }
     }
 
     /**
@@ -68,6 +112,11 @@ class Request
             case "string":
             case "str":
                 $retVal = "/^[a-z0-9]{4,}$/";
+                break;
+
+            case "int":
+            case "integer":
+                $retVal = "/^[0-9\+\-]+$/";
                 break;
 
             default:
