@@ -1,4 +1,5 @@
 <?php
+
 /**
  *
  * @category        admintool
@@ -13,7 +14,12 @@
  *
  */
 
-
 if (isset($_SERVER['HTTP_REFERER']) && !defined('ORG_REFERER')) {
     define('ORG_REFERER',$_SERVER['HTTP_REFERER']);
 }
+
+/**
+ * [1] Just to make sure the WBCE autoloader will find the module classes
+ *     (As this one line is missing in the "inizialize" file of the root.)
+ */
+WbAuto::AddDir(WB_PATH."/modules/");
