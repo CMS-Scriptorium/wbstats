@@ -12,3 +12,9 @@
  * @lastmodified    September 11, 2026
  *
  */
+
+if (!defined('WB_PATH'))
+{
+    header('Location: ../index.php');
+    die();
+}
