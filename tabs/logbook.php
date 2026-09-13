@@ -1,4 +1,5 @@
 <?php
+
 /**
  *
  * @category        admintool
@@ -15,18 +16,20 @@
 
 defined('WB_PATH') OR die(header('Location: ../index.php'));
 
-$page = 1;
 $session = '';
 $entries = $stats->getLogbookEntries();
-$page = isset($_GET['p']) ? intval($_GET['p']) : 1 ;
-if($page <= 0) $page = 1;
+
+$page = wbstats\core\Request::getValue('p', "int", "get", ['min' => 1, 'default' => 1]);
 
 $r = $stats->getLogbook($page);
 
 $code2lang = $stats->accessCode2Language();
 
 $prev = $page - 1;
-if($prev <= 0) $prev = 1;
+if ($prev <= 0)
+{
+    $prev = 1;
+}
 $next = $page + 1;
 
 echo '<div id="log">';
