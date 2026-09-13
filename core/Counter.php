@@ -188,7 +188,7 @@ class Counter extends Config
 		$fp = $this->getRealUserIp(); //. session_id(); 
 		if(isset($_SERVER['HTTP_USER_AGENT'])) $fp .= $_SERVER['HTTP_USER_AGENT'];
 		if(isset($_SERVER['HTTP_ACCEPT_LANGUAGE'])) $fp .= $_SERVER['HTTP_ACCEPT_LANGUAGE'];
-		$this->ip = md5($fp); 
+		$this->ip = sha1($fp); 
         if (defined( 'ORG_REFERER' )) {
             $this->referer = ORG_REFERER;
 		} elseif (isset($referer)) {
@@ -399,7 +399,7 @@ class Counter extends Config
 		global $database;
 
 		$ip = $this->getRealUserIp(); 
-		$ipkey = md5($ip); // 2026-09-13 Mfi!
+		$ipkey = sha1($ip); // 2026-09-13 Mfi!
 		$timeout = time() - $this->reload;
 		$field = $countryOnly ? 'country' : 'location';
 		
@@ -445,7 +445,7 @@ class Counter extends Config
 	public function noLongerFree_getCountryCode() {
 		global $database;
 		$ip = $this->getRealUserIp(); 
-		$ipkey = md5($ip);  // Attention!
+		$ipkey = sha1($ip);  // Attention!
         if (!$city = $database->get_one("SELECT `location` FROM `" . self::TABLE_LOC . "` WHERE `ip`='" . $ipkey . "' LIMIT 1"))
         {
             if ($ipdata = unserialize($this->getUrlContent('http://www.geoplugin.net/php.gp?ip=' . $ip)))
