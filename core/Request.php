@@ -41,6 +41,8 @@ class Request
     private static array $patternCache = [
         'str'     => '/^[a-z0-9]{4,}$/',
         'int'     => '/^[0-9\+\-]+$/',
+        'ip'      => '/^[0-9\.\:]{3,}$/',
+        'text'    => '/^[a-z0-9 \/\.\:\;()\+\-]+$/i',
         'default' => '/^[A-Za-z0-9]{2,}$/',
     ];
 

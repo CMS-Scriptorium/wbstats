@@ -19,19 +19,23 @@
  */
 if (defined('WB_PATH') == false) die("Cannot access this file directly");
 
-global $WS;
+// global $WS;
 $mpath = WB_PATH.'/modules/wbstats/';
+/**
 $lang = $mpath . '/languages/' . LANGUAGE . '.php';
-require_once(!file_exists($lang) ? $mpath . '/languages/EN.php' : $lang );
+require_once (!file_exists($lang) ? $mpath . '/languages/EN.php' : $lang );
+*/
 
 // Aldus [2026-09-11] No idea why on earth we need this one here ...
 require_once $mpath .'/info.php';
 
-// This one is obsolet in 1.7.0?
-require_once $mpath . '/core/Stats.php';
-require_once $mpath . '/core/Request.php';
+// This one is obsolet in 1.7.0? Also here in 1.6.8 with 0.2.6.0
+// require_once $mpath . '/core/Request.php';
+// require_once $mpath . '/core/Stats.php';
 
 $stats = new wbstats\core\Stats();
+
+$WS = $stats->accessLanguage();
 
 $module_overview_link   = '?show=overview';
 $module_visitors_link   = '?show=visitors';

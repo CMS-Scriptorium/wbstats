@@ -20,7 +20,10 @@ $session = '';
 $entries = $stats->getLogbookEntries();
 $page = isset($_GET['p']) ? intval($_GET['p']) : 1 ;
 if($page <= 0) $page = 1;
+
 $r = $stats->getLogbook($page);
+
+$code2lang = $stats->accessCode2Language();
 
 $prev = $page - 1;
 if($prev <= 0) $prev = 1;

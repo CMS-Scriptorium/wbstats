@@ -61,10 +61,11 @@ class Counter extends Config
 
 	public function init() {
 		global $database;
+
 		$time = time();
 		$this->time = $time;
-		$this->day   = date("Ymd",$time);
-		$this->month = date("Ym",$time);
+		$this->day   = date("Ymd", $time);
+		$this->month = date("Ym", $time);
 
 		$oNOW = new DateTime();
 		$oNOW->modify("-90 day"); // 90 days ago today
@@ -227,24 +228,40 @@ class Counter extends Config
 		}
 	}
 	
-	public function getRealUserIp(){
-		$ip = '';
-		switch(true){
-			case (!empty($_SERVER['HTTP_X_REAL_IP'])) : $ip = $_SERVER['HTTP_X_REAL_IP']; break;
-			case (!empty($_SERVER['HTTP_CLIENT_IP'])) : $ip = $_SERVER['HTTP_CLIENT_IP']; break;
-			case (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) : $ip = $_SERVER['HTTP_X_FORWARDED_FOR']; break;
-			default : $ip = $_SERVER['REMOTE_ADDR'];
-		}
-		if(filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)) {
-			return $ip;
-		}
-		if(filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6)) {
-			return $ip;
-		}
-		return '0.0.0.0';
-	}
-	
-	public function getKeywords () {
+	public function getRealUserIp(): string
+    {
+        $ip = '';
+
+        $lookFor = [
+            'HTTP_X_REAL_IP',
+            'HTTP_CLIENT_IP',
+            'HTTP_X_FORWARDED_FOR',
+            'REMOTE_ADDR'
+        ];
+
+        foreach ($lookFor as $key)
+        {
+            $ip = Request::getValue($key, "ip", "server");
+            if (!empty($ip))
+            {
+                break;
+            }
+        }
+        
+        if (filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4))
+        {
+            return $ip;
+        }
+
+        if (filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6))
+        {
+            return $ip;
+        }
+
+        return '0.0.0.0';
+    }
+
+    public function getKeywords () {
 		if($ref = parse_url($this->referer, PHP_URL_QUERY)) {
 			parse_str( $ref, $parms );
 			if(isset($parms['q']) && $parms['q']!="") $this->keywords = urldecode($parms['q']); 

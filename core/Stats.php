@@ -62,7 +62,7 @@ class Stats extends Config
 		
 		$this->reload = 3 * 60 * 60 ;
 		$this->online = $time - 5 * 60;
-		if($do_clean)
+		if ($do_clean)
         {
             $this->cleanup();
         }
@@ -732,6 +732,16 @@ class Stats extends Config
         }
 
         return $retVal;
+    }
+
+    public function accessLanguage(): array
+    {
+        return $this->WS;
+    }
+
+    public function accessCode2Language(): array
+    {
+        return $this->code2lang;
     }
 
     protected function getLanguage(): void
