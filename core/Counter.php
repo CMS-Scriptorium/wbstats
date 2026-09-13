@@ -335,9 +335,9 @@ class Counter extends Config
         }
     }
 	
-
-	public function newUser() {
-		global $database, $table_day, $table_ips;
+	public function newUser(): bool
+    {
+		global $database;
 		$this->session = session_id();
 		$timeout = time() - $this->reload;
 		$loggedin = isset($_SESSION['USER_ID']) ? ", `loggedin`='1'":"";
@@ -345,64 +345,73 @@ class Counter extends Config
 			$this->page = ''; //prevent pagecounting
 			return false;
 		} elseif($this->isBot()) {
-			$database->query("UPDATE ".self::TABLE_DAY." SET `bots`=`bots`+1 WHERE `day`='".$this->day."'");
+			$database->query("UPDATE `".self::TABLE_DAY."` SET `bots`=`bots`+1 WHERE `day`='".$this->day."'");
 			$this->page = ''; //prevent pagecounting
 			return false;		
 		} elseif($this->isSuspected()) {
-			$database->query("UPDATE ".self::TABLE_DAY." SET `suspected`=`suspected`+1 WHERE `day`='".$this->day."'");
+			$database->query("UPDATE `".self::TABLE_DAY."` SET `suspected`=`suspected`+1 WHERE `day`='".$this->day."'");
 			$this->page = ''; //prevent pagecounting
 			return false;
 		} elseif($this->isRefererSpam()) {
-			$database->query("UPDATE ".self::TABLE_DAY." SET `refspam`=`refspam`+1 WHERE `day`='".$this->day."'");
+			$database->query("UPDATE `".self::TABLE_DAY."` SET `refspam`=`refspam`+1 WHERE `day`='".$this->day."'");
 			$this->page = ''; //prevent pagecounting
 			$this->keywords = ''; //prevent pagecounting
 			$this->language = ''; //prevent pagecounting
 			return true;
-		} elseif(!$id = $database->get_one("SELECT `id` FROM ".self::TABLE_IPS." WHERE `ip`='".$this->ip."' AND `session`='".$this->session."' AND `time` > '$timeout' ORDER BY `id` DESC LIMIT 1")) {
+		} elseif(!$id = $database->get_one("SELECT `id` FROM `".self::TABLE_IPS."` WHERE `ip`='".$this->ip."' AND `session`='".$this->session."' AND `time` > '$timeout' ORDER BY `id` DESC LIMIT 1")) {
 			$city = $this->getCountryCode();
 			$country = $this->getCountryCode(true);
-			$database->query("INSERT INTO ".self::TABLE_IPS." (`ip`,`session`, `location`, `country`, `time`, `online`,`page`,`last_page`,`pages`,`language`,`os`,`browser`,`referer`,`ua`) VALUES 
+			$database->query("INSERT INTO `".self::TABLE_IPS."` (`ip`,`session`, `location`, `country`, `time`, `online`,`page`,`last_page`,`pages`,`language`,`os`,`browser`,`referer`,`ua`) VALUES 
 				('".$this->ip."', '".$this->session."', '".$city."','".$country."', '".$this->time."', '".$this->time."', '".$this->page."', '".$this->page."','1','".$this->language."', '".$this->os."', '".$this->browser." (".$this->browser_version.")','".$this->referer_host."','".$this->agent."')");
-			$database->query("UPDATE ".self::TABLE_DAY." SET `user`=`user`+1, `view`=`view`+1 WHERE `day`='".$this->day."'");
+			$database->query("UPDATE `".self::TABLE_DAY."` SET `user`=`user`+1, `view`=`view`+1 WHERE `day`='".$this->day."'");
 			return true;
 		} else {
-			$database->query("UPDATE ".self::TABLE_IPS." SET `online`='".$this->time."', `last_page`='".$this->page."', `pages`=`pages`+1, `last_status`='".$this->response_code."' $loggedin WHERE `id`='$id'");
-			$database->query("UPDATE ".self::TABLE_DAY." SET `view`=`view`+1 WHERE `day`='".$this->day."'");
+			$database->query("UPDATE `".self::TABLE_IPS."` SET `online`='".$this->time."', `last_page`='".$this->page."', `pages`=`pages`+1, `last_status`='".$this->response_code."' $loggedin WHERE `id`='$id'");
+			$database->query("UPDATE `".self::TABLE_DAY."` SET `view`=`view`+1 WHERE `day`='".$this->day."'");
 			return false;
 		}
 	}
 	
 	public function getCountryCode($countryOnly = false) {
-		global $database, $table_loc;
-		$ip = $this->getRealUserIp(); 
-		$ipkey = md5($ip);
-		$timeout = time() - $this->reload;
-		$field = $countryOnly ? 'country':'location';
-		
-		if(!$location = $database->get_one("SELECT `$field` FROM ".self::TABLE_LOC." WHERE `ip`='".$ipkey."' and `location` != '' and `timestamp` > '$timeout' ORDER BY `timestamp` DESC LIMIT 1")) {
-			if($ipdata = json_decode($this->getUrlContent('http://ip-api.com/json/'.$ip),true)) {
-				
-				if(!isset($ipdata['city']) || !$ipdata['city'])  				$ipdata['city'] = '- unknown -';
-				if(!isset($ipdata['countryCode']) || !$ipdata['countryCode'])  	$ipdata['countryCode'] = '';
-				if(!isset($ipdata['country']) || !$ipdata['country'])  			$ipdata['country'] = '';
-				if(!isset($ipdata['lat']) || !$ipdata['lat'])  					$ipdata['lat'] = '';
-				if(!isset($ipdata['lon']) || !$ipdata['lon'])  					$ipdata['lon'] = '';
-				if(!isset($ipdata['timezone']) || !$ipdata['timezone'])  		$ipdata['timezone'] = '';
+		global $database;
 
-				$lat 			= $database->escapeString($ipdata['lat']);
+		$ip = $this->getRealUserIp(); 
+		$ipkey = md5($ip); // 2026-09-13 Mfi!
+		$timeout = time() - $this->reload;
+		$field = $countryOnly ? 'country' : 'location';
+		
+		if (!$location = $database->get_one("SELECT `$field` FROM `" . self::TABLE_LOC . "` WHERE `ip`='" . $ipkey . "' and `location` != '' and `timestamp` > '$timeout' ORDER BY `timestamp` DESC LIMIT 1"))
+        {
+			if ($ipdata = json_decode($this->getUrlContent('http://ip-api.com/json/' . $ip), true))
+            {
+                $ipdata['city']         ??= '- unknown -';
+                $ipdata['countryCode']  ??= '';
+                $ipdata['country']      ??= '';
+                $ipdata['lat']          ??= '';
+                $ipdata['lon']          ??= '';
+                $ipdata['timezone']     ??= '';
+
+                $lat 			= $database->escapeString($ipdata['lat']);
 				$lon 			= $database->escapeString($ipdata['lon']);
 				$tz 			= $database->escapeString($ipdata['timezone']);
 				$country 		= $database->escapeString($ipdata['country']);
-				$country 		= str_ireplace("The ","",$country);  // "Netherlands" is sometimes "The Netherlands"
+				$country 		= str_ireplace("The ", "", $country);  // "Netherlands" is sometimes "The Netherlands"
 				$country_code 	= $database->escapeString($ipdata['countryCode']);
 				$city 			= $database->escapeString($ipdata['city']);
 				
 				$location 		= $city;
-				if($country_code) $location = $city.' ('.$country_code.')';
+				if ($country_code)
+                {
+                    $location = $city.' ('.$country_code.')';
+                }
 
 				$database->query("INSERT INTO ".self::TABLE_LOC." (`ip`,`location`,`timestamp`,`city`,`country`,`country_code`,`latitude`,`longitude`,`timezone`) 
 					VALUES ('".$ipkey."','".$location."','".time()."','".$city."','".$country."','".$country_code."','".$lat."','".$lon."','".$tz."') ");
-				if($countryOnly) $location = $country;
+				
+                if ($countryOnly)
+                {
+                    $location = $country;
+                }
 			}
 		} else {
 			// $city .= ' *';
@@ -411,23 +420,29 @@ class Counter extends Config
 	}	
 	
 	public function noLongerFree_getCountryCode() {
-		global $database, $table_loc;
+		global $database;
 		$ip = $this->getRealUserIp(); 
-		$ipkey = md5($ip);
-		if(!$city = $database->get_one("SELECT `location` FROM ".self::TABLE_LOC." WHERE `ip`='".$ipkey."' LIMIT 1")) {
-			if($ipdata = unserialize($this->getUrlContent('http://www.geoplugin.net/php.gp?ip='.$ip))) {
-				if(!$ipdata['geoplugin_city'])  $ipdata['geoplugin_city'] = '- unknown -';
-				if(!$ipdata['geoplugin_countryCode'])  $ipdata['geoplugin_countryCode'] = '';
+		$ipkey = md5($ip);  // Attention!
+        if (!$city = $database->get_one("SELECT `location` FROM `" . self::TABLE_LOC . "` WHERE `ip`='" . $ipkey . "' LIMIT 1"))
+        {
+            if ($ipdata = unserialize($this->getUrlContent('http://www.geoplugin.net/php.gp?ip=' . $ip)))
+            {
+                $ipdata['geoplugin_city']        ??= '- unknown -';
+                $ipdata['geoplugin_countryCode'] ??= '';
 
-				$country_code 	= $ipdata['geoplugin_countryCode'];
-				$city 			= $ipdata['geoplugin_city'];
-				if($country_code) $city = $city.' ('.$country_code.')';
-				$database->query("INSERT INTO ".self::TABLE_LOC." (`ip`,`location`,`timestamp`) VALUES ('".$ipkey."','".$city."','".time()."') ");
-			}
-		} else {
-			// $city .= ' *';
-		}
-		return $city;
+                $country_code = $ipdata['geoplugin_countryCode'];
+                $city = $ipdata['geoplugin_city'];
+                if ($country_code)
+                {
+                    $city = $city . ' (' . $country_code . ')';
+                }
+                $database->query("INSERT INTO " . self::TABLE_LOC . " (`ip`,`location`,`timestamp`) VALUES ('" . $ipkey . "','" . $city . "','" . time() . "') ");
+            }
+        } else
+        {
+            // $city .= ' *';
+        }
+        return $city;
 	}	
 	
 	public function getUrlContent($url){
