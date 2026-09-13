@@ -175,7 +175,7 @@ class Counter extends Config
             if ($this->utm['source'])
             {
                 $p = parse_url($this->page, PHP_URL_PATH);
-                $database->query("INSERT INTO `" . self::TABLE_UTM . "` 
+                $database->query("INSERT INTO `" . self::TABLE_UTM . "`
                     (`timestamp`, `ip`, `campaign`, `source`,`medium`,`term`,`content`,`referer`,`day`,`page`,`session`,`pagecount`)
                     VALUES ('" . time() . "', '" . $this->ip . "', '" . $this->utm['campaign'] . "', '" . $this->utm['source'] . "', '" . $this->utm['medium'] . "', '" . $this->utm['term'] . "', '" . $this->utm['content'] . "', '" . $this->referer_host . "', '" . $this->day . "', '" . $p . "', '" . $this->session . "','1')");
             }
