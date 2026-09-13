@@ -18,7 +18,11 @@ declare(strict_types=1);
 
 namespace wbstats\core;
 
-defined('WB_PATH') OR die(header('Location: ../index.php'));
+use DateTime;
+use InvalidArgumentException;
+use wbstats\core\lists\Botlist;
+use wbstats\core\lists\Referers;
+use const ORG_REFERER;
 
 class Counter extends Config
 {
@@ -62,7 +66,7 @@ class Counter extends Config
 		$this->day   = date("Ymd",$time);
 		$this->month = date("Ym",$time);
 
-		$oNOW = new \DateTime();
+		$oNOW = new DateTime();
 		$oNOW->modify("-90 day"); // 90 days ago today
 		$this->old_data = $oNOW->getTimestamp(); 
 		$this->old_date = date("Ymd", $this->old_data);
@@ -72,7 +76,8 @@ class Counter extends Config
 		$this->online = $time - 3 * 60;
 		
 		// make sure a visitor only once runs the cleanup!
-		if(!isset($_SESSION['cleanstats'])) {
+		if (!isset($_SESSION['cleanstats']))
+        {
 			$_SESSION['cleanstats'] = 'done';
             $database->query("DELETE FROM " . self::TABLE_IPS . " WHERE `time` < '" . $this->old_data . "'");
             $database->query("DELETE FROM " . self::TABLE_PAGES . " WHERE `day` < '" . $this->old_date . "'");
@@ -84,7 +89,8 @@ class Counter extends Config
             $database->query("DELETE FROM " . self::TABLE_LOC . " WHERE `timestamp` < '" . $this->old_data . "'");
             $database->query("DELETE FROM " . self::TABLE_UTM . " WHERE `timestamp` < '" . $this->old_data . "'");
         }
-		$id = $database->get_one("SELECT `id` FROM " . self::TABLE_DAY . " WHERE `day` = '" . $this->day . "'");
+		
+        $id = $database->get_one("SELECT `id` FROM " . self::TABLE_DAY . " WHERE `day` = '" . $this->day . "'");
         if (!$id)
         {
             $database->query("INSERT INTO " . self::TABLE_DAY . " (day, user, view) values ('" . $this->day . "', '0', '0')");
@@ -465,14 +471,14 @@ class Counter extends Config
             return true;
         }
 
-        require dirname(__DIR__) . '/botlist.php';
-
         $userAgent = strtolower($_SERVER['HTTP_USER_AGENT']);
 
         if (empty($userAgent))
         {
             return true; //Empty useraget is mostly a bot
         }
+
+        $botUserAgents = Botlist::BOT_USER_AGENTS;
 
         foreach ($botUserAgents as $botUserAgent)
         {
@@ -504,9 +510,9 @@ class Counter extends Config
         {
             return false;
         }
-        
-        require (dirname(__DIR__) . '/referers.php');
-        
+
+        $spamReferers = Referers::SPAM_REFERERS;
+
         foreach ($spamReferers as $spammer)
         {
             if (stripos($this->referer_host, $spammer) !== false)
@@ -518,31 +524,42 @@ class Counter extends Config
         return false;
     }
 
-    public function isIgnored() {
-		global $database, $table_ips;
-		$ip = $this->getRealUserIp(); // $_SERVER['REMOTE_ADDR'];
-		$ip = $this->escapeString($ip);
-		$r = $database->get_one("SELECT `ip` from `" . self::TABLE_IPS . "` WHERE `ip` = '" . $ip . "' AND `session`='ignore'");
-		return $r == $ip;		
-	}
+    public function isIgnored()
+    {
+        global $database;
 
-	public function escapeString($string) {	
-		global $database;
-		if(!is_string($string)) return $string;  // make sure the parameter is a string
-		if(is_object($database->DbHandle)) { 
-			$rval = $database->escapeString($string);
-		} else {
-			$rval = mysql_real_escape_string ($string);
-		}
-		return $rval;
-	}
+        $ip1 = $this->getRealUserIp(); // $_SERVER['REMOTE_ADDR'];
+        $ip = $this->escapeString($ip1);
+        $r = $database->get_one("SELECT `ip` from `" . self::TABLE_IPS . "` WHERE `ip` = '" . $ip . "' AND `session`='ignore'");
+        return ($r == $ip);
+    }
 
-	/**
+    public function escapeString($string)
+    {
+        global $database;
+        
+        // make sure the parameter is a string
+        if (!is_string($string))
+        {
+            return $string;
+        }
+
+        if (is_object($database->DbHandle))
+        {
+            $rval = $database->escapeString($string);
+        } else
+        {
+            $rval = mysql_real_escape_string($string);
+        }
+        return $rval;
+    }
+
+    /**
 	 * Parses a user agent string into its important parts
 	 *
 	 * @param string|null $u_agent User agent string to parse or null. Uses $_SERVER['HTTP_USER_AGENT'] on NULL
 	 * @return string[] an array with 'browser', 'version' and 'platform' keys
-	 * @throws \InvalidArgumentException on not having a proper user agent to parse.
+	 * @throws InvalidArgumentException on not having a proper user agent to parse.
 	 */
 	public function parse_user_agent( $u_agent = null ) {
 		if( $u_agent === null && isset($_SERVER['HTTP_USER_AGENT']) ) {
@@ -550,7 +567,7 @@ class Counter extends Config
 		}
 
 		if( $u_agent === null ) {
-			throw new \InvalidArgumentException('parse_user_agent requires a user agent');
+			throw new InvalidArgumentException('parse_user_agent requires a user agent');
 		}
 
 		$platform = null;
