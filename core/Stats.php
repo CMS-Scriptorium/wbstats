@@ -734,11 +734,19 @@ class Stats extends Config
         return $retVal;
     }
 
+    /**
+     * Getter for the internal language-array (ws)
+     * @return array
+     */
     public function accessLanguage(): array
     {
         return $this->WS;
     }
 
+    /**
+     * Getter for the internal property "code2lang" (declared inside the LANG file)
+     * @return array
+     */
     public function accessCode2Language(): array
     {
         return $this->code2lang;
