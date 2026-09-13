@@ -59,27 +59,26 @@ class Counter extends Config
 		$this->count();
 	}
 
-	public function init() {
-		global $database;
+    public function init()
+    {
+        global $database;
 
-		$time = time();
-		$this->time = $time;
-		$this->day   = date("Ymd", $time);
-		$this->month = date("Ym", $time);
+        $time = time();
+        $this->time = $time;
+        $this->day = date("Ymd", $time);
+        $this->month = date("Ym", $time);
 
-		$oNOW = new DateTime();
-		$oNOW->modify("-90 day"); // 90 days ago today
-		$this->old_data = $oNOW->getTimestamp(); 
-		$this->old_date = date("Ymd", $this->old_data);
-//		$this->old_data = strtotime(date("Ymd", mktime(0, 0, 0, date("n"), date("j") - 90, date("Y")))); // 90 days
-//		$this->old_date = date("Ymd", mktime(0, 0, 0, date("n"), date("j") - 90, date("Y"))); // 90 days
-		$this->reload = 3 * 60 * 60 ;
-		$this->online = $time - 3 * 60;
-		
-		// make sure a visitor only once runs the cleanup!
-		if (!isset($_SESSION['cleanstats']))
+        $oNOW = new DateTime();
+        $oNOW->modify("-90 day"); // 90 days ago today
+        $this->old_data = $oNOW->getTimestamp();
+        $this->old_date = date("Ymd", $this->old_data);
+        $this->reload = 3 * 60 * 60;
+        $this->online = $time - 3 * 60;
+
+        // make sure a visitor only once runs the cleanup!
+        if (!isset($_SESSION['cleanstats']))
         {
-			$_SESSION['cleanstats'] = 'done';
+            $_SESSION['cleanstats'] = 'done';
             $database->query("DELETE FROM " . self::TABLE_IPS . " WHERE `time` < '" . $this->old_data . "'");
             $database->query("DELETE FROM " . self::TABLE_PAGES . " WHERE `day` < '" . $this->old_date . "'");
             $database->query("DELETE FROM " . self::TABLE_REF . " WHERE `day` < '" . $this->old_date . "'");
@@ -90,7 +89,7 @@ class Counter extends Config
             $database->query("DELETE FROM " . self::TABLE_LOC . " WHERE `timestamp` < '" . $this->old_data . "'");
             $database->query("DELETE FROM " . self::TABLE_UTM . " WHERE `timestamp` < '" . $this->old_data . "'");
         }
-		
+
         $id = $database->get_one("SELECT `id` FROM " . self::TABLE_DAY . " WHERE `day` = '" . $this->day . "'");
         if (!$id)
         {
@@ -177,8 +176,8 @@ class Counter extends Config
             {
                 $p = parse_url($this->page, PHP_URL_PATH);
                 $database->query("INSERT INTO `" . self::TABLE_UTM . "` 
-					(`timestamp`, `ip`, `campaign`, `source`,`medium`,`term`,`content`,`referer`,`day`,`page`,`session`,`pagecount`) 
-					VALUES ('" . time() . "', '" . $this->ip . "', '" . $this->utm['campaign'] . "', '" . $this->utm['source'] . "', '" . $this->utm['medium'] . "', '" . $this->utm['term'] . "', '" . $this->utm['content'] . "', '" . $this->referer_host . "', '" . $this->day . "', '" . $p . "', '" . $this->session . "','1')");
+                    (`timestamp`, `ip`, `campaign`, `source`,`medium`,`term`,`content`,`referer`,`day`,`page`,`session`,`pagecount`)
+                    VALUES ('" . time() . "', '" . $this->ip . "', '" . $this->utm['campaign'] . "', '" . $this->utm['source'] . "', '" . $this->utm['medium'] . "', '" . $this->utm['term'] . "', '" . $this->utm['content'] . "', '" . $this->referer_host . "', '" . $this->day . "', '" . $p . "', '" . $this->session . "','1')");
             }
         }
     }
@@ -384,7 +383,7 @@ class Counter extends Config
 		} elseif(!$id = $database->get_one("SELECT `id` FROM `".self::TABLE_IPS."` WHERE `ip`='".$this->ip."' AND `session`='".$this->session."' AND `time` > '$timeout' ORDER BY `id` DESC LIMIT 1")) {
 			$city = $this->getCountryCode();
 			$country = $this->getCountryCode(true);
-			$database->query("INSERT INTO `".self::TABLE_IPS."` (`ip`,`session`, `location`, `country`, `time`, `online`,`page`,`last_page`,`pages`,`language`,`os`,`browser`,`referer`,`ua`) VALUES 
+			$database->query("INSERT INTO `".self::TABLE_IPS."` (`ip`,`session`, `location`, `country`, `time`, `online`,`page`,`last_page`,`pages`,`language`,`os`,`browser`,`referer`,`ua`) VALUES
 				('".$this->ip."', '".$this->session."', '".$city."','".$country."', '".$this->time."', '".$this->time."', '".$this->page."', '".$this->page."','1','".$this->language."', '".$this->os."', '".$this->browser." (".$this->browser_version.")','".$this->referer_host."','".$this->agent."')");
 			$database->query("UPDATE `".self::TABLE_DAY."` SET `user`=`user`+1, `view`=`view`+1 WHERE `day`='".$this->day."'");
 			return true;
@@ -545,10 +544,10 @@ class Counter extends Config
     {
         global $database;
 
-        $ip1 = $this->getRealUserIp(); // $_SERVER['REMOTE_ADDR'];
+        $ip1 = $this->getRealUserIp();
         $ip = $this->escapeString($ip1);
         $r = $database->get_one("SELECT `ip` from `" . self::TABLE_IPS . "` WHERE `ip` = '" . $ip . "' AND `session`='ignore'");
-        return ($r == $ip);
+        return $r == $ip;
     }
 
     public function escapeString($string)

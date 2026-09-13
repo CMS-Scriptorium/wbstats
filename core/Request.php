@@ -108,9 +108,9 @@ class Request
 
     /**
      * Coerce return value to the specified type
-     * 
+     *
      * @param  mixed     $value  Any valid value
-     * @param  string    $what   Any valid "type" - keep in mind  
+     * @param  string    $what   Any valid "type" - keep in mind
      *                           we can only handle integer and string here
      * @return string|int
      */
