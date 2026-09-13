@@ -18,14 +18,6 @@ use wbstats\core\Request;
 
 defined('WB_PATH') OR die(header('Location: ../index.php'));
 
-/*
-$time=time();
-if (isset($_GET["m"]) && is_numeric($_GET["m"]) && $_GET["m"] >= 1 && $_GET["m"] <= 12 ) {$show_month = $_GET["m"];} 
-else {$show_month=date("n",$time);}
-if (isset($_GET["y"]) && is_numeric($_GET["y"]) && $_GET["y"] >= 2010 && $_GET["y"] <= 2100 ) {$show_year = $_GET["y"];} 
-else {$show_year=date("Y",$time);}
-*/
-
 $show_month = Request::getValue("m", "int", "get",
     ["min" => 1, "max" => 12, "default" => intval(date("n"))]);
 

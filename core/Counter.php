@@ -39,7 +39,6 @@ class Counter extends Config
 	private $session;
 	private $utm = array("source" => '',"medium" => '',"campaign" => '',"term" => '',"content" => '',);
 	
-	
 	private $time;
 	private $day;
 	private $month;
@@ -64,8 +63,8 @@ class Counter extends Config
 		$this->month = date("Ym",$time);
 
 		$oNOW = new \DateTime();
-		$oNOW->modify("-90 day");
-		$this->old_data = $oNOW->getTimestamp(); // 90 days
+		$oNOW->modify("-90 day"); // 90 days ago today
+		$this->old_data = $oNOW->getTimestamp(); 
 		$this->old_date = date("Ymd", $this->old_data);
 //		$this->old_data = strtotime(date("Ymd", mktime(0, 0, 0, date("n"), date("j") - 90, date("Y")))); // 90 days
 //		$this->old_date = date("Ymd", mktime(0, 0, 0, date("n"), date("j") - 90, date("Y"))); // 90 days
@@ -85,72 +84,97 @@ class Counter extends Config
             $database->query("DELETE FROM " . self::TABLE_LOC . " WHERE `timestamp` < '" . $this->old_data . "'");
             $database->query("DELETE FROM " . self::TABLE_UTM . " WHERE `timestamp` < '" . $this->old_data . "'");
         }
-		$id = $database->get_one("SELECT `id` FROM ".self::TABLE_DAY." WHERE `day` = '".$this->day."'");
-		if (!$id) 
+		$id = $database->get_one("SELECT `id` FROM " . self::TABLE_DAY . " WHERE `day` = '" . $this->day . "'");
+        if (!$id)
         {
-            $database->query("INSERT INTO ".self::TABLE_DAY." (day, user, view) values ('".$this->day."', '0', '0')");
+            $database->query("INSERT INTO " . self::TABLE_DAY . " (day, user, view) values ('" . $this->day . "', '0', '0')");
         }
     }
 
 	public function count() {
-		global $database; //, $table_day, $table_ips, $table_pages, $table_ref, $table_key, $table_lang, $table_browser, $table_hist, $table_utm;
+		global $database;
 		$this->getHosts();
 		$this->getKeywords();
-		$this->getSearch ();
-		$this->getUTM ();
-		if ($this->newUser()) {
-			if($this->referer_host && stristr($this->host, $this->referer_host) === false) {
-				if(!$id = $database->get_one("SELECT `id` from ".self::TABLE_REF." WHERE `referer`='".$this->referer_host."' AND day='".$this->day."'") ) {
-					$database->query("INSERT INTO ".self::TABLE_REF." (`day`, `referer`, `view`, `spam`) VALUES ('".$this->day."', '".$this->referer_host."', '1','".$this->referer_spam."' )");
-				} else { 
-					$database->query("UPDATE ".self::TABLE_REF." SET `view`=`view`+1 where `id`='$id'");
-				}
-			}
-			if($this->language) {
-				if (!$id = $database->get_one("SELECT `id` from ".self::TABLE_LANG." WHERE `language`='".$this->language."' AND `day`='".$this->day."'")) {
-					$database->query("INSERT INTO ".self::TABLE_LANG." (`day`, `language`, `view`) VALUES ('".$this->day."', '".$this->language."', '1')");
-				} else { 
-					$database->query("UPDATE ".self::TABLE_LANG." SET `view`=`view`+1 where `id`='$id'");
-				}
-			}
-			if($this->agent) {
-				if (!$id = $database->get_one("SELECT `id` from ".self::TABLE_BROWSER." WHERE `agent`='".$this->agent."' AND `day`='".$this->day."'")) {
-					$database->query("INSERT INTO ".self::TABLE_BROWSER." (`day`, `agent`, `os`, `browser`, `version`, `view`) 
-					VALUES ('".$this->day."', '".$this->agent."', '".$this->os."', '".$this->browser."', '".$this->browser_version."', '1')");
-				} else { 
-					$database->query("UPDATE ".self::TABLE_BROWSER." SET `view`=`view`+1 where `id`='$id'");
-				}
-			}
-		} 
+		$this->getSearch();
+		$this->getUTM();
 		
-		if($this->keywords) {
-			if (!$id = $database->get_one("SELECT `id` from ".self::TABLE_KEY." WHERE `keyword`='".$this->keywords."' AND `day`='".$this->day."'")) {
-				$database->query("INSERT INTO ".self::TABLE_KEY." (`day`, `keyword`, `view`) VALUES ('".$this->day."', '".$this->keywords."', '1')");
-			} else { 
-				$database->query("UPDATE ".self::TABLE_KEY." SET `view`=`view`+1 where `id`='$id'");
-			}
-		}
-		if($this->page <> "") {
-			if (!$id = $database->get_one("SELECT `id` from ".self::TABLE_PAGES." WHERE `page`='".$this->page."' AND `day`='".$this->day."'")) {
-				$database->query("INSERT INTO ".self::TABLE_PAGES." (`day`, `page`, `view`) VALUES ('".$this->day."', '".$this->page."', '1')");
-			} else { 
-				$database->query("UPDATE ".self::TABLE_PAGES." SET `view`=`view`+1 WHERE id='$id'");
-			}
-			$database->query("INSERT INTO ".self::TABLE_HIST." (`timestamp`, `page`, `ip`,`session`,`status`) VALUES ('".time()."', '".$this->page."', '".$this->ip."', '".$this->session."', '".$this->response_code."')");
+        if ($this->newUser())
+        {
+			if ($this->referer_host && stristr($this->host, $this->referer_host) === false)
+            {
+                if (!$id = $database->get_one("SELECT `id` from `" . self::TABLE_REF . "` WHERE `referer`='" . $this->referer_host . "' AND day='" . $this->day . "'"))
+                {
+                    $database->query("INSERT INTO `" . self::TABLE_REF . "` (`day`, `referer`, `view`, `spam`) VALUES ('" . $this->day . "', '" . $this->referer_host . "', '1','" . $this->referer_spam . "' )");
+                } else
+                {
+                    $database->query("UPDATE `" . self::TABLE_REF . "` SET `view`=`view`+1 where `id`=" . $id);
+                }
+            }
+            
+            if ($this->language)
+            {
+                if (!$id = $database->get_one("SELECT `id` from `" . self::TABLE_LANG . "` WHERE `language`='" . $this->language . "' AND `day`='" . $this->day . "'"))
+                {
+                    $database->query("INSERT INTO `" . self::TABLE_LANG . "` (`day`, `language`, `view`) VALUES ('" . $this->day . "', '" . $this->language . "', '1')");
+                } else
+                {
+                    $database->query("UPDATE `" . self::TABLE_LANG . "` SET `view`=`view`+1 where `id`=" . $id);
+                }
+            }
+            
+            if ($this->agent)
+            {
+                if (!$id = $database->get_one("SELECT `id` from `" . self::TABLE_BROWSER . "` WHERE `agent`='" . $this->agent . "' AND `day`='" . $this->day . "'"))
+                {
+                    $database->query("INSERT INTO `" . self::TABLE_BROWSER . "` (`day`, `agent`, `os`, `browser`, `version`, `view`) 
+					VALUES ('" . $this->day . "', '" . $this->agent . "', '" . $this->os . "', '" . $this->browser . "', '" . $this->browser_version . "', '1')");
+                } else
+                {
+                    $database->query("UPDATE `" . self::TABLE_BROWSER . "` SET `view`=`view`+1 where `id`=" . $id);
+                }
+            }
+        } 
+		
+		if ($this->keywords)
+        {
+            if (!$id = $database->get_one("SELECT `id` from `" . self::TABLE_KEY . "` WHERE `keyword`='" . $this->keywords . "' AND `day`='" . $this->day . "'"))
+            {
+                $database->query("INSERT INTO `" . self::TABLE_KEY . "` (`day`, `keyword`, `view`) VALUES ('" . $this->day . "', '" . $this->keywords . "', '1')");
+            } else
+            {
+                $database->query("UPDATE `" . self::TABLE_KEY . "` SET `view`=`view`+1 where `id`=" . $id);
+            }
+        }
 
-			if ($id = $database->get_one("SELECT `id` from ".self::TABLE_UTM." WHERE `ip`='".$this->ip."' AND `session`='".$this->session."' AND `day`='".$this->day."'")) {
-				$database->query("UPDATE ".self::TABLE_UTM." SET `pagecount`=`pagecount`+1 WHERE id='$id'");
-				if($this->utm['source']) $this->utm['source'] = ''; // count campaign only once. i.e. page refresh
-			}
-			if($this->utm['source']) {
-				$p = parse_url($this->page, PHP_URL_PATH);
-				$database->query("INSERT INTO ".self::TABLE_UTM." 
+        if ($this->page <> "")
+        {
+            if (!$id = $database->get_one("SELECT `id` from `" . self::TABLE_PAGES . "` WHERE `page`='" . $this->page . "' AND `day`='" . $this->day . "'"))
+            {
+                $database->query("INSERT INTO `" . self::TABLE_PAGES . "` (`day`, `page`, `view`) VALUES ('" . $this->day . "', '" . $this->page . "', '1')");
+            } else
+            {
+                $database->query("UPDATE `" . self::TABLE_PAGES . "` SET `view`=`view`+1 WHERE id='$id'");
+            }
+            $database->query("INSERT INTO `" . self::TABLE_HIST . "` (`timestamp`, `page`, `ip`,`session`,`status`) VALUES ('" . time() . "', '" . $this->page . "', '" . $this->ip . "', '" . $this->session . "', '" . $this->response_code . "')");
+
+            if ($id = $database->get_one("SELECT `id` from `" . self::TABLE_UTM . "` WHERE `ip`='" . $this->ip . "' AND `session`='" . $this->session . "' AND `day`='" . $this->day . "'"))
+            {
+                $database->query("UPDATE `" . self::TABLE_UTM . "` SET `pagecount`=`pagecount`+1 WHERE id='$id'");
+                if ($this->utm['source'])
+                {
+                    $this->utm['source'] = ''; // count campaign only once. i.e. page refresh
+                }
+            }
+
+            if ($this->utm['source'])
+            {
+                $p = parse_url($this->page, PHP_URL_PATH);
+                $database->query("INSERT INTO `" . self::TABLE_UTM . "` 
 					(`timestamp`, `ip`, `campaign`, `source`,`medium`,`term`,`content`,`referer`,`day`,`page`,`session`,`pagecount`) 
-					VALUES ('".time()."', '".$this->ip."', '".$this->utm['campaign']."', '".$this->utm['source']."', '".$this->utm['medium']."', '".$this->utm['term']."', '".$this->utm['content']."', '".$this->referer_host."', '".$this->day."', '".$p."', '".$this->session."','1')");
-			}
-		}
-		
-	}
+					VALUES ('" . time() . "', '" . $this->ip . "', '" . $this->utm['campaign'] . "', '" . $this->utm['source'] . "', '" . $this->utm['medium'] . "', '" . $this->utm['term'] . "', '" . $this->utm['content'] . "', '" . $this->referer_host . "', '" . $this->day . "', '" . $p . "', '" . $this->session . "','1')");
+            }
+        }
+    }
 
 	public function getHosts() {
 		global $referer;
@@ -236,45 +260,80 @@ class Counter extends Config
 	}
 		
 	public function getUTM () {
-		if($ref = parse_url($_SERVER['REQUEST_URI'], PHP_URL_QUERY)) {
+		if ($ref = parse_url($_SERVER['REQUEST_URI'], PHP_URL_QUERY))
+        {
 			$p = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 
-			parse_str( $ref, $parms );
-			if(isset($parms['fbclid'])) {
-				$this->utm['campaign'] = "Facebook external link";
-				$this->utm['source'] = "Facebook";
-				$this->utm['medium'] = "External";
-				$this->utm['content'] = "FBCLID - ".$p;
-			}
-			if(isset($parms['gclid'])) {
-				$this->utm['campaign'] = "Google external link";
-				$this->utm['source'] = "Google";
-				$this->utm['medium'] = "External / Advertisement";
-				$this->utm['content'] = "GCLID - ".$p;
-			}
-			if(isset($parms['gbraid'])) {
-				$this->utm['campaign'] = "Google advertisement IOS (app)";
-				$this->utm['source'] = "Google";
-				$this->utm['medium'] = "External / Advertisement";
-				$this->utm['content'] = "GBRAID - ".$p;
-			}
-			if(isset($parms['wbraid'])) {
-				$this->utm['campaign'] = "Google advertisement IOS (web)";
-				$this->utm['source'] = "Google";
-				$this->utm['medium'] = "External / Advertisement";
-				$this->utm['content'] = "WBRAID - ".$p;
-			}
-			
-			if(isset($parms['utm_campaign'])) 	$this->utm['campaign'] 	= $this->escapeString(urldecode($parms['utm_campaign'])); 
-			if(isset($parms['utm_source'])) 	$this->utm['source'] 	= $this->escapeString(urldecode($parms['utm_source'])); 
-			if(isset($parms['utm_medium'])) 	$this->utm['medium'] 	= $this->escapeString(urldecode($parms['utm_medium'])); 
-			if(isset($parms['utm_term'])) 		$this->utm['term'] 		= $this->escapeString(urldecode($parms['utm_term'])); 
-			if(isset($parms['utm_content'])) 	$this->utm['content']	= $this->escapeString(urldecode($parms['utm_content'])); 
-			
-			if(!$this->utm['campaign']) $this->utm['campaign'] = $this->utm['source'];
-			if(!$this->utm['content']) $this->utm['content'] = $this->utm['source'] . " - No content";
-		}
-	}
+			parse_str($ref, $parms);
+
+            if (isset($parms['fbclid']))
+            {
+                $this->utm['campaign'] = "Facebook external link";
+                $this->utm['source'] = "Facebook";
+                $this->utm['medium'] = "External";
+                $this->utm['content'] = "FBCLID - " . $p;
+            }
+            
+            if (isset($parms['gclid']))
+            {
+                $this->utm['campaign'] = "Google external link";
+                $this->utm['source'] = "Google";
+                $this->utm['medium'] = "External / Advertisement";
+                $this->utm['content'] = "GCLID - " . $p;
+            }
+
+            if (isset($parms['gbraid']))
+            {
+                $this->utm['campaign'] = "Google advertisement IOS (app)";
+                $this->utm['source'] = "Google";
+                $this->utm['medium'] = "External / Advertisement";
+                $this->utm['content'] = "GBRAID - " . $p;
+            }
+
+            if (isset($parms['wbraid']))
+            {
+                $this->utm['campaign'] = "Google advertisement IOS (web)";
+                $this->utm['source'] = "Google";
+                $this->utm['medium'] = "External / Advertisement";
+                $this->utm['content'] = "WBRAID - " . $p;
+            }
+
+            if (isset($parms['utm_campaign']))
+            {
+                $this->utm['campaign'] = $this->escapeString(urldecode($parms['utm_campaign']));
+            }
+
+            if (isset($parms['utm_source']))
+            {
+                $this->utm['source'] = $this->escapeString(urldecode($parms['utm_source']));
+            }
+
+            if (isset($parms['utm_medium']))
+            {
+                $this->utm['medium'] = $this->escapeString(urldecode($parms['utm_medium']));
+            }
+
+            if (isset($parms['utm_term']))
+            {
+                $this->utm['term'] = $this->escapeString(urldecode($parms['utm_term']));
+            }
+
+            if (isset($parms['utm_content']))
+            {
+                $this->utm['content'] = $this->escapeString(urldecode($parms['utm_content']));
+            }
+
+            if (!$this->utm['campaign'])
+            {
+                $this->utm['campaign'] = $this->utm['source'];
+            }
+
+            if (!$this->utm['content'])
+            {
+                $this->utm['content'] = $this->utm['source'] . " - No content";
+            }
+        }
+    }
 	
 
 	public function newUser() {
