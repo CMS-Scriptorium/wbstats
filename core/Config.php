@@ -20,8 +20,6 @@ namespace wbstats\core;
 
 use const TABLE_PREFIX;
 
-defined('WB_PATH') OR die(header('Location: ../index.php'));
-
 class Config
 {
     public const string TABLE_DAY     = TABLE_PREFIX . 'mod_wbstats_day';

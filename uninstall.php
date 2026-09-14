@@ -13,12 +13,11 @@
  *
  */
 
-/**
- *	Must include code to stop this file being access directly
- */
-if (defined('WB_PATH') == false)
+// prevent this file from being accessed directly
+if (!defined('WB_PATH'))
 {
-    die("Cannot access this file directly");
+    header('Location: ../../index.php');
+    die();
 }
 
 // Aldus [2026-09-11] Read/use the (Module-)Config!

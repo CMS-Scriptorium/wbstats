@@ -18,12 +18,11 @@ declare(strict_types=1);
 
 use wbstats\core\Config;
 
-/**
- *	Must include code to stop this file being access directly
- */
-if (defined('WB_PATH') == false)
+// prevent this file from being accessed directly
+if (!defined('WB_PATH'))
 {
-    die("Cannot access this file directly");
+    header('Location: ../../index.php');
+    die();
 }
 
 require_once __DIR__ . "/core/Config.php";

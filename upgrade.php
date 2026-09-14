@@ -13,14 +13,12 @@
  *
  */
 
-/**
- *	Must include code to stop this file being access directly
- */
-if (defined('WB_PATH') == false)
+// prevent this file from being accessed directly
+if (!defined('WB_PATH'))
 {
-    die("Cannot access this file directly");
+    header('Location: ../../index.php');
+    die();
 }
-
 
 function _wbs_db_add_field($field, $table, $desc) {
 	global $database;

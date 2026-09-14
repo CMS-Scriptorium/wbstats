@@ -18,8 +18,6 @@ declare(strict_types=1);
 
 namespace wbstats\core;
 
-defined('WB_PATH') OR die(header('Location: ../index.php'));
-
 class Stats extends Config
 {
 	private $ip;

@@ -14,12 +14,11 @@
  *
  */
 
-/**
- *	Must include code to stop this file being access directly
- */
-if (defined('WB_PATH') == false)
+// prevent this file from being accessed directly
+if (!defined('WB_PATH'))
 {
-    die("Cannot access this file directly");
+    header('Location: ../../index.php');
+    die();
 }
 
 $stats = new wbstats\core\Stats();
