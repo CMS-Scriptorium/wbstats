@@ -183,13 +183,21 @@ class Counter extends Config
         }
     }
 
-    public function getHosts() {
+    public function getHosts()
+    {
         global $referer;
-		$fp = $this->getRealUserIp(); //. session_id(); 
-        if (isset($_SERVER['HTTP_USER_AGENT']))
-            $fp .= $_SERVER['HTTP_USER_AGENT'];
-        if (isset($_SERVER['HTTP_ACCEPT_LANGUAGE']))
-            $fp .= $_SERVER['HTTP_ACCEPT_LANGUAGE'];
+        $fp = $this->getRealUserIp(); //. session_id(); 
+
+        $fields = [
+            'HTTP_USER_AGENT',
+            'HTTP_ACCEPT_LANGUAGE',
+        ];
+
+        foreach ($fields as $key)
+        {
+            $fp .= Request::getValue($key, "text", "server");
+        }
+
         $this->ip = hash("sha512", $fp);
         if (defined('ORG_REFERER'))
         {
@@ -199,44 +207,43 @@ class Counter extends Config
             $this->referer = $referer;
         } else
         {
-            if (isset($_SERVER['HTTP_REFERER']))
-                $this->referer = $_SERVER['HTTP_REFERER'];
+            $this->referer = self::getServerVar("HTTP_REFERER");
+            
         }
-        $this->page = $_SERVER['REQUEST_URI'];
-        if (isset($_SERVER['HTTP_ACCEPT_LANGUAGE']))
-        {
-            $this->language = substr($_SERVER['HTTP_ACCEPT_LANGUAGE'], 0, 2);
-        }
+        $this->page = self::getServerVar('REQUEST_URI');
+        $this->language = substr(self::getServerVar('HTTP_ACCEPT_LANGUAGE'), 0, 2);
         $this->response_code = http_response_code(); // detect 404
-        $this->host = $_SERVER["HTTP_HOST"];
+        $this->host = self::getServerVar("HTTP_HOST");
         if (substr($this->host, 0, 4) == "www.")
+        {
             $this->host = substr($this->host, 4);
+        }
         if ($this->referer)
         {
             $this->referer_host = parse_url($this->referer, PHP_URL_HOST); // Referrer Host
             if (!$this->referer_host)
+            {
                 $this->referer_host = '';
+            }
             if (substr($this->referer_host, 0, 4) == "www.")
+            {
                 $this->referer_host = substr($this->referer_host, 4);
+            }
         }
         $this->referer = $this->escapeString($this->referer);
         $this->page = $this->escapeString($this->page);
         $this->language = $this->escapeString($this->language);
         $this->referer_host = $this->escapeString($this->referer_host);
         $this->agent = '';
-        if (isset($_SERVER['HTTP_USER_AGENT']))
+
+        $userAgent = self::getServerVar('HTTP_USER_AGENT');
+        if (!empty($userAgent))
         {
             $res = $this->parse_user_agent();
-            $this->agent = $this->escapeString($_SERVER['HTTP_USER_AGENT']);
-            $this->os = $res['platform']; // .' '.$res['platform_version'];
+            $this->agent = $this->escapeString($userAgent);
+            $this->os = $res['platform'];
             $this->browser = $res['browser'];
             $this->browser_version = $res['version'];
-            /*
-              echo '<!-- ';
-              print_r($res);
-              print_r($this->agent);
-              echo ' -->';
-             */
         }
     }
 
@@ -291,7 +298,7 @@ class Counter extends Config
 
     public function getSearch ()
     {
-        if ($ref = parse_url($_SERVER['REQUEST_URI'], PHP_URL_QUERY))
+        if ($ref = parse_url(self::getServerVar('REQUEST_URI'), PHP_URL_QUERY))
         {
             parse_str($ref, $parms);
             if (isset($parms['string']))
@@ -304,9 +311,9 @@ class Counter extends Config
 
     public function getUTM()
     {
-        if ($ref = parse_url($_SERVER['REQUEST_URI'], PHP_URL_QUERY))
+        if ($ref = parse_url(self::getServerVar('REQUEST_URI'), PHP_URL_QUERY))
         {
-            $p = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+            $p = parse_url(self::getServerVar('REQUEST_URI'), PHP_URL_PATH);
 
             parse_str($ref, $parms);
 
@@ -606,14 +613,14 @@ class Counter extends Config
      * @return string[] an array with 'browser', 'version' and 'platform' keys
      * @throws InvalidArgumentException on not having a proper user agent to parse.
      */
-    public function parse_user_agent( $u_agent = null )
+    public function parse_user_agent(string|null $u_agent = null)
     {
-        if ($u_agent === null && isset($_SERVER['HTTP_USER_AGENT']))
+        if ($u_agent === null)
         {
-            $u_agent = (string) $_SERVER['HTTP_USER_AGENT'];
+            $u_agent = self::getServerVar('HTTP_USER_AGENT');
         }
 
-        if( $u_agent === null )
+        if(empty($u_agent))
         {
             throw new InvalidArgumentException('parse_user_agent requires a user agent');
         }
@@ -622,9 +629,10 @@ class Counter extends Config
         $browser = null;
         $version = null;
 
-        $empty = array( self::PLATFORM => $platform, self::BROWSER => $browser, self::BROWSER_VERSION => $version );
+        $empty = [self::PLATFORM => $platform, self::BROWSER => $browser, self::BROWSER_VERSION => $version];
 
-        if( !$u_agent ) {
+        if (!$u_agent)
+        {
             return $empty;
         }
 
@@ -787,6 +795,11 @@ REGEX
             self::PLATFORM        => $platform    ?: null,
             self::BROWSER         => $browser     ?: null,
             self::BROWSER_VERSION => $versionInt  ?: null];
+    }
+
+    protected static function getServerVar(string $key): string
+    {
+        return Request::getValue($key, "text", "server");
     }
 
     /**
