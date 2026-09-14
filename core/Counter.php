@@ -239,7 +239,7 @@ class Counter extends Config
         $userAgent = self::getServerVar('HTTP_USER_AGENT');
         if (!empty($userAgent))
         {
-            $res = $this->parse_user_agent();
+            $res = $this->parseUserAgent();
             $this->agent = $this->escapeString($userAgent);
             $this->os = $res['platform'];
             $this->browser = $res['browser'];
@@ -286,12 +286,17 @@ class Counter extends Config
         {
             parse_str($ref, $parms);
             if (isset($parms['q']) && $parms['q'] != "")
+            {
                 $this->keywords = urldecode($parms['q']);
+            }
             //elseif(isset($parms['q'])) 		$this->keywords = 'Searchkey not provided'; 
             elseif (isset($parms['p']))
+            {
                 $this->keywords = urldecode($parms['p']);
-            elseif (isset($parms['query']))
+            } elseif (isset($parms['query']))
+            {
                 $this->keywords = urldecode($parms['query']);
+            }
             $this->keywords = $this->escapeString($this->keywords);
         }
     }
@@ -484,7 +489,7 @@ class Counter extends Config
         return $location;
     }
 
-    public function noLongerFree_getCountryCode()
+    public function noLongerFreeGetCountryCode()
     {
         global $database;
         $ip = $this->getRealUserIp();
@@ -553,7 +558,8 @@ class Counter extends Config
         $tempVal = Request::getValue("HTTP_ACCEPT_LANGUAGE", "text", "server");
 
         // Assuming no language means no human browser
-        return (empty($tempVal) || $tempVal == "*");
+        $retVal = (empty($tempVal) || $tempVal == "*");
+        return $retVal;
     }
 
     public function isRefererSpam(): bool
@@ -613,7 +619,7 @@ class Counter extends Config
      * @return string[] an array with 'browser', 'version' and 'platform' keys
      * @throws InvalidArgumentException on not having a proper user agent to parse.
      */
-    public function parse_user_agent(string|null $u_agent = null)
+    public function parseUserAgent(string|null $u_agent = null)
     {
         if ($u_agent === null)
         {
@@ -622,7 +628,7 @@ class Counter extends Config
 
         if(empty($u_agent))
         {
-            throw new InvalidArgumentException('parse_user_agent requires a user agent');
+            throw new InvalidArgumentException('parseUserAgent requires an valid user agent');
         }
 
         $platform = null;
