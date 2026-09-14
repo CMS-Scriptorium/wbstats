@@ -618,9 +618,9 @@ class Counter extends Config
     /**
      * Parses a user agent string into its important parts
      *
-     * @param string|null $u_agent User agent string to parse or null. Uses $_SERVER['HTTP_USER_AGENT'] on NULL
-     * @return string[] an array with 'browser', 'version' and 'platform' keys
-     * @throws InvalidArgumentException on not having a proper user agent to parse.
+     * @param   string|null $u_agent User agent string to parse or null. Uses $_SERVER['HTTP_USER_AGENT'] on NULL
+     * @return  array                An array with 'browser', 'version' and 'platform' keys
+     * @throws  InvalidArgumentException on not having a proper user agent to parse.
      */
     public function parseUserAgent(string|null $u_agent = null)
     {
@@ -640,12 +640,10 @@ class Counter extends Config
 
         $empty = [self::PLATFORM => $platform, self::BROWSER => $browser, self::BROWSER_VERSION => $version];
 
-        if (!$u_agent)
+        $parent_matches = [];
+        if( preg_match('/\((.*?)\)/m', $u_agent, $parent_matches) )
         {
-            return $empty;
-        }
-
-        if( preg_match('/\((.*?)\)/m', $u_agent, $parent_matches) ) {
+            $result = [];
             preg_match_all(<<<'REGEX'
 /(?P<platform>BB\d+;|Android|CrOS|Tizen|iPhone|iPad|iPod|Linux|(Open|Net|Free)BSD|Macintosh|Windows(\ Phone)?|Silk|linux-gnu|BlackBerry|PlayBook|X11|(New\ )?Nintendo\ (WiiU?|3?DS|Switch)|Xbox(\ One)?)
 (?:\ [^;]*)?
@@ -695,7 +693,7 @@ REGEX
         {
             if (preg_match('%^(?!Mozilla)(?P<browser>[A-Z0-9\-]+)(/(?P<version>[0-9A-Z.]+))?%ix', $u_agent, $result))
             {
-                return array (self::PLATFORM => $platform ?: null, self::BROWSER => $result[self::BROWSER], self::BROWSER_VERSION => empty($result[self::BROWSER_VERSION]) ? null : $result[self::BROWSER_VERSION]);
+                return [self::PLATFORM => $platform ?: null, self::BROWSER => $result[self::BROWSER], self::BROWSER_VERSION => empty($result[self::BROWSER_VERSION]) ? null : $result[self::BROWSER_VERSION]];
             }
 
             return $empty;
