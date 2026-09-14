@@ -23,6 +23,8 @@ if (!defined('WB_PATH'))
 $top = 10;
 $r = $stats->getVisitors(100);
 
+$pages_cloud = $stats->accessPagesCloud();
+
 ?>
 <div class="sysmenu small">
   <a href="#" class="pop" data-sec="pages"><?php echo $WS['PAGETOP']  ?></a>

@@ -38,6 +38,7 @@ class Stats extends Config
 	
     protected array $WS = [];
     protected array $code2lang = [];
+    protected array $pages_cloud = [];
 
 	public function __construct($do_clean = true) {
 		global $database;
@@ -750,11 +751,21 @@ class Stats extends Config
         return $this->code2lang;
     }
 
+    /**
+     * Getter for internal property "pages_cloud"
+     * @return array
+     */
+    public function accessPagesCloud(): array
+    {
+        return $this->pages_cloud;
+    }
+
     protected function getLanguage(): void
     {
         // Overwritten by the language file.
         $WS = [];
         $code2lang = [];
+        $pages_cloud = [];
 
         $mpath = WB_PATH . '/modules/wbstats/';
         $lang = $mpath . '/languages/' . LANGUAGE . '.php';
@@ -762,5 +773,6 @@ class Stats extends Config
 
         $this->WS = $WS;
         $this->code2lang = $code2lang;
+        $this->pages_cloud = $pages_cloud;
     }
 }
