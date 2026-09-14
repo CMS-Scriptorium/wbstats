@@ -26,38 +26,38 @@ use const ORG_REFERER;
 
 class Counter extends Config
 {
-	private $ip;
-	private $referer = '';
-	private $host = '';
-	private $referer_host = '';
-	private $referer_spam= 0;
-	private $page;
-	private $keywords = '';
-	private $language = '';
-	private $agent = '';
-	private $browser = '';
-	private $browser_version = '';
-	private $os = '';
-	private $location = '';
-	private $response_code;
-	private $session;
-	private $utm = ["source" => '',"medium" => '',"campaign" => '',"term" => '',"content" => ''];
-	
-	private $time;
-	private $day;
-	private $month;
-	private $old_data;
-	private $old_date;
-	private $reload;
-	private $online;
-	
+    private $ip;
+    private $referer = '';
+    private $host = '';
+    private $referer_host = '';
+    private $referer_spam = 0;
+    private $page;
+    private $keywords = '';
+    private $language = '';
+    private $agent = '';
+    private $browser = '';
+    private $browser_version = '';
+    private $os = '';
+    private $location = '';
+    private $response_code;
+    private $session;
+    private $utm = ["source" => '', "medium" => '', "campaign" => '', "term" => '', "content" => ''];
+    private $time;
+    private $day;
+    private $month;
+    private $old_data;
+    private $old_date;
+    private $reload;
+    private $online;
+
     // Internal use 
     protected array $lowerBrowser = [];
 
-	public function __construct() {
-		$this->init();
-		$this->count();
-	}
+    public function __construct()
+    {
+        $this->init();
+        $this->count();
+    }
 
     public function init()
     {
@@ -97,16 +97,17 @@ class Counter extends Config
         }
     }
 
-	public function count() {
-		global $database;
-		$this->getHosts();
-		$this->getKeywords();
-		$this->getSearch();
-		$this->getUTM();
-		
+    public function count()
+    {
+        global $database;
+        $this->getHosts();
+        $this->getKeywords();
+        $this->getSearch();
+        $this->getUTM();
+
         if ($this->newUser())
         {
-			if ($this->referer_host && stristr($this->host, $this->referer_host) === false)
+            if ($this->referer_host && stristr($this->host, $this->referer_host) === false)
             {
                 if (!$id = $database->get_one("SELECT `id` from `" . self::TABLE_REF . "` WHERE `referer`='" . $this->referer_host . "' AND day='" . $this->day . "'"))
                 {
@@ -133,15 +134,15 @@ class Counter extends Config
                 if (!$id = $database->get_one("SELECT `id` from `" . self::TABLE_BROWSER . "` WHERE `agent`='" . $this->agent . "' AND `day`='" . $this->day . "'"))
                 {
                     $database->query("INSERT INTO `" . self::TABLE_BROWSER . "` (`day`, `agent`, `os`, `browser`, `version`, `view`) 
-					VALUES ('" . $this->day . "', '" . $this->agent . "', '" . $this->os . "', '" . $this->browser . "', '" . $this->browser_version . "', '1')");
+                    VALUES ('" . $this->day . "', '" . $this->agent . "', '" . $this->os . "', '" . $this->browser . "', '" . $this->browser_version . "', '1')");
                 } else
                 {
                     $database->query("UPDATE `" . self::TABLE_BROWSER . "` SET `view`=`view`+1 where `id`=" . $id);
                 }
             }
         } 
-		
-		if ($this->keywords)
+
+        if ($this->keywords)
         {
             if (!$id = $database->get_one("SELECT `id` from `" . self::TABLE_KEY . "` WHERE `keyword`='" . $this->keywords . "' AND `day`='" . $this->day . "'"))
             {
@@ -182,52 +183,64 @@ class Counter extends Config
         }
     }
 
-	public function getHosts() {
-		global $referer;
+    public function getHosts() {
+        global $referer;
 		$fp = $this->getRealUserIp(); //. session_id(); 
-		if(isset($_SERVER['HTTP_USER_AGENT'])) $fp .= $_SERVER['HTTP_USER_AGENT'];
-		if(isset($_SERVER['HTTP_ACCEPT_LANGUAGE'])) $fp .= $_SERVER['HTTP_ACCEPT_LANGUAGE'];
-		$this->ip = hash("sha512", $fp); 
-        if (defined( 'ORG_REFERER' )) {
+        if (isset($_SERVER['HTTP_USER_AGENT']))
+            $fp .= $_SERVER['HTTP_USER_AGENT'];
+        if (isset($_SERVER['HTTP_ACCEPT_LANGUAGE']))
+            $fp .= $_SERVER['HTTP_ACCEPT_LANGUAGE'];
+        $this->ip = hash("sha512", $fp);
+        if (defined('ORG_REFERER'))
+        {
             $this->referer = ORG_REFERER;
-		} elseif (isset($referer)) {
-			$this->referer = $referer;
-		} else {
-			if(isset($_SERVER['HTTP_REFERER'])) $this->referer = $_SERVER['HTTP_REFERER'];
-		} 	
-		$this->page = $_SERVER['REQUEST_URI']; 
-		if (isset($_SERVER['HTTP_ACCEPT_LANGUAGE'])) {
-			$this->language = substr($_SERVER['HTTP_ACCEPT_LANGUAGE'],0,2);
-		}
-		$this->response_code = http_response_code(); // detect 404
-		$this->host=$_SERVER["HTTP_HOST"]; 
-		if (substr($this->host,0,4) == "www.") $this->host=substr($this->host,4);
-		if($this->referer) {
-			$this->referer_host = parse_url($this->referer, PHP_URL_HOST); // Referrer Host
-			if(!$this->referer_host) $this->referer_host = '';
-			if (substr($this->referer_host,0,4) == "www.") $this->referer_host=substr($this->referer_host,4);
-		}
-		$this->referer = $this->escapeString($this->referer);
-		$this->page = $this->escapeString($this->page);
-		$this->language = $this->escapeString($this->language);
-		$this->referer_host = $this->escapeString($this->referer_host);
-		$this->agent = '';
-		if(isset($_SERVER['HTTP_USER_AGENT'])) {
-			$res = $this->parse_user_agent();
-			$this->agent = $this->escapeString($_SERVER['HTTP_USER_AGENT']);
-			$this->os = $res['platform']; // .' '.$res['platform_version'];
-			$this->browser = $res['browser'];
-			$this->browser_version = $res['version'];
-			/*
-			echo '<!-- ';
-			print_r($res);
-			print_r($this->agent);
-			echo ' -->';
-			*/
-		}
-	}
-	
-	public function getRealUserIp(): string
+        } elseif (isset($referer))
+        {
+            $this->referer = $referer;
+        } else
+        {
+            if (isset($_SERVER['HTTP_REFERER']))
+                $this->referer = $_SERVER['HTTP_REFERER'];
+        }
+        $this->page = $_SERVER['REQUEST_URI'];
+        if (isset($_SERVER['HTTP_ACCEPT_LANGUAGE']))
+        {
+            $this->language = substr($_SERVER['HTTP_ACCEPT_LANGUAGE'], 0, 2);
+        }
+        $this->response_code = http_response_code(); // detect 404
+        $this->host = $_SERVER["HTTP_HOST"];
+        if (substr($this->host, 0, 4) == "www.")
+            $this->host = substr($this->host, 4);
+        if ($this->referer)
+        {
+            $this->referer_host = parse_url($this->referer, PHP_URL_HOST); // Referrer Host
+            if (!$this->referer_host)
+                $this->referer_host = '';
+            if (substr($this->referer_host, 0, 4) == "www.")
+                $this->referer_host = substr($this->referer_host, 4);
+        }
+        $this->referer = $this->escapeString($this->referer);
+        $this->page = $this->escapeString($this->page);
+        $this->language = $this->escapeString($this->language);
+        $this->referer_host = $this->escapeString($this->referer_host);
+        $this->agent = '';
+        if (isset($_SERVER['HTTP_USER_AGENT']))
+        {
+            $res = $this->parse_user_agent();
+            $this->agent = $this->escapeString($_SERVER['HTTP_USER_AGENT']);
+            $this->os = $res['platform']; // .' '.$res['platform_version'];
+            $this->browser = $res['browser'];
+            $this->browser_version = $res['version'];
+            /*
+              echo '<!-- ';
+              print_r($res);
+              print_r($this->agent);
+              echo ' -->';
+             */
+        }
+    }
+
+    public function getRealUserIp(): string
     {
         $ip = '';
 
@@ -260,33 +273,42 @@ class Counter extends Config
         return '0.0.0.0';
     }
 
-    public function getKeywords () {
-		if($ref = parse_url($this->referer, PHP_URL_QUERY)) {
-			parse_str( $ref, $parms );
-			if(isset($parms['q']) && $parms['q']!="") $this->keywords = urldecode($parms['q']); 
-			//elseif(isset($parms['q'])) 		$this->keywords = 'Searchkey not provided'; 
-			elseif(isset($parms['p'])) 		$this->keywords = urldecode($parms['p']); 
-			elseif(isset($parms['query'])) 	$this->keywords = urldecode($parms['query']); 
-			$this->keywords = $this->escapeString($this->keywords);
-		}
-	}
-
-	public function getSearch () {
-		if($ref = parse_url($_SERVER['REQUEST_URI'], PHP_URL_QUERY)) {
-			parse_str( $ref, $parms );
-			if(isset($parms['string']))  {
-				$this->keywords = "Local search: ".urldecode($parms['string']); 
-				$this->keywords = $this->escapeString($this->keywords);
-			}
-		}
-	}
-		
-	public function getUTM () {
-		if ($ref = parse_url($_SERVER['REQUEST_URI'], PHP_URL_QUERY))
+    public function getKeywords ()
+    {
+        if ($ref = parse_url($this->referer, PHP_URL_QUERY))
         {
-			$p = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+            parse_str($ref, $parms);
+            if (isset($parms['q']) && $parms['q'] != "")
+                $this->keywords = urldecode($parms['q']);
+            //elseif(isset($parms['q'])) 		$this->keywords = 'Searchkey not provided'; 
+            elseif (isset($parms['p']))
+                $this->keywords = urldecode($parms['p']);
+            elseif (isset($parms['query']))
+                $this->keywords = urldecode($parms['query']);
+            $this->keywords = $this->escapeString($this->keywords);
+        }
+    }
 
-			parse_str($ref, $parms);
+    public function getSearch ()
+    {
+        if ($ref = parse_url($_SERVER['REQUEST_URI'], PHP_URL_QUERY))
+        {
+            parse_str($ref, $parms);
+            if (isset($parms['string']))
+            {
+                $this->keywords = "Local search: " . urldecode($parms['string']);
+                $this->keywords = $this->escapeString($this->keywords);
+            }
+        }
+    }
+
+    public function getUTM()
+    {
+        if ($ref = parse_url($_SERVER['REQUEST_URI'], PHP_URL_QUERY))
+        {
+            $p = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+
+            parse_str($ref, $parms);
 
             if (isset($parms['fbclid']))
             {
@@ -356,16 +378,16 @@ class Counter extends Config
             }
         }
     }
-	
-	public function newUser(): bool
+
+    public function newUser(): bool
     {
-		global $database;
-		$this->session = session_id();
-		$timeout = time() - $this->reload;
-		$loggedin = isset($_SESSION['USER_ID']) ? ", `loggedin`='1'":"";
+        global $database;
+        $this->session = session_id();
+        $timeout = time() - $this->reload;
+        $loggedin = isset($_SESSION['USER_ID']) ? ", `loggedin`='1'" : "";
 
         $retValue = false;
-		if ($this->isIgnored())
+        if ($this->isIgnored())
         {
             $this->page = ''; //prevent pagecounting
         
@@ -393,7 +415,7 @@ class Counter extends Config
             $city = $this->getCountryCode();
             $country = $this->getCountryCode(true);
             $database->query("INSERT INTO `" . self::TABLE_IPS . "` (`ip`,`session`, `location`, `country`, `time`, `online`,`page`,`last_page`,`pages`,`language`,`os`,`browser`,`referer`,`ua`) VALUES
-				('" . $this->ip . "', '" . $this->session . "', '" . $city . "','" . $country . "', '" . $this->time . "', '" . $this->time . "', '" . $this->page . "', '" . $this->page . "','1','" . $this->language . "', '" . $this->os . "', '" . $this->browser . " (" . $this->browser_version . ")','" . $this->referer_host . "','" . $this->agent . "')");
+            ('" . $this->ip . "', '" . $this->session . "', '" . $city . "','" . $country . "', '" . $this->time . "', '" . $this->time . "', '" . $this->page . "', '" . $this->page . "','1','" . $this->language . "', '" . $this->os . "', '" . $this->browser . " (" . $this->browser_version . ")','" . $this->referer_host . "','" . $this->agent . "')");
             $database->query("UPDATE `" . self::TABLE_DAY . "` SET `user`=`user`+1, `view`=`view`+1 WHERE `day`='" . $this->day . "'");
 
             $retValue = true;
@@ -405,19 +427,20 @@ class Counter extends Config
         }
 
         return $retValue;
-	}
-	
-	public function getCountryCode($countryOnly = false) {
-		global $database;
+    }
 
-		$ip = $this->getRealUserIp(); 
-		$ipkey = hash("sha512", $ip); // 2026-09-13 Mfi!
-		$timeout = time() - $this->reload;
-		$field = $countryOnly ? 'country' : 'location';
-		
-		if (!$location = $database->get_one("SELECT `$field` FROM `" . self::TABLE_LOC . "` WHERE `ip`='" . $ipkey . "' and `location` != '' and `timestamp` > '$timeout' ORDER BY `timestamp` DESC LIMIT 1"))
+	public function getCountryCode($countryOnly = false)
+    {
+        global $database;
+
+        $ip = $this->getRealUserIp();
+        $ipkey = hash("sha512", $ip); // 2026-09-13 Mfi!
+        $timeout = time() - $this->reload;
+        $field = $countryOnly ? 'country' : 'location';
+
+        if (!$location = $database->get_one("SELECT `$field` FROM `" . self::TABLE_LOC . "` WHERE `ip`='" . $ipkey . "' and `location` != '' and `timestamp` > '$timeout' ORDER BY `timestamp` DESC LIMIT 1"))
         {
-			if ($ipdata = json_decode($this->getUrlContent('http://ip-api.com/json/' . $ip), true))
+            if ($ipdata = json_decode($this->getUrlContent('http://ip-api.com/json/' . $ip), true))
             {
                 $ipdata['city']         ??= '- unknown -';
                 $ipdata['countryCode']  ??= '';
@@ -426,38 +449,39 @@ class Counter extends Config
                 $ipdata['lon']          ??= '';
                 $ipdata['timezone']     ??= '';
 
-                $lat 			= $database->escapeString($ipdata['lat']);
-				$lon 			= $database->escapeString($ipdata['lon']);
-				$tz 			= $database->escapeString($ipdata['timezone']);
-				$country 		= $database->escapeString($ipdata['country']);
-				$country 		= str_ireplace("The ", "", $country);  // "Netherlands" is sometimes "The Netherlands"
-				$country_code 	= $database->escapeString($ipdata['countryCode']);
-				$city 			= $database->escapeString($ipdata['city']);
-				
-				$location 		= $city;
-				if ($country_code)
+                $lat = $database->escapeString($ipdata['lat']);
+                $lon = $database->escapeString($ipdata['lon']);
+                $tz = $database->escapeString($ipdata['timezone']);
+                $country = $database->escapeString($ipdata['country']);
+                $country = str_ireplace("The ", "", $country);  // "Netherlands" is sometimes "The Netherlands"
+                $country_code = $database->escapeString($ipdata['countryCode']);
+                $city = $database->escapeString($ipdata['city']);
+
+                $location = $city;
+                if ($country_code)
                 {
                     $location = $city.' ('.$country_code.')';
                 }
 
-				$database->query("INSERT INTO ".self::TABLE_LOC." (`ip`,`location`,`timestamp`,`city`,`country`,`country_code`,`latitude`,`longitude`,`timezone`) 
-					VALUES ('".$ipkey."','".$location."','".time()."','".$city."','".$country."','".$country_code."','".$lat."','".$lon."','".$tz."') ");
-				
+                $database->query("INSERT INTO ".self::TABLE_LOC." (`ip`,`location`,`timestamp`,`city`,`country`,`country_code`,`latitude`,`longitude`,`timezone`) 
+                    VALUES ('".$ipkey."','".$location."','".time()."','".$city."','".$country."','".$country_code."','".$lat."','".$lon."','".$tz."') ");
+
                 if ($countryOnly)
                 {
                     $location = $country;
                 }
-			}
-		} else {
-			// $city .= ' *';
-		}
-		return $location;
-	}	
-	
-	public function noLongerFree_getCountryCode() {
-		global $database;
-		$ip = $this->getRealUserIp(); 
-		$ipkey = hash("sha512", $ip);  // Attention!
+            }
+        } else {
+            // $city .= ' *';
+        }
+        return $location;
+    }
+
+    public function noLongerFree_getCountryCode()
+    {
+        global $database;
+        $ip = $this->getRealUserIp();
+        $ipkey = hash("sha512", $ip);  // Attention!
         if (!$city = $database->get_one("SELECT `location` FROM `" . self::TABLE_LOC . "` WHERE `ip`='" . $ipkey . "' LIMIT 1"))
         {
             if ($ipdata = unserialize($this->getUrlContent('http://www.geoplugin.net/php.gp?ip=' . $ip)))
@@ -478,22 +502,23 @@ class Counter extends Config
             // $city .= ' *';
         }
         return $city;
-	}	
-	
-	public function getUrlContent($url){
-		$ch = curl_init();
-		curl_setopt($ch, CURLOPT_URL, $url);
-		curl_setopt($ch, CURLOPT_USERAGENT, 'WBStats geoplugin');
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-		curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
-		curl_setopt($ch, CURLOPT_TIMEOUT, 5);
-		$data = curl_exec($ch);
-		$httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-		//curl_close($ch);
-		return ($httpcode>=200 && $httpcode<300) ? $data : false;
-	}	
-	
-	public function isBot(): bool
+    }
+
+    public function getUrlContent($url)
+    {
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_USERAGENT, 'WBStats geoplugin');
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 5);
+        $data = curl_exec($ch);
+        $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        //curl_close($ch);
+        return ($httpcode >= 200 && $httpcode < 300) ? $data : false;
+    }
+
+    public function isBot(): bool
     {
         if (!isset($_SERVER['HTTP_USER_AGENT']))
         {
@@ -529,7 +554,7 @@ class Counter extends Config
         {
             return true; // assuming no language means no human browser
         }
-        // if($this->referer_host == parse_url(WB_URL, PHP_URL_HOST)) return true; // referer same as website domain
+
         return false;
     }
 
@@ -584,60 +609,69 @@ class Counter extends Config
     }
 
     /**
-	 * Parses a user agent string into its important parts
-	 *
-	 * @param string|null $u_agent User agent string to parse or null. Uses $_SERVER['HTTP_USER_AGENT'] on NULL
-	 * @return string[] an array with 'browser', 'version' and 'platform' keys
-	 * @throws InvalidArgumentException on not having a proper user agent to parse.
-	 */
-	public function parse_user_agent( $u_agent = null ) {
-		if( $u_agent === null && isset($_SERVER['HTTP_USER_AGENT']) ) {
-			$u_agent = (string)$_SERVER['HTTP_USER_AGENT'];
-		}
+     * Parses a user agent string into its important parts
+     *
+     * @param string|null $u_agent User agent string to parse or null. Uses $_SERVER['HTTP_USER_AGENT'] on NULL
+     * @return string[] an array with 'browser', 'version' and 'platform' keys
+     * @throws InvalidArgumentException on not having a proper user agent to parse.
+     */
+    public function parse_user_agent( $u_agent = null )
+    {
+        if ($u_agent === null && isset($_SERVER['HTTP_USER_AGENT']))
+        {
+            $u_agent = (string) $_SERVER['HTTP_USER_AGENT'];
+        }
 
-		if( $u_agent === null ) {
-			throw new InvalidArgumentException('parse_user_agent requires a user agent');
-		}
+        if( $u_agent === null )
+        {
+            throw new InvalidArgumentException('parse_user_agent requires a user agent');
+        }
 
-		$platform = null;
-		$browser  = null;
-		$version  = null;
+        $platform = null;
+        $browser = null;
+        $version = null;
 
-		$empty = array( self::PLATFORM => $platform, self::BROWSER => $browser, self::BROWSER_VERSION => $version );
+        $empty = array( self::PLATFORM => $platform, self::BROWSER => $browser, self::BROWSER_VERSION => $version );
 
-		if( !$u_agent ) {
-			return $empty;
-		}
+        if( !$u_agent ) {
+            return $empty;
+        }
 
-		if( preg_match('/\((.*?)\)/m', $u_agent, $parent_matches) ) {
-			preg_match_all(<<<'REGEX'
+        if( preg_match('/\((.*?)\)/m', $u_agent, $parent_matches) ) {
+            preg_match_all(<<<'REGEX'
 /(?P<platform>BB\d+;|Android|CrOS|Tizen|iPhone|iPad|iPod|Linux|(Open|Net|Free)BSD|Macintosh|Windows(\ Phone)?|Silk|linux-gnu|BlackBerry|PlayBook|X11|(New\ )?Nintendo\ (WiiU?|3?DS|Switch)|Xbox(\ One)?)
 (?:\ [^;]*)?
 (?:;|$)/imx
 REGEX
-				, $parent_matches[1], $result);
+                , $parent_matches[1], $result);
 
-			$priority = array( 'Xbox One', 'Xbox', 'Windows Phone', 'Tizen', 'Android', 'FreeBSD', 'NetBSD', 'OpenBSD', 'CrOS', 'X11' );
+            $priority = array( 'Xbox One', 'Xbox', 'Windows Phone', 'Tizen', 'Android', 'FreeBSD', 'NetBSD', 'OpenBSD', 'CrOS', 'X11' );
 
-			$result[self::PLATFORM] = array_unique($result[self::PLATFORM]);
-			if( count($result[self::PLATFORM]) > 1 ) {
-				if( $keys = array_intersect($priority, $result[self::PLATFORM]) ) {
-					$platform = reset($keys);
-				} else {
-					$platform = $result[self::PLATFORM][0];
-				}
-			} elseif( isset($result[self::PLATFORM][0]) ) {
-				$platform = $result[self::PLATFORM][0];
-			}
-		}
+            $result[self::PLATFORM] = array_unique($result[self::PLATFORM]);
+            if (count($result[self::PLATFORM]) > 1)
+            {
+                if ($keys = array_intersect($priority, $result[self::PLATFORM]))
+                {
+                    $platform = reset($keys);
+                } else
+                {
+                    $platform = $result[self::PLATFORM][0];
+                }
+            } elseif (isset($result[self::PLATFORM][0]))
+            {
+                $platform = $result[self::PLATFORM][0];
+            }
+        }
 
-		if( $platform == 'linux-gnu' || $platform == 'X11' ) {
-			$platform = 'Linux';
-		} elseif( $platform == 'CrOS' ) {
-			$platform = 'Chrome OS';
-		}
+        if ($platform == 'linux-gnu' || $platform == 'X11')
+        {
+            $platform = 'Linux';
+        } elseif ($platform == 'CrOS')
+        {
+            $platform = 'Chrome OS';
+        }
 
-		preg_match_all(<<<'REGEX'
+        preg_match_all(<<<'REGEX'
 %(?P<browser>Camino|Kindle(\ Fire)?|Firefox|Iceweasel|IceCat|Safari|MSIE|Trident|AppleWebKit|
 TizenBrowser|(?:Headless)?Chrome|YaBrowser|Vivaldi|IEMobile|Opera|OPR|Silk|Midori|Edge|Edg|CriOS|UCBrowser|Puffin|OculusBrowser|SamsungBrowser|
 Baiduspider|Applebot|Googlebot|YandexBot|bingbot|Lynx|Version|Wget|curl|
@@ -646,29 +680,32 @@ NintendoBrowser|PLAYSTATION\ (\d|Vita)+)
 (?:\)?;?)
 (?:(?:[:/ ])(?P<version>[0-9A-Z.]+)|/(?:[A-Z]*))%ix
 REGEX
-			, $u_agent, $result);
+            , $u_agent, $result);
 
-		// If nothing matched, return null (to avoid undefined index errors)
-		if( !isset($result[self::BROWSER][0]) || !isset($result[self::BROWSER_VERSION][0]) ) {
-			if( preg_match('%^(?!Mozilla)(?P<browser>[A-Z0-9\-]+)(/(?P<version>[0-9A-Z.]+))?%ix', $u_agent, $result) ) {
-				return array( self::PLATFORM => $platform ?: null, self::BROWSER => $result[self::BROWSER], self::BROWSER_VERSION => empty($result[self::BROWSER_VERSION]) ? null : $result[self::BROWSER_VERSION] );
-			}
+        // If nothing matched, return null (to avoid undefined index errors)
+        if (!isset($result[self::BROWSER][0]) || !isset($result[self::BROWSER_VERSION][0]))
+        {
+            if (preg_match('%^(?!Mozilla)(?P<browser>[A-Z0-9\-]+)(/(?P<version>[0-9A-Z.]+))?%ix', $u_agent, $result))
+            {
+                return array (self::PLATFORM => $platform ?: null, self::BROWSER => $result[self::BROWSER], self::BROWSER_VERSION => empty($result[self::BROWSER_VERSION]) ? null : $result[self::BROWSER_VERSION]);
+            }
 
-			return $empty;
-		}
+            return $empty;
+        }
 
-		if( preg_match('/rv:(?P<version>[0-9A-Z.]+)/i', $u_agent, $rv_result) ) {
-			$rv_result = $rv_result[self::BROWSER_VERSION];
-		}
+        if (preg_match('/rv:(?P<version>[0-9A-Z.]+)/i', $u_agent, $rv_result))
+        {
+            $rv_result = $rv_result[self::BROWSER_VERSION];
+        }
 
-		$browser = $result[self::BROWSER][0];
-		$version = $result[self::BROWSER_VERSION][0];
+        $browser = $result[self::BROWSER][0];
+        $version = $result[self::BROWSER_VERSION][0];
 
-		$this->lowerBrowser = array_map('strtolower', $result[self::BROWSER]);
+        $this->lowerBrowser = array_map('strtolower', $result[self::BROWSER]);
 
-		$key = 0;
-		$val = '';
-		if ($this->browserFindT(
+        $key = 0;
+        $val = '';
+        if ($this->browserFindT(
             [
                 'OPR'       => 'Opera',
                 'UCBrowser' => 'UC Browser',
@@ -681,67 +718,94 @@ REGEX
             $key,
             $browser)
         ){
-			$version = $result[self::BROWSER_VERSION][$key];
-		} elseif( $this->browserFind('Playstation Vita', $key, $platform) ) {
-			$platform = 'PlayStation Vita';
-			$browser  = 'Browser';
-		} elseif( $this->browserFind(array( 'Kindle Fire', 'Silk' ), $key, $val) ) {
-			$browser  = $val == 'Silk' ? 'Silk' : 'Kindle';
-			$platform = 'Kindle Fire';
-			if( !($version = $result[self::BROWSER_VERSION][$key]) || !is_numeric($version[0]) ) {
-				$version = $result[self::BROWSER_VERSION][array_search('Version', $result[self::BROWSER])];
-			}
-		} elseif( $this->browserFind('NintendoBrowser', $key) || $platform == 'Nintendo 3DS' ) {
-			$browser = 'NintendoBrowser';
-			$version = $result[self::BROWSER_VERSION][$key];
-		} elseif( $this->browserFind('Kindle', $key, $platform) ) {
-			$browser = $result[self::BROWSER][$key];
-			$version = $result[self::BROWSER_VERSION][$key];
-		} elseif( $this->browserFind('Opera', $key, $browser) ) {
-			$this->browserFind('Version', $key);
-			$version = $result[self::BROWSER_VERSION][$key];
-		} elseif( $this->browserFind('Puffin', $key, $browser) ) {
-			$version = $result[self::BROWSER_VERSION][$key];
-			if( strlen($version) > 3 ) {
-				$part = substr($version, -2);
-				if( ctype_upper($part) ) {
-					$version = substr($version, 0, -2);
+            $version = $result[self::BROWSER_VERSION][$key];
+        } elseif( $this->browserFind('Playstation Vita', $key, $platform) ) {
+            $platform = 'PlayStation Vita';
+            $browser  = 'Browser';
+        } elseif( $this->browserFind(array( 'Kindle Fire', 'Silk' ), $key, $val) ) {
+            $browser = $val == 'Silk' ? 'Silk' : 'Kindle';
+            $platform = 'Kindle Fire';
+            if (!($version = $result[self::BROWSER_VERSION][$key]) || !is_numeric($version[0]))
+            {
+                $version = $result[self::BROWSER_VERSION][array_search('Version', $result[self::BROWSER])];
+            }
+        } elseif ($this->browserFind('NintendoBrowser', $key) || $platform == 'Nintendo 3DS')
+        {
+            $browser = 'NintendoBrowser';
+            $version = $result[self::BROWSER_VERSION][$key];
+        } elseif ($this->browserFind('Kindle', $key, $platform))
+        {
+            $browser = $result[self::BROWSER][$key];
+            $version = $result[self::BROWSER_VERSION][$key];
+        } elseif ($this->browserFind('Opera', $key, $browser))
+        {
+            $this->browserFind('Version', $key);
+            $version = $result[self::BROWSER_VERSION][$key];
+        } elseif ($this->browserFind('Puffin', $key, $browser))
+        {
+            $version = $result[self::BROWSER_VERSION][$key];
+            if (strlen($version) > 3)
+            {
+                $part = substr($version, -2);
+                if (ctype_upper($part))
+                {
+                    $version = substr($version, 0, -2);
 
-					$flags = array( 'IP' => 'iPhone', 'IT' => 'iPad', 'AP' => 'Android', 'AT' => 'Android', 'WP' => 'Windows Phone', 'WT' => 'Windows' );
-					if( isset($flags[$part]) ) {
-						$platform = $flags[$part];
-					}
-				}
-			}
-		} elseif( $this->browserFind(array( 'Applebot', 'IEMobile', 'Edge', 'Midori', 'Vivaldi', 'OculusBrowser', 'SamsungBrowser', 'Valve Steam Tenfoot', 'Chrome', 'HeadlessChrome' ), $key, $browser) ) {
-			$version = $result[self::BROWSER_VERSION][$key];
-		} elseif( $rv_result && $this->browserFind('Trident') ) {
-			$browser = 'MSIE';
-			$version = $rv_result;
-		} elseif( $browser == 'AppleWebKit' ) {
-			if( $platform == 'Android' ) {
-				$browser = 'Android Browser';
-			} elseif($platform && strpos($platform, 'BB') === 0 ) {
-				$browser  = 'BlackBerry Browser';
-				$platform = 'BlackBerry';
-			} elseif( $platform == 'BlackBerry' || $platform == 'PlayBook' ) {
-				$browser = 'BlackBerry Browser';
-			} else {
-				$this->browserFind('Safari', $key, $browser) || $this->browserFind('TizenBrowser', $key, $browser);
-			}
+                    $flags = ['IP' => 'iPhone', 'IT' => 'iPad', 'AP' => 'Android', 'AT' => 'Android', 'WP' => 'Windows Phone', 'WT' => 'Windows'];
+                    if (isset($flags[$part]))
+                    {
+                        $platform = $flags[$part];
+                    }
+                }
+            }
+        } elseif ($this->browserFind(['Applebot', 'IEMobile', 'Edge', 'Midori', 'Vivaldi', 'OculusBrowser', 'SamsungBrowser', 'Valve Steam Tenfoot', 'Chrome', 'HeadlessChrome' ], $key, $browser))
+        {
+            $version = $result[self::BROWSER_VERSION][$key];
+        } elseif ($rv_result && $this->browserFind('Trident'))
+        {
+            $browser = 'MSIE';
+            $version = $rv_result;
+        } elseif ($browser == 'AppleWebKit')
+        {
+            if ($platform == 'Android')
+            {
+                $browser = 'Android Browser';
+            } elseif ($platform && strpos($platform, 'BB') === 0)
+            {
+                $browser = 'BlackBerry Browser';
+                $platform = 'BlackBerry';
+            } elseif ($platform == 'BlackBerry' || $platform == 'PlayBook')
+            {
+                $browser = 'BlackBerry Browser';
+            } else
+            {
+                $this->browserFind('Safari', $key, $browser) || $this->browserFind('TizenBrowser', $key, $browser);
+            }
 
-			$this->browserFind('Version', $key);
-			$version = $result[self::BROWSER_VERSION][$key];
-		} elseif( $pKey = preg_grep('/playstation \d/i', $result[self::BROWSER]) ) {
-			$pKey = reset($pKey);
+            $this->browserFind('Version', $key);
+            $version = $result[self::BROWSER_VERSION][$key];
+        } elseif ($pKey = preg_grep('/playstation \d/i', $result[self::BROWSER]))
+        {
+            $pKey = reset($pKey);
 
-			$platform = 'PlayStation ' . preg_replace('/\D/', '', $pKey);
-			$browser  = 'NetFront';
-		}
-		$version = intval($version);
-		return array( self::PLATFORM => $platform ?: null, self::BROWSER => $browser ?: null, self::BROWSER_VERSION => $version ?: null );
-	}
+            $platform = 'PlayStation ' . preg_replace('/\D/', '', $pKey);
+            $browser = 'NetFront';
+        }
+        $versionInt = intval($version);
+        return [
+            self::PLATFORM        => $platform    ?: null,
+            self::BROWSER         => $browser     ?: null,
+            self::BROWSER_VERSION => $versionInt  ?: null];
+    }
 
+    /**
+     *
+     * @param  mixed $searchOrg
+     * @param  mixed $key         Call by reference!
+     * @param  mixed $value       Call by Reference!
+     *
+     * @return bool
+     */
     protected function browserFind(mixed $searchOrg, mixed &$key = null, mixed &$value = null): bool
     {
         $search = is_array($searchOrg) ? $searchOrg : [$searchOrg];
@@ -761,7 +825,14 @@ REGEX
         return false;
     }
 
-    protected function browserFindT(array $search, &$key = null, &$value = null): bool
+    /**
+     *
+     * @param  array $search
+     * @param  mixed $key       Call by reference!
+     * @param  mixed $value     Call by reference!
+     * @return bool
+     */
+    protected function browserFindT(array $search, mixed &$key = null, mixed &$value = null): bool
     {
         $value2 = null;
         if ($this->browserFind(array_keys($search), $key, $value2))
