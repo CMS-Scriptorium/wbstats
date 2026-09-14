@@ -499,7 +499,7 @@ class Counter extends Config
             }
         } else
         {
-            // $city .= ' *';
+            $city .= ' *';
         }
         return $city;
     }
@@ -520,16 +520,13 @@ class Counter extends Config
 
     public function isBot(): bool
     {
-        if (!isset($_SERVER['HTTP_USER_AGENT']))
-        {
-            return true;
-        }
+        $testVal = Request::getValue("HTTP_USER_AGENT", "text", "server");
 
-        $userAgent = strtolower($_SERVER['HTTP_USER_AGENT']);
+        $userAgent = strtolower($testVal);
 
         if (empty($userAgent))
         {
-            return true; //Empty useraget is mostly a bot
+            return true; // An empty useragent is mostly a bot
         }
 
         $botUserAgents = Botlist::BOT_USER_AGENTS;
@@ -546,16 +543,10 @@ class Counter extends Config
 
     public function isSuspected(): bool
     {
-        if (!isset($_SERVER['HTTP_ACCEPT_LANGUAGE']))
-        {
-            return true; // assuming no language means no human browser
-        }
-        if ($_SERVER['HTTP_ACCEPT_LANGUAGE'] == "*")
-        {
-            return true; // assuming no language means no human browser
-        }
+        $tempVal = Request::getValue("HTTP_ACCEPT_LANGUAGE", "text", "server");
 
-        return false;
+        // Assuming no language means no human browser
+        return (empty($tempVal) || $tempVal == "*");
     }
 
     public function isRefererSpam(): bool
