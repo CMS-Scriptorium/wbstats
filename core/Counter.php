@@ -282,8 +282,10 @@ class Counter extends Config
 
     public function getKeywords ()
     {
-        if ($ref = parse_url($this->referer, PHP_URL_QUERY))
+        $ref = parse_url($this->referer, PHP_URL_QUERY);
+        if ($ref)
         {
+            $parms = [];
             parse_str($ref, $parms);
             if (isset($parms['q']) && $parms['q'] != "")
             {
@@ -303,8 +305,10 @@ class Counter extends Config
 
     public function getSearch ()
     {
-        if ($ref = parse_url(self::getServerVar('REQUEST_URI'), PHP_URL_QUERY))
+        $ref = parse_url(self::getServerVar('REQUEST_URI'), PHP_URL_QUERY);
+        if ($ref)
         {
+            $parms = [];
             parse_str($ref, $parms);
             if (isset($parms['string']))
             {
