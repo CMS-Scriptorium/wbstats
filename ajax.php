@@ -13,18 +13,20 @@
  *
  */
 
-require('../../config.php');
+require '../../config.php';
 
 require_once WB_PATH.'/framework/class.admin.php';
+
 $admin = new admin();
 if (!($admin->is_authenticated())) {
     die("Go away");
 }
+
 $lang = (dirname(__FILE__)) . '/languages/' . LANGUAGE . '.php';
-require_once(!file_exists($lang) ? (dirname(__FILE__)) . '/languages/EN.php' : $lang );
+require_once !file_exists($lang) ? (dirname(__FILE__)) . '/languages/EN.php' : $lang;
 
 if(isAjax()) {
-    require_once (__DIR__ . '/core/Stats.php');
+    require_once __DIR__ . '/core/Stats.php';
     $stats = new wbstats\core\stats();
     $r = $stats->getLive();
 
