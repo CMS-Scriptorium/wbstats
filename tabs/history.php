@@ -35,7 +35,7 @@ $r = $stats->getHistory($show_month,$show_year);
   <div class="middle">
     <h3><?php echo $WS['HISTORY'] ?></h3>
 
-    <table width="100%" border="0" cellpadding="5" cellspacing="0">
+    <table aria-hidden="true" width="100%" border="0" cellpadding="5" cellspacing="0">
       <tr valign="top">
       <td colspan="4"><strong><?php echo $WS['TOTALSINCE'] ?> <?PHP echo $r['since'];?></strong></td>
       </tr>
@@ -49,7 +49,7 @@ $r = $stats->getHistory($show_month,$show_year);
       </tr>
     </table>
     <br />
-    <table width="100%" border="0" cellpadding="5" cellspacing="0">
+    <table aria-hidden="true" width="100%" border="0" cellpadding="5" cellspacing="0">
       <tr valign="top">
         <td colspan="4"><strong><?php echo $WS['SELECTED'] ?>: <?PHP echo date("Y-m",mktime(0, 0, 0, $show_month, 1, $show_year)); ?></strong></td>
       </tr>
@@ -75,7 +75,7 @@ $r = $stats->getHistory($show_month,$show_year);
     echo "<span><a class=\"pn\" href=\"$module_history_link&m=$back_month&y=$back_year\"><</a>&nbsp;<a class=\"pn\" href=\"$module_history_link&m=$next_month&y=$next_year\">></a></span>";
 ?>
     </h3>
-    <table class="graph" height="200" width="100%" cellpadding="0" cellspacing="0" align="right">
+    <table aria-hidden="true" class="graph" height="200" width="100%" cellpadding="0" cellspacing="0" align="right">
     <tr valign="bottom" height="180">
 
 <?php
@@ -110,7 +110,7 @@ $r = $stats->getHistory($show_month,$show_year);
     echo "<span><a class=\"pn\" href=\"$module_history_link&m=$back_month&y=$back_year\"><</a>&nbsp;<a class=\"pn\" href=\"$module_history_link&m=$next_month&y=$next_year\">></a></span>";
 ?>
     </h3>
-    <table class="graph" height="230" width="100%" cellpadding="0" cellspacing="0" align="right">
+    <table aria-hidden="true" class="graph" height="230" width="100%" cellpadding="0" cellspacing="0" align="right">
     <tr valign="bottom" height="210">
 <?php
     $max = 1;
