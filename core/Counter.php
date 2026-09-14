@@ -562,8 +562,7 @@ class Counter extends Config
         $tempVal = Request::getValue("HTTP_ACCEPT_LANGUAGE", "text", "server");
 
         // Assuming no language means no human browser
-        $retVal = (empty($tempVal) || $tempVal == "*");
-        return $retVal;
+        return (empty($tempVal) || $tempVal == "*") ? true : false;
     }
 
     public function isRefererSpam(): bool
