@@ -14,9 +14,12 @@
  */
 
 /**
-*	Must include code to stop this file being accessed directly
-*/
-if(defined('WB_PATH') == false) exit("Cannot access this file directly");
+ *	Must include code to stop this file being access directly
+ */
+if (defined('WB_PATH') == false)
+{
+    die("Cannot access this file directly");
+}
 
 global $code2lang,$WS;
 

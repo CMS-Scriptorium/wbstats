@@ -13,7 +13,14 @@
  *
  */
 
-defined('WB_PATH') OR die(header('Location: ../index.php?foutje'));
+/**
+ *	Must include code to stop this file being access directly
+ */
+if (defined('WB_PATH') == false)
+{
+    die("Cannot access this file directly");
+}
+
 if(isset($_POST['ips'])) {
 	$tmp = $_POST['ips'];
 	$tmp = str_replace(array(" ",",","|","\r\n"), '|', $tmp);

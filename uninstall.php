@@ -13,7 +13,13 @@
  *
  */
 
-defined('WB_PATH') OR die(header('Location: ../index.php'));
+/**
+ *	Must include code to stop this file being access directly
+ */
+if (defined('WB_PATH') == false)
+{
+    die("Cannot access this file directly");
+}
 
 // Aldus [2026-09-11] Read/use the (Module-)Config!
 require_once __DIR__ . "/core/Config.php";

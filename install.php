@@ -18,7 +18,13 @@ declare(strict_types=1);
 
 use wbstats\core\Config;
 
-defined('WB_PATH') OR die(header('Location: ../index.php'));
+/**
+ *	Must include code to stop this file being access directly
+ */
+if (defined('WB_PATH') == false)
+{
+    die("Cannot access this file directly");
+}
 
 require_once __DIR__ . "/core/Config.php";
 

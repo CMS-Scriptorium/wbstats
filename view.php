@@ -17,7 +17,10 @@
 /**
  *	Must include code to stop this file being access directly
  */
-if (defined('WB_PATH') == false) die("Cannot access this file directly");
+if (defined('WB_PATH') == false)
+{
+    die("Cannot access this file directly");
+}
 
 $mpath = WB_PATH.'/modules/wbstats/';
 

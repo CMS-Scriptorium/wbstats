@@ -14,7 +14,6 @@
  *
  */
 
-
 $module_directory   = 'wbstats';
 $module_name        = 'Visitor statistics - WBstats - by Dev4me';
 $module_version     = '0.2.6.0';

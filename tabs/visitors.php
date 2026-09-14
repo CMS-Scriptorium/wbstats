@@ -13,13 +13,17 @@
  *
  */
 
+/**
+ *	Must include code to stop this file being access directly
+ */
+if (defined('WB_PATH') == false)
+{
+    die("Cannot access this file directly");
+}
 
-defined('WB_PATH') OR die(header('Location: ../index.php'));
 $top = 10;
 $r = $stats->getVisitors(100);
-//echo '<pre>';
-//print_r($r);
-//die();
+
 ?>
 <div class="sysmenu small">
   <a href="#" class="pop" data-sec="pages"><?php echo $WS['PAGETOP']  ?></a>
