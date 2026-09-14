@@ -83,7 +83,7 @@ class Database
 
     /**
      * Update or insert database records.
-     * 
+     *
      * @throws InvalidArgumentException
      */
     public static function update(string $what, string $table, array $values, string|array $where = ""): bool
@@ -155,7 +155,7 @@ class Database
 
     /**
      * Validate table name to prevent SQL injection.
-     * 
+     *
      * @throws InvalidArgumentException
      */
     public static function testTablename(string $table): bool
@@ -245,5 +245,11 @@ class Database
         self::$instance->set_error(sprintf(self::STR_EXCEPTION, mysqli_error($handle)));
     }
 
-    protected function __construct() {}
+    /**
+     * Protect the class of getting instance use within "new".
+     * Protect the constructor.
+     */
+    protected function __construct() {
+        // Nothing to do here.
+    }
 }
