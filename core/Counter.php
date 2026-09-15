@@ -322,8 +322,7 @@ class Counter extends Config
     {
         if ($ref = parse_url(self::getServerVar('REQUEST_URI'), PHP_URL_QUERY))
         {
-            $p = parse_url(self::getServerVar('REQUEST_URI'), PHP_URL_PATH);
-            
+            $p = parse_url(self::getServerVar('REQUEST_URI'), PHP_URL_PATH);    
             $parms = [];
             parse_str($ref, $parms);
 
@@ -377,7 +376,6 @@ class Counter extends Config
 
             $this->utm['campaign'] ??= $this->utm['source'];
             $this->utm['content']  ??= $this->utm['source'] . " - No content";
-
         }
     }
 
@@ -630,21 +628,20 @@ class Counter extends Config
         if( preg_match('/\((.*?)\)/m', $u_agent, $parent_matches) )
         {
             $result = [];
-            preg_match_all(<<<'REGEX'
+            preg_match_all("
 /(?P<platform>BB\d+;|Android|CrOS|Tizen|iPhone|iPad|iPod|Linux|(Open|Net|Free)BSD|Macintosh|Windows(\ Phone)?|Silk|linux-gnu|BlackBerry|PlayBook|X11|(New\ )?Nintendo\ (WiiU?|3?DS|Switch)|Xbox(\ One)?)
 (?:\ [^;]*)?
 (?:;|$)/imx
-REGEX
-                , $parent_matches[1], $result);
+", $parent_matches[1], $result);
 
-            $priority = array( 'Xbox One', 'Xbox', 'Windows Phone', 'Tizen', 'Android', 'FreeBSD', 'NetBSD', 'OpenBSD', 'CrOS', 'X11' );
+            $priority = ['Xbox One', 'Xbox', 'Windows Phone', 'Tizen', 'Android', 'FreeBSD', 'NetBSD', 'OpenBSD', 'CrOS', 'X11'];
 
             $result[self::PLATFORM] = array_unique($result[self::PLATFORM]);
             if (count($result[self::PLATFORM]) > 1)
             {
                 if ($keys = array_intersect($priority, $result[self::PLATFORM]))
                 {
-                    $platform = reset($keys);
+                    $platform = reset($keys); // resets the array-pointer and return the first element
                 } else
                 {
                     $platform = $result[self::PLATFORM][0];
@@ -663,7 +660,7 @@ REGEX
             $platform = 'Chrome OS';
         }
 
-        preg_match_all(<<<'REGEX'
+        preg_match_all("
 %(?P<browser>Camino|Kindle(\ Fire)?|Firefox|Iceweasel|IceCat|Safari|MSIE|Trident|AppleWebKit|
 TizenBrowser|(?:Headless)?Chrome|YaBrowser|Vivaldi|IEMobile|Opera|OPR|Silk|Midori|Edge|Edg|CriOS|UCBrowser|Puffin|OculusBrowser|SamsungBrowser|
 Baiduspider|Applebot|Googlebot|YandexBot|bingbot|Lynx|Version|Wget|curl|
@@ -671,8 +668,7 @@ Valve\ Steam\ Tenfoot|
 NintendoBrowser|PLAYSTATION\ (\d|Vita)+)
 (?:\)?;?)
 (?:(?:[:/ ])(?P<version>[0-9A-Z.]+)|/(?:[A-Z]*))%ix
-REGEX
-            , $u_agent, $result);
+", $u_agent, $result);
 
         // If nothing matched, return null (to avoid undefined index errors)
         if (!isset($result[self::BROWSER][0]) || !isset($result[self::BROWSER_VERSION][0]))
