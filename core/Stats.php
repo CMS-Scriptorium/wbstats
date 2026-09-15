@@ -647,15 +647,11 @@ class Stats extends Config
 
     public function setIgnores($data = []): void
     {
-//        global $database;
-//        $database->query("DELETE FROM " . self::TABLE_IPS . " WHERE `session` = 'ignore'");
-        
         Database::query("DELETE FROM `" . self::TABLE_IPS . "` WHERE `session` = 'ignore'", []);
         foreach ($data as $ip)
         {
             if (filter_var($ip, FILTER_VALIDATE_IP))
             {
-                // $ip = $database->escapeString(trim($ip));
                 Database::query("INSERT INTO `" . self::TABLE_IPS . "` (`ip`,`session`,`time`) values (?, ?, ?);",
                                 [$ip,'ignore', time()]);
             }
@@ -762,7 +758,7 @@ class Stats extends Config
      */
     public function accessSecondCloud(): array
     {
-      return $this->secondCloud;  
+      return $this->secondCloud;
     }
 
     protected function getLanguage(): void
