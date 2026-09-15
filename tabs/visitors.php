@@ -24,6 +24,7 @@ $top = 10;
 $r = $stats->getVisitors(100);
 
 $pages_cloud = $stats->accessPagesCloud();
+$second_cloud = $stats->accessSecondCloud();
 $WS = $stats->accessLanguage();
 
 ?>
@@ -314,7 +315,9 @@ $WS = $stats->accessLanguage();
 		if(isset($r['seconds']) && is_array($r['seconds'])) {
 			$tmp = $r['seconds'];
 			$tmp = $stats->shuffle_assoc($tmp);
-			$maxval = max($tmp)+1; $minfont = 10; $maxfont = 28;
+			$maxval = max($tmp)+1;
+            $minfont = 10;
+            $maxfont = 28;
 			if(log($maxval)>0){
 				foreach ($tmp as $key => $data) { 
 					$fontsize = round((log($data) / log($maxval)) * ($maxfont - $minfont) + $minfont);

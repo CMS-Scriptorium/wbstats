@@ -38,6 +38,7 @@ class Stats extends Config
     protected array $WS = [];
     protected array $code2lang = [];
     protected array $pagesCloud = [];
+    protected array $secondCloud = [];
 
     public function __construct($do_clean = true)
     {
@@ -625,8 +626,6 @@ class Stats extends Config
 					$tmp['page'] .= '<span style="float:right; font-size:80%;">&nbsp; <b>New session</b></span>';
 				}
 				$result[] = $tmp;
-				//$new[] = $tmp;
-				//$result = $new + $result;
 			}
 		}
 		return $result;
@@ -646,18 +645,24 @@ class Stats extends Config
         return $result;
     }
 
-    public function setIgnores($data = array()) {
-		global $database;
-		$database->query("DELETE FROM ".self::TABLE_IPS." WHERE `session` = 'ignore'");
-		foreach($data as $ip) {
-			if(filter_var($ip, FILTER_VALIDATE_IP)) {
-				$ip = $database->escapeString(trim($ip));
-				$database->query("INSERT INTO ".self::TABLE_IPS." (`ip`,`session`,`time`) values ('$ip','ignore','".time()."');"); 
-			}
-		}
-	}
+    public function setIgnores($data = []): void
+    {
+//        global $database;
+//        $database->query("DELETE FROM " . self::TABLE_IPS . " WHERE `session` = 'ignore'");
+        
+        Database::query("DELETE FROM `" . self::TABLE_IPS . "` WHERE `session` = 'ignore'", []);
+        foreach ($data as $ip)
+        {
+            if (filter_var($ip, FILTER_VALIDATE_IP))
+            {
+                // $ip = $database->escapeString(trim($ip));
+                Database::query("INSERT INTO `" . self::TABLE_IPS . "` (`ip`,`session`,`time`) values (?, ?, ?);",
+                                [$ip,'ignore', time()]);
+            }
+        }
+    }
 
-	public function seconds2human($ss) {
+    public function seconds2human($ss) {
 		$s = $ss % 60;
 		$m = (floor(($ss % 3600)/60)>0)?floor(($ss%3600)/60).' min':'';
 		$h = (floor(($ss % 86400) / 3600)>0)?floor(($ss % 86400) / 3600).' hrs':'';
@@ -751,12 +756,22 @@ class Stats extends Config
         return $this->pagesCloud;
     }
 
+    /**
+     * Getter for the internal 'secondCloud' - comes from language-file
+     * @return array
+     */
+    public function accessSecondCloud(): array
+    {
+      return $this->secondCloud;  
+    }
+
     protected function getLanguage(): void
     {
         // Overwritten by the language file.
         $WS = [];
         $code2lang = [];
         $pages_cloud = [];
+        $second_cloud = [];
 
         $mpath = WB_PATH . '/modules/wbstats/';
         $lang = $mpath . '/languages/' . LANGUAGE . '.php';
@@ -765,5 +780,6 @@ class Stats extends Config
         $this->WS = $WS;
         $this->code2lang = $code2lang;
         $this->pagesCloud = $pages_cloud;
+        $this->secondCloud = $second_cloud;
     }
 }
