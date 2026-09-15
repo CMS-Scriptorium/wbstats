@@ -323,7 +323,8 @@ class Counter extends Config
         if ($ref = parse_url(self::getServerVar('REQUEST_URI'), PHP_URL_QUERY))
         {
             $p = parse_url(self::getServerVar('REQUEST_URI'), PHP_URL_PATH);
-
+            
+            $parms = [];
             parse_str($ref, $parms);
 
             if (isset($parms['fbclid']))
@@ -358,40 +359,25 @@ class Counter extends Config
                 $this->utm['content'] = "WBRAID - " . $p;
             }
 
-            if (isset($parms['utm_campaign']))
+            $lookUtmParams = [
+                'campaign',
+                'source',
+                'medium',
+                'term',
+                'content'
+            ];
+            foreach ($lookUtmParams as $term)
             {
-                $this->utm['campaign'] = $this->escapeString(urldecode($parms['utm_campaign']));
+                $utm = "utm_".$term;
+                if (isset($parms[$utm]))
+                {
+                    $this->utm[$term] = $this->escapeString(urldecode($parms[$utm]));
+                }
             }
 
-            if (isset($parms['utm_source']))
-            {
-                $this->utm['source'] = $this->escapeString(urldecode($parms['utm_source']));
-            }
+            $this->utm['campaign'] ??= $this->utm['source'];
+            $this->utm['content']  ??= $this->utm['source'] . " - No content";
 
-            if (isset($parms['utm_medium']))
-            {
-                $this->utm['medium'] = $this->escapeString(urldecode($parms['utm_medium']));
-            }
-
-            if (isset($parms['utm_term']))
-            {
-                $this->utm['term'] = $this->escapeString(urldecode($parms['utm_term']));
-            }
-
-            if (isset($parms['utm_content']))
-            {
-                $this->utm['content'] = $this->escapeString(urldecode($parms['utm_content']));
-            }
-
-            if (!$this->utm['campaign'])
-            {
-                $this->utm['campaign'] = $this->utm['source'];
-            }
-
-            if (!$this->utm['content'])
-            {
-                $this->utm['content'] = $this->utm['source'] . " - No content";
-            }
         }
     }
 
