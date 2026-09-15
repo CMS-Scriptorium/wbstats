@@ -514,7 +514,7 @@ class Counter extends Config
         curl_setopt($ch, CURLOPT_TIMEOUT, 5);
         $data = curl_exec($ch);
         $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        //curl_close($ch);
+
         return ($httpcode >= 200 && $httpcode < 300) ? $data : false;
     }
 
@@ -571,11 +571,11 @@ class Counter extends Config
 
     public function isIgnored()
     {
-        global $database;
-
         $ip1 = $this->getRealUserIp();
         $ip = $this->escapeString($ip1);
-        $r = $database->get_one("SELECT `ip` from `" . self::TABLE_IPS . "` WHERE `ip` = '" . $ip . "' AND `session`='ignore'");
+        $r = Database::fetchValue("SELECT `ip` from `" . self::TABLE_IPS . "` WHERE `ip` = ? AND `session`='ignore'",
+             [$ip]);
+        
         return $r == $ip;
     }
 
@@ -625,7 +625,7 @@ class Counter extends Config
         $empty = [self::PLATFORM => $platform, self::BROWSER => $browser, self::BROWSER_VERSION => $version];
 
         $parent_matches = [];
-        if( preg_match('/\((.*?)\)/m', $u_agent, $parent_matches) )
+        if( preg_match('/\((.*?)\)/m', $u_agent, $parent_matches))
         {
             $result = [];
             preg_match_all("
@@ -639,13 +639,9 @@ class Counter extends Config
             $result[self::PLATFORM] = array_unique($result[self::PLATFORM]);
             if (count($result[self::PLATFORM]) > 1)
             {
-                if ($keys = array_intersect($priority, $result[self::PLATFORM]))
-                {
-                    $platform = reset($keys); // resets the array-pointer and return the first element
-                } else
-                {
-                    $platform = $result[self::PLATFORM][0];
-                }
+                $keys = array_intersect($priority, $result[self::PLATFORM]);
+                $platform = ($keys) ? reset($keys) : $result[self::PLATFORM][0];
+                
             } elseif (isset($result[self::PLATFORM][0]))
             {
                 $platform = $result[self::PLATFORM][0];
