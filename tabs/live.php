@@ -24,22 +24,22 @@ $r = $stats->getLive();
 ?>
 <script type="text/javascript">
 function getLive() {
-	var url = "<?= WB_URL ?>/modules/wbstats/ajax.php";
-	$.getJSON(url , function(data) {
-		var tbl_body = "";
-		var odd_even = false;
-		$.each(data, function() {
-			var tbl_row = "";
-			$.each(this, function(k , v) {
-				if(k!='vis') {
-					tbl_row += "<td class=\""+k+"\">"+v+"</td>";
-				}
-			});
-			tbl_body += "<tr class=\""+( odd_even ? "odd" : "even")+" "+this['vis']+"\">"+tbl_row+"</tr>";
-			odd_even = !odd_even;               
-		});
-		$(".res").html(tbl_body);
-	});
+    var url = "<?= WB_URL ?>/modules/wbstats/ajax.php";
+    $.getJSON(url , function(data) {
+        var tbl_body = "";
+        var odd_even = false;
+        $.each(data, function() {
+            var tbl_row = "";
+            $.each(this, function(k , v) {
+                if(k!='vis') {
+                    tbl_row += "<td class=\""+k+"\">"+v+"</td>";
+                }
+            });
+            tbl_body += "<tr class=\""+( odd_even ? "odd" : "even")+" "+this['vis']+"\">"+tbl_row+"</tr>";
+            odd_even = !odd_even;
+        });
+        $(".res").html(tbl_body);
+    });
 }
 var refreshId = setInterval(getLive, 5000);
 getLive();

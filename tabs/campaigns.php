@@ -1,4 +1,5 @@
 <?php
+
 /**
  *
  * @category        admintool
@@ -22,48 +23,50 @@ if (!defined('WB_PATH'))
 
 $c = $stats->getCampaigns();
 
+foreach ($c as $campaign => $data)
+{
+    foreach ($data as $content => $val)
+    {
+        if (stripos($content, "Not identified") === false)
+        {
+            echo '<div class="full">';
+            echo '<h3>' . $campaign . ' -> ' . $content . '</h3>';
 
-?>
-<?php 
-foreach($c as $campaign => $data) {
-	foreach ($data as $content => $val) {
-	  if(stripos($content,"Not identified") === false) {
-		print ( '<div class="full">');
-		print ( '<h3>'.$campaign.' -> '.$content.'</h3>');
-		
-		print ( '<table class="res" width="100%" border="0" cellpadding="5" cellspacing="0">' );
-		print ( '<tr>');	
-		print ( '<th style="width:60px;">Source</td>');	
-		print ( '<th style="width:190px;">Medium</td>');	
-		print ( '<th>Content</td>');	
-		print ( '<th style="text-align:center;width:110px">First date</td>');	
-		print ( '<th style="text-align:center;width:110px">Last date</td>');	
-		print ( '<th style="text-align:center;width:50px">Visits</td>');	
-		print ( '<th style="text-align:center;width:50px">Bounces</td>');	
-		print ( '<th style="text-align:center;width:50px">Pages</td>');	
-		print ( '<th style="text-align:center;width:50px">Avg</td>');	
-		print ( '<tr>');
-		foreach ($val as $medium => $detail) {
-			print ( '<tr>');	
-			print ( '<td>'.$detail['source'].'</td>');	
-			print ( '<td>'.$medium.'</td>');	
-			print ( '<td style="white-space:nowrap;">'.$content.'</td>');	
-			print ( '<td style="text-align:center;">'.fdate($detail['first']).'</td>');	
-			print ( '<td style="text-align:center;">'.fdate($detail['last']).'</td>');	
-			print ( '<td style="text-align:center;">'.$detail['totalcount'].'</td>');	
-			print ( '<td style="text-align:center;">'.$detail['bounces'].' <small>('.$detail['bounce_perc'].'%)</small></td>');	
-			print ( '<td style="text-align:center;">'.$detail['pages'].'</td>');	
-			print ( '<td style="text-align:center;">'.$detail['pages_visit'].'</td>');	
-			print ( '<tr>');	
-		}
-		print ( '</table>' );
-		print ( '</div>' );
-	  }
-	}
+            echo '<table aria-hidden="true" class="res" width="100%" border="0" cellpadding="5" cellspacing="0">';
+            echo '<tr>';
+            echo '<th style="width:60px;">Source</td>';
+            echo '<th style="width:190px;">Medium</td>';
+            echo '<th>Content</td>';
+            echo '<th style="text-align:center;width:110px">First date</td>';
+            echo '<th style="text-align:center;width:110px">Last date</td>';
+            echo '<th style="text-align:center;width:50px">Visits</td>';
+            echo '<th style="text-align:center;width:50px">Bounces</td>';
+            echo '<th style="text-align:center;width:50px">Pages</td>';
+            echo '<th style="text-align:center;width:50px">Avg</td>';
+            echo '<tr>';
+            foreach ($val as $medium => $detail)
+            {
+                echo '<tr>';
+                echo '<td>' . $detail['source'] . '</td>';
+                echo '<td>' . $medium . '</td>';
+                echo '<td style="white-space:nowrap;">' . $content . '</td>';
+                echo '<td style="text-align:center;">' . fdate($detail['first']) . '</td>';
+                echo '<td style="text-align:center;">' . fdate($detail['last']) . '</td>';
+                echo '<td style="text-align:center;">' . $detail['totalcount'] . '</td>';
+                echo '<td style="text-align:center;">' . $detail['bounces'] . ' <small>(' . $detail['bounce_perc'] . '%)</small></td>';
+                echo '<td style="text-align:center;">' . $detail['pages'] . '</td>';
+                echo '<td style="text-align:center;">' . $detail['pages_visit'] . '</td>';
+                echo '<tr>';
+            }
+            echo '</table>';
+            echo '</div>';
+        }
+    }
 }
 
-function fdate($d) {
-	$d = substr($d,0,4).'-'.substr($d,4,2).'-'.substr($d,6,2);
-	
-	return $d;
+function fdate($d)
+{
+    $d = substr($d, 0, 4) . '-' . substr($d, 4, 2) . '-' . substr($d, 6, 2);
+
+    return $d;
 }

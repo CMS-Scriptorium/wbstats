@@ -24,18 +24,18 @@ $r = $stats->getStats();
 ?>
 <script type="text/javascript">
 function AutoRefresh( t ) {
-	setTimeout("location.reload(true);", t);
+    setTimeout("location.reload(true);", t);
 }
 AutoRefresh(5*60000);
 $(document).on("click", '.visitors', function(e) { 
-	e.preventDefault();
-	$('tr#pags').hide(); 
-	$('tr#visits').show(); 
+    e.preventDefault();
+    $('tr#pags').hide(); 
+    $('tr#visits').show(); 
 });
 $(document).on("click",'.pags', function(e) {
-	e.preventDefault();
-	$('tr#visits').hide(); 
-	$('tr#pags').show(); 
+    e.preventDefault();
+    $('tr#visits').hide(); 
+    $('tr#pags').show(); 
 });
 
 </script>
@@ -118,18 +118,27 @@ $(document).on("click",'.pags', function(e) {
 	<table class="graph" height="230" width="100%" cellpadding="0" cellspacing="0" align="right">
 		<tr valign="bottom" height="210">
 		<?php
-			$max = 1;
-			foreach($r['bar'] as $bar) {
-				if($bar['data']>$max) $max = $bar['data'];
-			}
-			foreach($r['bar'] as $bar) {
-				$value = $bar['data'];
-				$bar_height=round((205/$max)*$value+5);
-				if ($bar_height == 0) $bar_height = 1;	
-				echo "\t\t\t<td width=\"19\">";
-				echo "<div class=\"bar\" style=\"height:".$bar_height."px;\" title=\"".$bar['title']." - $value ".$WS['VISITORS']."\"></div></td>\n";
-			}	
-		?>
+            $max = 1;
+            foreach ($r['bar'] as $bar)
+            {
+                if ($bar['data'] > $max)
+                {
+                    $max = $bar['data'];
+                }
+            }
+            foreach($r['bar'] as $bar)
+            {
+                $value = $bar['data'];
+                $bar_height=round((205/$max)*$value+5);
+                if ($bar_height == 0)
+                {
+                    $bar_height = 1;
+                }
+
+                echo "\t\t\t<td width=\"19\">";
+                echo "<div class=\"bar\" style=\"height:".$bar_height."px;\" title=\"".$bar['title']." - $value ".$WS['VISITORS']."\"></div></td>\n";
+            }
+        ?>
 		</tr>
 		<tr height="20">
 			<td colspan="6" width="25%" class="timeline"><?PHP echo date("H:i",mktime(date("H")-23, 0, 0, date("n"), date("j"), date("Y"))+TIMEZONE); ?></td>
@@ -150,42 +159,58 @@ $(document).on("click",'.pags', function(e) {
 	<table class="graph"  height="230" width="100%" cellpadding="0" cellspacing="0" align="right">
 		<tr id="visits" valign="bottom" height="210">
 		<?php
-			$max = 1;
-			foreach($r['days'] as $days) {
-				if($days['data']>$max) $max = $days['data'];
-			}
-			foreach($r['days'] as $days) {
-				$value = $days['data'];
-				$bar_height=round((195/$max)*$value+5);
-				if ($bar_height == 0) $bar_height = 1;	
-				echo "\t\t\t<td width=\"19\">";
-				echo "<div class=\"bar\" style=\"height:".$bar_height."px;\" title=\"".$days['title'].$days['tooltip']."\"></div></td>\n";
-			}	
-		?>
-		</tr>
-		<tr style="display:none" id="pags" valign="bottom" height="210">
-		<?php
-			$max = 1;
-			foreach($r['days'] as $days) {
-				if($days['views']>$max) $max = $days['views'];
-			}
-			foreach($r['days'] as $days) {
-				$value = $days['views'];
-				$bar_height=round((195/$max)*$value+5);
-				if ($bar_height == 0) $bar_height = 1;	
-				echo "\t\t\t<td width=\"19\">";
-				echo "<div class=\"bar\" style=\"height:".$bar_height."px;\" title=\"".$days['title'].$days['tooltip']."\"></div></td>\n";
-			}	
-		?>
-		</tr>
-		<tr height="20">
-			<td colspan="6" class="timeline"><?PHP echo date("j.M",mktime(0, 0, 0, date("n"), date("j")-29, date("Y"))); ?></td>
-			<td colspan="6" class="timeline"><?PHP echo date("j.M",mktime(0, 0, 0, date("n"), date("j")-23, date("Y"))); ?></td>
-			<td colspan="6" class="timeline"><?PHP echo date("j.M",mktime(0, 0, 0, date("n"), date("j")-17, date("Y"))); ?></td>
-			<td colspan="6" class="timeline"><?PHP echo date("j.M",mktime(0, 0, 0, date("n"), date("j")-11, date("Y"))); ?></td>
-			<td colspan="6" class="timeline"><?PHP echo date("j.M",mktime(0, 0, 0, date("n"), date("j")-5, date("Y"))); ?></td>
-		</tr>
-	</table>
+            $max = 1;
+            foreach($r['days'] as $days)
+            {
+                if ($days['data'] > $max)
+                {
+                    $max = $days['data'];
+                }
+            }
+            foreach($r['days'] as $days)
+            {
+                $value = $days['data'];
+                $bar_height=round((195/$max)*$value+5);
+                if ($bar_height == 0)
+                {
+                    $bar_height = 1;
+                }
+                echo "\t\t\t<td width=\"19\">";
+                echo "<div class=\"bar\" style=\"height:".$bar_height."px;\" title=\"".$days['title'].$days['tooltip']."\"></div></td>\n";
+            }
+        ?>
+        </tr>
+        <tr style="display:none" id="pags" valign="bottom" height="210">
+        <?php
+            $max = 1;
+            foreach($r['days'] as $days)
+            {
+                if ($days['views'] > $max)
+                {
+                    $max = $days['views'];
+                }
+            }
+            foreach($r['days'] as $days)
+            {
+                $value = $days['views'];
+                $bar_height=round((195/$max)*$value+5);
+                if ($bar_height == 0)
+                {
+                     $bar_height = 1;
+                }
+                echo "\t\t\t<td width=\"19\">";
+                echo "<div class=\"bar\" style=\"height:".$bar_height."px;\" title=\"".$days['title'].$days['tooltip']."\"></div></td>\n";
+            }
+        ?>
+        </tr>
+        <tr height="20">
+            <td colspan="6" class="timeline"><?PHP echo date("j.M",mktime(0, 0, 0, date("n"), date("j")-29, date("Y"))); ?></td>
+            <td colspan="6" class="timeline"><?PHP echo date("j.M",mktime(0, 0, 0, date("n"), date("j")-23, date("Y"))); ?></td>
+            <td colspan="6" class="timeline"><?PHP echo date("j.M",mktime(0, 0, 0, date("n"), date("j")-17, date("Y"))); ?></td>
+            <td colspan="6" class="timeline"><?PHP echo date("j.M",mktime(0, 0, 0, date("n"), date("j")-11, date("Y"))); ?></td>
+            <td colspan="6" class="timeline"><?PHP echo date("j.M",mktime(0, 0, 0, date("n"), date("j")-5, date("Y"))); ?></td>
+        </tr>
+    </table>
 </div>
 
 <div style="clear:both"></div>

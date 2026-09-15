@@ -44,9 +44,13 @@ echo "<a class='right' href='$module_log_link&p=$next'>".$WS['PAGE']." $next >><
 echo "</div>";
 echo "<div class='full'>";
 echo '<table class="res" width="100%" border="0" cellpadding="5" cellspacing="0">';
-foreach($r as $v) {
-		$language=$v['language'];
-		if (array_key_exists($language,$code2lang)) $language=$code2lang[$language];
+foreach($r as $v)
+{
+        $language=$v['language'];
+        if (array_key_exists($language,$code2lang))
+        {
+            $language=$code2lang[$language];
+        }
 		echo '<tr>';
 		echo '<td style="width:200px;white-space:nowrap;">';
 		echo '<b>'.$WS['LIVE_DATE'].'</b>: '.$v['date'].' '.$v['time'].'<br>';
