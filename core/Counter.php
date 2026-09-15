@@ -322,7 +322,7 @@ class Counter extends Config
     {
         if ($ref = parse_url(self::getServerVar('REQUEST_URI'), PHP_URL_QUERY))
         {
-            $p = parse_url(self::getServerVar('REQUEST_URI'), PHP_URL_PATH);    
+            $p = parse_url(self::getServerVar('REQUEST_URI'), PHP_URL_PATH);
             $parms = [];
             parse_str($ref, $parms);
 
