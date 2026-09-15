@@ -37,12 +37,10 @@ class Stats extends Config
 
     protected array $WS = [];
     protected array $code2lang = [];
-    protected array $pages_cloud = [];
+    protected array $pagesCloud = [];
 
     public function __construct($do_clean = true)
     {
-        // global $database;
-
         $this->getLanguage();
 
         Database::query("SET sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''));", [] );
@@ -760,12 +758,12 @@ class Stats extends Config
     }
 
     /**
-     * Getter for internal property "pages_cloud"
+     * Getter for internal property "pagesCloud"
      * @return array
      */
     public function accessPagesCloud(): array
     {
-        return $this->pages_cloud;
+        return $this->pagesCloud;
     }
 
     protected function getLanguage(): void
@@ -781,6 +779,6 @@ class Stats extends Config
 
         $this->WS = $WS;
         $this->code2lang = $code2lang;
-        $this->pages_cloud = $pages_cloud;
+        $this->pagesCloud = $pages_cloud;
     }
 }
