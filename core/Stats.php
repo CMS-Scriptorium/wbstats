@@ -394,69 +394,54 @@ class Stats extends Config
 		
 		
 
-		// aantal pagina's per bezoek
-		$q = "SELECT pages FROM ".self::TABLE_IPS." WHERE `session`!='ignore' ORDER BY pages DESC";
-		$query = $database->query($q);
-		
-		$result['pageviews'][1] = 0;
-		$result['pageviews'][2] = 0;
-		$result['pageviews'][3] = 0;
-		$result['pageviews'][4] = 0;
-		$result['pageviews'][5] = 0;
-		$result['pageviews'][7] = 0;
-		$result['pageviews'][10] = 0;
-		$result['pageviews'][15] = 0;
-		$result['pageviews'][20] = 0;
-		$result['pageviews'][25] = 0;
-		
-		while($res = $query->fetchRow()) {
-			$pages = $res['pages'];
-			switch (true) {
-				case ($pages >= 25): $result['pageviews'][25]++;break;
-				case ($pages >= 20): $result['pageviews'][20]++;break;
-				case ($pages >= 15): $result['pageviews'][15]++;break;
-				case ($pages >= 10): $result['pageviews'][10]++;break;
-				case ($pages >= 7) : $result['pageviews'][7]++;break;
-				case ($pages >= 5) : $result['pageviews'][5]++;break;
-				case ($pages == 4) : $result['pageviews'][4]++;break;
-				case ($pages == 3) : $result['pageviews'][3]++;break;
-				case ($pages == 2) : $result['pageviews'][2]++;break;
-				case ($pages == 1) : $result['pageviews'][1]++;break;
-			}
-		}	
-		
-		// tijd per bezoek
-		$q = "SELECT ROUND(`online` - `time`)  AS `length` FROM ".self::TABLE_IPS." WHERE `session`!='ignore' ORDER BY `length` DESC";
-		$query = $database->query($q);
-		
-		$result['seconds'][0] = 0;
-		$result['seconds'][10] = 0;
-		$result['seconds'][30] = 0;
-		$result['seconds'][60] = 0;
-		$result['seconds'][120] = 0;
-		$result['seconds'][240] = 0;
-		$result['seconds'][420] = 0;
-		$result['seconds'][600] = 0;
-		$result['seconds'][900] = 0;
-		$result['seconds'][1800] = 0;
-		
-		while($res = $query->fetchRow()) {
-			$length = (int)$res['length'];
-			switch (true) {
-				case ($length >= 1800): $result['seconds'][1800]++;break;
-				case ($length >= 900) : $result['seconds'][900]++;break;
-				case ($length >= 600) : $result['seconds'][600]++;break;
-				case ($length >= 420) : $result['seconds'][420]++;break;
-				case ($length >= 240) : $result['seconds'][240]++;break;
-				case ($length >= 120) : $result['seconds'][120]++;break;
-				case ($length >= 60)  : $result['seconds'][60]++;break;
-				case ($length >= 30)  : $result['seconds'][30]++;break;
-				case ($length >= 10)  : $result['seconds'][10]++;break;
-				case ($length >= 0)   : $result['seconds'][0]++;break;
-			}
-		}	
-		
-		return $result;
+        // aantal pagina's per bezoek
+        $opCodes = [25, 20, 15, 10, 7, 5, 4, 2, 1];
+
+        foreach ($opCodes as $key)
+        {
+                $result['pageviews'][$key] = 0;
+        }
+
+        $query = Database::query("SELECT pages FROM " . self::TABLE_IPS . " WHERE `session`!='ignore' ORDER BY pages DESC");
+
+        foreach($query as $res)
+        {
+            $pages = $res['pages'];
+
+            foreach ($opCodes as $key)
+            {
+                if ($pages >= $key)
+                {
+                    $result['pageviews'][$key]++;
+                    break;
+                }
+            }
+        }
+
+        // tijd per bezoek
+        $opCodesTime = [1800, 900, 600, 420, 240, 120, 60, 30, 10, 0];
+
+        foreach ($opCodesTime as $key)
+        {
+            $result['seconds'][$key] = 0;
+        }
+
+        $query = Database::query("SELECT ROUND(`online` - `time`)  AS `length` FROM " . self::TABLE_IPS . " WHERE `session`!='ignore' ORDER BY `length` DESC");
+
+        foreach ($query as $res)
+        {
+            $length = (int) $res['length'];
+            foreach ($opCodesTime as $key)
+            {
+                if ($length >= $key)
+                {
+                    $result['seconds'][$key]++;
+                    break;
+                }
+            }
+        }
+
+        return $result;
 	}
 
 	public function getHistory($show_month,$show_year) {
