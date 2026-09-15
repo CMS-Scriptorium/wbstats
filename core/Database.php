@@ -74,11 +74,48 @@ class Database
     /**
      * Perform a simple query and return results as array.
      */
-    public static function query(string $query): array
+    public static function query(string $query, array $params = []): mixed
     {
-        $result = [];
-        self::executeQuery($query, true, $result);
-        return $result;
+        $instance = self::getInstance();
+
+        $retVal = [];
+
+        self::handleTableprefix($query);
+
+        try {
+            $statement = $instance->db_handle->prepare($query);
+            $statement->execute($params);
+            $result = $statement->get_result();
+
+            if (!$result)
+            {
+                return $statement->affected_rows;
+            }
+            
+            if ($result->num_rows > 0)
+            {
+                $retVal = $result->fetch_all(MYSQLI_ASSOC);
+            }
+
+            return $retVal;
+        } catch(Exception $error) {
+            self::logError($error->getMessage(), $query, $instance->db_handle, "[3]");
+            return false;
+        }
+    }
+
+    public static function fetchValue(string $query, array $params): mixed
+    {
+        $result = self::query($query, $params);
+        if (is_array($result))
+        {
+            if (isset($result[0]) && is_array($result[0]))
+            {
+                return array_shift($result[0]);
+            }
+            return $result[0] ?? null;
+        }
+        return null;
     }
 
     /**

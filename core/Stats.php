@@ -20,65 +20,69 @@ namespace wbstats\core;
 
 class Stats extends Config
 {
-	private $ip;
-	private $referer;
-	private $host;
-	private $referer_host;
-	private $page;
-	private $keywords;
-	private $language;
-	
-	private $time;
-	private $day;
-	private $month;
-	private $old_data;
-	private $old_date;
-	private $reload;
-	private $online;
-	
+    private $ip;
+    private $referer;
+    private $host;
+    private $referer_host;
+    private $page;
+    private $keywords;
+    private $language;
+    private $time;
+    private $day;
+    private $month;
+    private $old_data;
+    private $old_date;
+    private $reload;
+    private $online;
+
     protected array $WS = [];
     protected array $code2lang = [];
     protected array $pages_cloud = [];
 
-	public function __construct($do_clean = true) {
-		global $database;
-		
+    public function __construct($do_clean = true)
+    {
+        // global $database;
+
         $this->getLanguage();
 
-        $database->query("SET sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''));");
-		$time = time();
-		$this->time = $time;
-		$this->day   = date("Ymd",$time);
-		$this->month = date("Ym",$time);
-		
-		$oNOW = new \DateTime();
-		$oNOW->modify("-90 day");
-		$this->old_data = $oNOW->getTimestamp(); // 90 days
-		$this->old_date = date("Ymd", $this->old_data);
+        Database::query("SET sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''));", [] );
 
-		// $this->old_data = strtotime(date("Ymd", mktime(0, 0, 0, date("n"), date("j") - 90, date("Y")))); // 90 days
-		// $this->old_date = date("Ymd", mktime(0, 0, 0, date("n"), date("j") - 90, date("Y"))); // 90 days
-		
-		$this->reload = 3 * 60 * 60 ;
-		$this->online = $time - 5 * 60;
-		if ($do_clean)
+        $time = time();
+        $this->time = $time;
+        $this->day = date("Ymd", $time);
+        $this->month = date("Ym", $time);
+
+        $oNOW = new \DateTime();
+        $oNOW->modify("-90 day");
+        $this->old_data = $oNOW->getTimestamp(); // 90 days
+        $this->old_date = date("Ymd", $this->old_data);
+
+        $this->reload = 3 * 60 * 60;
+        $this->online = $time - 5 * 60;
+        if ($do_clean)
         {
             $this->cleanup();
         }
-	}
+    }
 
-	public function cleanup() {
-		global $database;
-		$database->query("DELETE FROM ".self::TABLE_IPS." WHERE `session`!='ignore' AND `time` < '".$this->old_data."'");
-		$database->query("DELETE FROM ".self::TABLE_PAGES." WHERE `day` < '".$this->old_date."'");
-		$database->query("DELETE FROM ".self::TABLE_REF.  " WHERE `day` < '".$this->old_date."'");
-		$database->query("DELETE FROM ".self::TABLE_KEY.  " WHERE `day` < '".$this->old_date."'");
-		$database->query("DELETE FROM ".self::TABLE_LANG. " WHERE `day` < '".$this->old_date."'");
-		$database->query("DELETE FROM ".self::TABLE_BROWSER. " WHERE `day` < '".$this->old_date."'");
-		$database->query("DELETE FROM ".self::TABLE_HIST." WHERE `timestamp` < '".$this->old_data."'");
-		$id = $database->get_one("SELECT `id` FROM ".self::TABLE_DAY." WHERE `day` = '".$this->day."'");
-		if (!$id) $database->query("INSERT INTO ".self::TABLE_DAY." (day, user, view) values ('".$this->day."', '0', '0')");
-	}
+    public function cleanup()
+    {
+        Database::query("DELETE FROM `" . self::TABLE_IPS . "`     WHERE `session`!='ignore' AND `time` < ? ", [$this->old_data]);
+        Database::query("DELETE FROM `" . self::TABLE_PAGES . "`   WHERE `day` < ? ", [$this->old_date]);
+        Database::query("DELETE FROM `" . self::TABLE_REF . "`     WHERE `day` < ? ", [$this->old_date]);
+        Database::query("DELETE FROM `" . self::TABLE_KEY . "`     WHERE `day` < ? ", [$this->old_date]);
+        Database::query("DELETE FROM `" . self::TABLE_LANG . "`    WHERE `day` < ? ", [$this->old_date]);
+        Database::query("DELETE FROM `" . self::TABLE_BROWSER . "` WHERE `day` < ? ", [$this->old_date]);
+        Database::query("DELETE FROM `" . self::TABLE_HIST . "`    WHERE `timestamp` < ? ", [$this->old_data]);
+
+        $id = Database::fetchValue("SELECT `id` FROM `" . self::TABLE_DAY . "` WHERE `day` =  ? ", [$this->day]);
+
+        if (!$id)
+        {
+            Database::query("INSERT INTO `" . self::TABLE_DAY . "` (day, user, view) values (?, ?, ?)",
+            [$this->day, 0, 0]);
+        }
+    }
 
 	public function getStats() {
 		global $database;
@@ -104,8 +108,11 @@ class Stats extends Config
 			}
 		}		
 		$result['total']   = $database->get_one("SELECT count(id) from ".self::TABLE_IPS." WHERE `session`!='ignore'");
-		if(!$result['total']) $result['total'] = 1;
-		$result['onepage'] = $database->get_one("SELECT count(id) from ".self::TABLE_IPS." WHERE `session`!='ignore' AND `online` = `time` ");
+		if (!$result['total'])
+        {
+            $result['total'] = 1;
+        }
+        $result['onepage'] = $database->get_one("SELECT count(id) from ".self::TABLE_IPS." WHERE `session`!='ignore' AND `online` = `time` ");
 		$result['bounced']  = $this->safeRound(($result['onepage']/$result['total'])*100,1);		
 		
 		$from_day_7 = date("Ymd",$this->time - (7*24*60*60)); // 7 days
@@ -536,7 +543,8 @@ class Stats extends Config
 		return $result;
 	}
 		
-	public function getLive() 	{
+	public function getLive()
+	{
 		global $database;
 		$result = [];
 		$tmp = [];

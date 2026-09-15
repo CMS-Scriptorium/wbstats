@@ -24,6 +24,7 @@ $top = 10;
 $r = $stats->getVisitors(100);
 
 $pages_cloud = $stats->accessPagesCloud();
+$WS = $stats->accessLanguage();
 
 ?>
 <div class="sysmenu small">
