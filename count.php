@@ -20,5 +20,8 @@
 // Add to the /config.php, just before the initialize line
 // $referer = $_SERVER['HTTP_REFERER'];
 
+// Not really clear if this one is obsolete in 1.7.0
 require_once __DIR__ . '/core/Counter.php';
-new wbstats\core\Counter();
+
+$oStats = new wbstats\core\Counter();
+$oStats->count();

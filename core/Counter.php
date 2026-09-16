@@ -56,13 +56,11 @@ class Counter extends Config
     public function __construct()
     {
         $this->init();
-        $this->count();
+        // $this->count();
     }
 
     public function init()
     {
-        global $database;
-
         $time = time();
         $this->time = $time;
         $this->day = date("Ymd", $time);
@@ -79,21 +77,22 @@ class Counter extends Config
         if (!isset($_SESSION['cleanstats']))
         {
             $_SESSION['cleanstats'] = 'done';
-            $database->query("DELETE FROM " . self::TABLE_IPS . " WHERE `time` < '" . $this->old_data . "'");
-            $database->query("DELETE FROM " . self::TABLE_PAGES . " WHERE `day` < '" . $this->old_date . "'");
-            $database->query("DELETE FROM " . self::TABLE_REF . " WHERE `day` < '" . $this->old_date . "'");
-            $database->query("DELETE FROM " . self::TABLE_KEY . " WHERE `day` < '" . $this->old_date . "'");
-            $database->query("DELETE FROM " . self::TABLE_LANG . " WHERE `day` < '" . $this->old_date . "'");
-            $database->query("DELETE FROM " . self::TABLE_BROWSER . " WHERE `day` < '" . $this->old_date . "'");
-            $database->query("DELETE FROM " . self::TABLE_HIST . " WHERE `timestamp` < '" . $this->old_data . "'");
-            $database->query("DELETE FROM " . self::TABLE_LOC . " WHERE `timestamp` < '" . $this->old_data . "'");
-            $database->query("DELETE FROM " . self::TABLE_UTM . " WHERE `timestamp` < '" . $this->old_data . "'");
+            Database::query("DELETE FROM " . self::TABLE_IPS .     " WHERE `time` < ? ",   [$this->old_data]);
+            Database::query("DELETE FROM " . self::TABLE_PAGES .   " WHERE `day` < ? ",    [$this->old_date]);
+            Database::query("DELETE FROM " . self::TABLE_REF .     " WHERE `day` < ? ",    [$this->old_date]);
+            Database::query("DELETE FROM " . self::TABLE_KEY .     " WHERE `day` < ? ",    [$this->old_date]);
+            Database::query("DELETE FROM " . self::TABLE_LANG .    " WHERE `day` <  ? ",   [$this->old_date]);
+            Database::query("DELETE FROM " . self::TABLE_BROWSER . " WHERE `day` < ? ",    [$this->old_date]);
+            Database::query("DELETE FROM " . self::TABLE_HIST .    " WHERE `timestamp` < ? ", [$this->old_data]);
+            Database::query("DELETE FROM " . self::TABLE_LOC .     " WHERE `timestamp` < ? ", [$this->old_data]);
+            Database::query("DELETE FROM " . self::TABLE_UTM .     " WHERE `timestamp` < ? ", [$this->old_data]);
         }
 
-        $id = $database->get_one("SELECT `id` FROM " . self::TABLE_DAY . " WHERE `day` = '" . $this->day . "'");
+        $id = Database::fetchValue("SELECT `id` FROM `" . self::TABLE_DAY . "` WHERE `day` = ? ", [$this->day]);
         if (!$id)
         {
-            $database->query("INSERT INTO " . self::TABLE_DAY . " (day, user, view) values ('" . $this->day . "', '0', '0')");
+            Database::query("INSERT INTO " . self::TABLE_DAY . " (day, user, view) values (?, ?, ?);",
+                     [$this->day, 0 , 0]);
         }
     }
 
