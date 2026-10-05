@@ -43,7 +43,7 @@ $WS = $stats->accessLanguage();
 
 <div class="full h265" id="pages">
     <h3><span><?php echo $WS['TOP'] . ' ' . $top . ' - ' ?></span><?php echo $WS['PAGETOP'] ?></h3>
-    <table width="100%" cellpadding="3" cellspacing="0">
+    <table style="width: 100%; padding: 3px; border-spacing: 0px;">
         <tr>
             <th class="fbar" style="width:30px;"><strong><?php echo $WS['NUMBER'] ?></strong></th>
             <th ><strong><?php echo $WS['PAGES'] ?></strong></th>
