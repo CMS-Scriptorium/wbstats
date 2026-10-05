@@ -45,10 +45,10 @@ $WS = $stats->accessLanguage();
     <h3><span><?php echo $WS['TOP'] . ' ' . $top . ' - ' ?></span><?php echo $WS['PAGETOP'] ?></h3>
     <table width="100%" cellpadding="3" cellspacing="0">
         <tr>
-            <th class="fbar" width="30"><strong><?php echo $WS['NUMBER'] ?></strong></th>
+            <th class="fbar" style="width:30px;"><strong><?php echo $WS['NUMBER'] ?></strong></th>
             <th ><strong><?php echo $WS['PAGES'] ?></strong></th>
-            <th width="70"><strong><?php echo $WS['PERCENT'] ?></strong></th>
-            <th class="tbar" width="40"><strong>##</strong></th>
+            <th style="width:70px;"><strong><?php echo $WS['PERCENT'] ?></strong></th>
+            <th class="tbar" style="width:40px;"><strong>##</strong></th>
         </tr>
         <?php
         if (isset($r['pages']) && is_array($r['pages']))
@@ -74,10 +74,10 @@ $WS = $stats->accessLanguage();
     <h3><span><?php echo $WS['TOP'] . ' ' . $top . ' - ' ?></span><?php echo $WS['ENTRYTOP'] ?></h3>
     <table width="100%" border="0" cellpadding="3" cellspacing="0">
         <tr>
-            <th class="fbar" width="30"><strong><?php echo $WS['NUMBER'] ?></strong></th>
+            <th class="fbar" style="width: 30px;"><strong><?php echo $WS['NUMBER'] ?></strong></th>
             <th ><strong><?php echo $WS['PAGES'] ?></strong></th>
-            <th width="70"><strong><?php echo $WS['PERCENT'] ?></strong></th>
-            <th class="tbar" width="40"><strong>##</strong></th>
+            <th style="width:70px;"><strong><?php echo $WS['PERCENT'] ?></strong></th>
+            <th class="tbar" style="width:40px;"><strong>##</strong></th>
         </tr>
         <?php
         if (isset($r['entry']) && is_array($r['entry']))
