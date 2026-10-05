@@ -83,21 +83,22 @@ class Stats extends Config
         }
     }
 
-	public function getStats() {
-		global $database;
+    public function getStats()
+    {
+        global $database;
 
-		$result = [];
-		$res = Database::query("SELECT sum(user) visitors, sum(view) visits FROM `" . self::TABLE_DAY . "`", []);
+        $result = [];
+        $res = Database::query("SELECT sum(user) visitors, sum(view) visits FROM `" . self::TABLE_DAY . "`", []);
 
-		$result['visitors'] = $res[0]['visitors'];
+        $result['visitors'] = $res[0]['visitors'];
         $result['visits'] = $res[0]['visits'];
 
-        $result['online']  = Database::fetchValue("SELECT count(id) from `".self::TABLE_IPS."` WHERE `session`!='ignore' AND `online` >= ?", [$this->online]);
-		
-        $result['online_title'] = '';
-		$queryResult = Database::query("SELECT `ip`,`online`,`last_page` from `" . self::TABLE_IPS . "` WHERE `session`!='ignore' AND `online` >= ?", [$this->online]);
+        // $result['online']  = Database::fetchValue("SELECT count(id) from `".self::TABLE_IPS."` WHERE `session`!='ignore' AND `online` >= ?", [$this->online]);
 
-		$result['online'] = count($queryResult);
+        $result['online_title'] = '';
+        $queryResult = Database::query("SELECT `ip`,`online`,`last_page` from `" . self::TABLE_IPS . "` WHERE `session`!='ignore' AND `online` >= ?", [$this->online]);
+
+        $result['online'] = count($queryResult);
         if ($result['online'])
         {
             $result['online_title'] = '<table class=\'popup\' cellpadding=\'2\'><tr><th colspan=\'3\'>' . $this->WS['CURRENTONLINE'] . '</th></tr>';
@@ -111,18 +112,18 @@ class Stats extends Config
         }
         // [2] --
         $result['total']   = Database::fetchValue("SELECT count(id) from `".self::TABLE_IPS."` WHERE `session`!='ignore'", []);
-		if (!$result['total'])
+        if (!$result['total'])
         {
             $result['total'] = 1;
         }
         // [3] --
         $result['onepage'] = $database->get_one("SELECT count(id) from ".self::TABLE_IPS." WHERE `session`!='ignore' AND `online` = `time` ");
-		$result['bounced']  = $this->safeRound(($result['onepage']/$result['total'])*100,1);		
-		
-		$from_day_7 = date("Ymd",$this->time - (7*24*60*60)); // 7 days
-		$from_day_30 = date("Ymd",$this->time -(30*24*60*60)); // 30 days
-		$to_day   = date("Ymd",$this->time - (24*60*60)); 
-		$query = $database->query("SELECT AVG(user) avgu, (sum(view)/sum(user)) pages FROM ".self::TABLE_DAY." WHERE `day`>='$from_day_7' AND `day`<='$to_day'");
+        $result['bounced']  = $this->safeRound(($result['onepage']/$result['total'])*100,1);		
+
+        $from_day_7 = date("Ymd", $this->time - (7 * 24 * 60 * 60)); // 7 days
+        $from_day_30 = date("Ymd", $this->time - (30 * 24 * 60 * 60)); // 30 days
+        $to_day = date("Ymd", $this->time - (24 * 60 * 60));
+        $query = $database->query("SELECT AVG(user) avgu, (sum(view)/sum(user)) pages FROM ".self::TABLE_DAY." WHERE `day`>='$from_day_7' AND `day`<='$to_day'");
 		if($res = $query->fetchRow()) {
 			$result['avg_7'] = $this->safeRound($res['avgu'],2);
 			$result['page_user'] = $this->safeRound($res['pages'],1);
@@ -511,7 +512,7 @@ class Stats extends Config
 	public function getCampaigns()
     {
 		global $database;
-		$result = [];		
+		$result = [];
 		if($query  = $database->query("SELECT *, count(*) as totalcount, sum(pagecount) as pages, sum(pagecount = 1) as bounces, min(day) as first, max(day) as last from ".self::TABLE_UTM." 
 			GROUP BY `campaign`,`medium`,`source`,`term`,`content` 
 			ORDER BY `last` DESC, `totalcount` DESC, `campaign`, `content`, `source`")) {
@@ -529,7 +530,7 @@ class Stats extends Config
 				$tmp['term'] = $res['term'];
 				$tmp['content'] = $res['content'];
 				$result [$res['campaign']] [$res['content']] [$res['medium']] = $tmp;
-			}		
+			}
 		}
 		return $result;
 	}
