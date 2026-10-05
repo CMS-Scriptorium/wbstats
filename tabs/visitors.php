@@ -72,7 +72,7 @@ $WS = $stats->accessLanguage();
 
 <div class="middle h265" id="entry">
     <h3><span><?php echo $WS['TOP'] . ' ' . $top . ' - ' ?></span><?php echo $WS['ENTRYTOP'] ?></h3>
-    <table width="100%" border="0" cellpadding="3" cellspacing="0">
+    <table style="width: 100%; padding: 3px; border-spacing: 0px;">
         <tr>
             <th class="fbar" style="width: 30px;"><strong><?php echo $WS['NUMBER'] ?></strong></th>
             <th ><strong><?php echo $WS['PAGES'] ?></strong></th>
@@ -99,7 +99,7 @@ $WS = $stats->accessLanguage();
 </div>
 <div class="middle h265" id="exit">
     <h3><span><?php echo $WS['TOP'].' '.$top.' - ' ?></span><?php echo $WS['EXITTOP'] ?></h3>
-	<table width="100%" border="0" cellpadding="3" cellspacing="0">
+	<table style="width: 100%; padding: 3px; border-spacing: 0px;">
 		<tr>
 			<th class="fbar" style="width: 30px;"><strong><?php echo $WS['NUMBER'] ?></strong></th>
 			<th ><strong><?php echo $WS['PAGES'] ?></strong></th>
@@ -123,7 +123,7 @@ $WS = $stats->accessLanguage();
 <div style="clear:both"></div>
 <div class="middle h265" id="referer">
 	<h3><span><?php echo $WS['TOP'].' '.$top.' - '?></span><?php echo $WS['REFTOP'] ?></h3>
-	<table width="100%" border="0" cellpadding="3" cellspacing="0">
+	<table style="width: 100%; padding: 3px; border-spacing: 0px;">
 		<tr>
 			<th class="fbar" style="width: 30px;"><strong><?php echo $WS['NUMBER'] ?></strong></th>
 			<th ><strong><?php echo $WS['REFERER'] ?></strong></th>
@@ -150,7 +150,7 @@ $WS = $stats->accessLanguage();
 
 <div class="middle h265" id="keys">
     <h3><span><?php echo $WS['TOP'].' '.$top.' - ' ?></span><?php echo $WS['KEYSTOP'] ?></h3>
-	<table width="100%" border="0" cellpadding="3" cellspacing="0">
+	<table style="width: 100%; padding: 3px; border-spacing: 0px;">
 		<tr>
 			<th class="fbar" style="width: 30px;"><strong><?php echo $WS['NUMBER'] ?></strong></th>
 			<th ><strong><?php echo $WS['KEYWORDS'] ?></strong></th>
@@ -175,7 +175,7 @@ $WS = $stats->accessLanguage();
 <div style="clear:both"></div>
 <div class="third h265" id="lang">
     <h3><span><?php echo $WS['TOP'].' '.$top.' - ' ?></span><?php echo $WS['LANGTOP'] ?></h3>
-	<table width="100%" border="0" cellpadding="3" cellspacing="0">
+	<table style="width: 100%; padding: 3px; border-spacing: 0px;">
 		<tr>
 			<th class="fbar" style="width: 30px;"><strong><?php echo $WS['NUMBER'] ?></strong></th>
 			<th ><strong><?php echo $WS['LANGUAGES'] ?></strong></th>
@@ -199,7 +199,7 @@ $WS = $stats->accessLanguage();
 
 <div class="third h265" id="browser">
     <h3><span><?php echo $WS['TOP'].' '.$top.' - ' ?></span><?php echo $WS['BROWSERTOP'] ?></h3>
-	<table width="100%" border="0" cellpadding="3" cellspacing="0">
+	<table style="width: 100%; padding: 3px; border-spacing: 0px;">
 		<tr>
 			<th class="fbar" style="width: 30px;"><strong><?php echo $WS['NUMBER'] ?></strong></th>
 			<th ><strong><?php echo $WS['BROWSER'] ?></strong></th>
@@ -223,7 +223,7 @@ $WS = $stats->accessLanguage();
 
 <div class="third h265" id="os">
     <h3><span><?php echo $WS['TOP'].' '.$top.' - ' ?></span><?php echo $WS['OSTOP'] ?></h3>
-	<table width="100%" border="0" cellpadding="3" cellspacing="0">
+	<table style="width: 100%; padding: 3px; border-spacing: 0px;">
 		<tr>
 			<th class="fbar" style="width: 30px;"><strong><?php echo $WS['NUMBER'] ?></strong></th>
 			<th ><strong><?php echo $WS['OS'] ?></strong></th>
@@ -249,7 +249,7 @@ $WS = $stats->accessLanguage();
 
 <div class="middle h265" id="countries">
     <h3><span><?php echo $WS['TOP'].' '.$top.' - ' ?></span><?php echo $WS['COUNTRYTOP'] ?></h3>
-	<table width="100%" border="0" cellpadding="3" cellspacing="0">
+	<table style="width: 100%; padding: 3px; border-spacing: 0px;">
 		<tr>
 			<th class="fbar" style="width: 30px;"><strong><?php echo $WS['NUMBER'] ?></strong></th>
 			<th ><strong><?php echo $WS['COUNTRIES'] ?></strong></th>
@@ -273,7 +273,7 @@ $WS = $stats->accessLanguage();
 
 <div class="middle h265" id="location">
     <h3><span><?php echo $WS['TOP'].' '.$top.' - ' ?></span><?php echo $WS['LOCTOP'] ?></h3>
-	<table width="100%" border="0" cellpadding="3" cellspacing="0">
+	<table style="width: 100%; padding: 3px; border-spacing: 0px;">
 		<tr>
 			<th class="fbar" style="width: 30px;"><strong><?php echo $WS['NUMBER'] ?></strong></th>
 			<th ><strong><?php echo $WS['LOCATIONS'] ?></strong></th>
