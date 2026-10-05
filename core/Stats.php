@@ -87,30 +87,35 @@ class Stats extends Config
 		global $database;
 
 		$result = [];
-		$query = $database->query("SELECT sum(user) visitors, sum(view) visits FROM ".self::TABLE_DAY);
-		$res = $query->fetchRow();
-		$result['visitors']=$res['visitors'];
-		$result['visits']=$res['visits'];
+		$res = Database::query("SELECT sum(user) visitors, sum(view) visits FROM `" . self::TABLE_DAY . "`", []);
 
-		$result['online']  = $database->get_one("SELECT count(id) from ".self::TABLE_IPS." WHERE `session`!='ignore' AND `online` >= '".$this->online."'");
-		$result['online_title'] = '';
-		$query  = $database->query("SELECT `ip`,`online`,`last_page` from ".self::TABLE_IPS." WHERE `session`!='ignore' AND `online` >= '".$this->online."'");
-		if($query) {
-			$result['online'] = $query->numRows();
-			if($result['online']) {
-				$result['online_title'] = '<table class=\'popup\' cellpadding=\'2\'><tr><th colspan=\'3\'>'.$this->WS['CURRENTONLINE'].'</th></tr>';
-				while($res = $query->fetchRow()) {
-					$result['online_title']  .= '<tr><td>'.date(DATE_FORMAT,$res['online']+TIMEZONE).'</td><td>'.date(TIME_FORMAT,$res['online']+TIMEZONE).'</td><td>'.$res['last_page'].'</td></tr>';
-				}
-				$result['online_title']  .= '</table>';
-				$result['online_title'] = htmlspecialchars($result['online_title']);
-			}
-		}		
-		$result['total']   = $database->get_one("SELECT count(id) from ".self::TABLE_IPS." WHERE `session`!='ignore'");
+		$result['visitors'] = $res[0]['visitors'];
+        $result['visits'] = $res[0]['visits'];
+
+        $result['online']  = Database::fetchValue("SELECT count(id) from `".self::TABLE_IPS."` WHERE `session`!='ignore' AND `online` >= ?", [$this->online]);
+		
+        $result['online_title'] = '';
+		$queryResult = Database::query("SELECT `ip`,`online`,`last_page` from `" . self::TABLE_IPS . "` WHERE `session`!='ignore' AND `online` >= ?", [$this->online]);
+
+		$result['online'] = count($queryResult);
+        if ($result['online'])
+        {
+            $result['online_title'] = '<table class=\'popup\' cellpadding=\'2\'><tr><th colspan=\'3\'>' . $this->WS['CURRENTONLINE'] . '</th></tr>';
+        
+            foreach ($queryResult as $tempRef)
+            {
+                $result['online_title'] .= '<tr><td>' . date(DATE_FORMAT, $tempRef['online'] + TIMEZONE) . '</td><td>' . date(TIME_FORMAT, $tempRef['online'] + TIMEZONE) . '</td><td>' . $tempRef['last_page'] . '</td></tr>';
+            }
+            $result['online_title'] .= '</table>';
+            $result['online_title'] = htmlspecialchars($result['online_title']);
+        }
+        // [2] --
+        $result['total']   = Database::fetchValue("SELECT count(id) from `".self::TABLE_IPS."` WHERE `session`!='ignore'", []);
 		if (!$result['total'])
         {
             $result['total'] = 1;
         }
+        // [3] --
         $result['onepage'] = $database->get_one("SELECT count(id) from ".self::TABLE_IPS." WHERE `session`!='ignore' AND `online` = `time` ");
 		$result['bounced']  = $this->safeRound(($result['onepage']/$result['total'])*100,1);		
 		
@@ -427,7 +432,7 @@ class Stats extends Config
             $result['seconds'][$key] = 0;
         }
 
-        $query = Database::query("SELECT ROUND(`online` - `time`)  AS `length` FROM " . self::TABLE_IPS . " WHERE `session`!='ignore' ORDER BY `length` DESC");
+        $query = Database::query("SELECT ROUND(`online` - `time`)  AS `length` FROM `" . self::TABLE_IPS . "` WHERE `session`!='ignore' ORDER BY `length` DESC");
 
         foreach ($query as $res)
         {
@@ -447,18 +452,19 @@ class Stats extends Config
 
 	public function getHistory($show_month,$show_year) {
 		global $database;
-		$result = array();
+		$result = [];
 
-		$query = $database->query("SELECT sum(user) users, sum(view) views, min(day) since, avg(user) avgusr FROM ".self::TABLE_DAY);
-		$res = $query->fetchRow();
-		$result['visitors'] = $res['users'];
-		$result['visits'] = $res['views'];
-		$result['since'] = $this->mkDay($res['since']);
-		$result['average'] = $this->safeRound($res['avgusr'],2);
+        // [1] -- a
+		$queryResult = Database::query("SELECT sum(user) users, sum(view) views, min(day) since, avg(user) avgusr FROM `" . self::TABLE_DAY . "`", []);
 
+        $result['visitors'] = $queryResult[0]['users'];
+        $result['visits'] = $queryResult[0]['views'];
+        $result['since'] = $this->mkDay($queryResult[0]['since']);
+        $result['average'] = $this->safeRound($queryResult[0]['avgusr'], 2);
 
-		$month = date("Ym%",mktime(0, 0, 0, (int)$show_month, 1, (int)$show_year));
-		$query = $database->query("SELECT sum(user) users, sum(view) views, avg(user) avgusr FROM ".self::TABLE_DAY." WHERE `day` LIKE '$month'");
+        // [2] -- a
+		$month = date("Ym%", mktime(0, 0, 0, (int) $show_month, 1, (int) $show_year));
+        $query = $database->query("SELECT sum(user) users, sum(view) views, avg(user) avgusr FROM ".self::TABLE_DAY." WHERE `day` LIKE '$month'");
 		$res = $query->fetchRow();
 		$result['mvisitors'] = $res['users'];
 		$result['mvisits'] = $res['views'];
@@ -496,20 +502,21 @@ class Stats extends Config
 		return $result;
 	}
 	
-	public function hasCampaigns() {
-		global $database, $table_utm;
-		$count = $database->get_one("SELECT count(*) from ".self::TABLE_UTM);
+	public function hasCampaigns()
+    {
+		$count = Database::fetchValue("SELECT count(*) from `".self::TABLE_UTM . "`", []);
 		return $count ? true : false;
 	}
 	
-	public function getCampaigns() {
+	public function getCampaigns()
+    {
 		global $database;
-		$result = array();		
+		$result = [];		
 		if($query  = $database->query("SELECT *, count(*) as totalcount, sum(pagecount) as pages, sum(pagecount = 1) as bounces, min(day) as first, max(day) as last from ".self::TABLE_UTM." 
 			GROUP BY `campaign`,`medium`,`source`,`term`,`content` 
 			ORDER BY `last` DESC, `totalcount` DESC, `campaign`, `content`, `source`")) {
 			while($res = $query->fetchRow(MYSQLI_ASSOC)) {
-				$tmp = array();
+				$tmp = [];
 				$tmp['first'] = $res['first'];
 				$tmp['last'] = $res['last'];
 				$tmp['totalcount'] = $res['totalcount'];
@@ -531,20 +538,22 @@ class Stats extends Config
 	{
 		global $database;
 		$result = [];
-		$tmp = [];
-		$tmp['num'] = "#";
-		$tmp['vis'] = 'header';
-		$tmp['date'] = $this->WS['LIVE_DATE'];
-		$tmp['time'] = $this->WS['LIVE_TIME'];
-		$tmp['page'] = $this->WS['LIVE_PAGE'];
-		$tmp['count'] = $this->WS['LIVE_PAGES'];
-		$tmp['last'] = $this->WS['LIVE_LAST'];
-		$tmp['duration'] = $this->WS['LIVE_ONLINE'];
-		$tmp['loc'] = $this->WS['LOCATION'];
-		$result[] = $tmp;
+		
+        $result[] = [
+            'num'       => "#",
+            'vis'       => 'header',
+            'date'      => $this->WS['LIVE_DATE'],
+            'time'      => $this->WS['LIVE_TIME'],
+            'page'      => $this->WS['LIVE_PAGE'],
+            'count'     => $this->WS['LIVE_PAGES'],
+            'last'      => $this->WS['LIVE_LAST'],
+            'duration'  => $this->WS['LIVE_ONLINE'],
+            'loc'       => $this->WS['LOCATION']
+        ];
+
 		$count = 1;
 		//if($query  = $database->query("SELECT * from ".$table_ips." WHERE `online` >= '".$this->online."' AND `session`!='ignore' ORDER BY `online` DESC")) {
-		if ($query = $database->query("SELECT * from " . self::TABLE_IPS . " WHERE `session`!='ignore' ORDER BY `online` DESC LIMIT 0, 50 "))
+		if ($query = $database->query("SELECT * from `" . self::TABLE_IPS . "` WHERE `session`!='ignore' ORDER BY `online` DESC LIMIT 0, 50 "))
         {
             while ($res = $query->fetchRow())
             {
@@ -585,10 +594,10 @@ class Stats extends Config
 	public function getLogbook($page = 1) {
 		global $database;
 		$start = ($page - 1) * 50;
-		$result = array();
+		$result = [];
 		if($query  = $database->query("SELECT *, max(`online`) as online from ".self::TABLE_IPS." WHERE `session`!='ignore' GROUP BY `ip` ORDER BY `online` DESC  LIMIT $start, 50")) {
 		while($res = $query->fetchRow()) {			
-				$tmp = array();
+				$tmp = [];
 				$tmp['vis'] = $res['online'] >= $this->online ? 'online':'old';
 				$tmp['date'] = date(DATE_FORMAT,$res['online']+TIMEZONE);
 				$tmp['time'] = date(TIME_FORMAT,$res['online']+TIMEZONE);
@@ -612,11 +621,11 @@ class Stats extends Config
 
 	public function getLogSession($ip, $session = '') {
 		global $database;
-		$result = array();
+		$result = [];
 		if($query  = $database->query("SELECT * from ".self::TABLE_HIST." WHERE `ip`='$ip' ORDER BY `timestamp` ASC LIMIT 2500")) {
 			while($res = $query->fetchRow()) {	
 				if(!isset($sess)) $sess = '-';
-				$tmp = array();
+				$tmp = [];
 				$tmp['date'] = date(DATE_FORMAT,$res['timestamp']+TIMEZONE);
 				$tmp['time'] = date(TIME_FORMAT,$res['timestamp']+TIMEZONE);
 				$tmp['page'] = '<a href="'.$res['page'].'" target="_blank">'.substr($res['page'],0,70).'</a>';

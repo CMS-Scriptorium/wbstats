@@ -77,15 +77,15 @@ class Counter extends Config
         if (!isset($_SESSION['cleanstats']))
         {
             $_SESSION['cleanstats'] = 'done';
-            Database::query("DELETE FROM " . self::TABLE_IPS .     " WHERE `time` < ? ",   [$this->old_data]);
-            Database::query("DELETE FROM " . self::TABLE_PAGES .   " WHERE `day` < ? ",    [$this->old_date]);
-            Database::query("DELETE FROM " . self::TABLE_REF .     " WHERE `day` < ? ",    [$this->old_date]);
-            Database::query("DELETE FROM " . self::TABLE_KEY .     " WHERE `day` < ? ",    [$this->old_date]);
-            Database::query("DELETE FROM " . self::TABLE_LANG .    " WHERE `day` <  ? ",   [$this->old_date]);
-            Database::query("DELETE FROM " . self::TABLE_BROWSER . " WHERE `day` < ? ",    [$this->old_date]);
-            Database::query("DELETE FROM " . self::TABLE_HIST .    " WHERE `timestamp` < ? ", [$this->old_data]);
-            Database::query("DELETE FROM " . self::TABLE_LOC .     " WHERE `timestamp` < ? ", [$this->old_data]);
-            Database::query("DELETE FROM " . self::TABLE_UTM .     " WHERE `timestamp` < ? ", [$this->old_data]);
+            Database::query("DELETE FROM `" . self::TABLE_IPS .     "` WHERE `time` < ? ",   [$this->old_data]);
+            Database::query("DELETE FROM `" . self::TABLE_PAGES .   "` WHERE `day` < ? ",    [$this->old_date]);
+            Database::query("DELETE FROM `" . self::TABLE_REF .     "` WHERE `day` < ? ",    [$this->old_date]);
+            Database::query("DELETE FROM `" . self::TABLE_KEY .     "` WHERE `day` < ? ",    [$this->old_date]);
+            Database::query("DELETE FROM `" . self::TABLE_LANG .    "` WHERE `day` <  ? ",   [$this->old_date]);
+            Database::query("DELETE FROM `" . self::TABLE_BROWSER . "` WHERE `day` < ? ",    [$this->old_date]);
+            Database::query("DELETE FROM `" . self::TABLE_HIST .    "` WHERE `timestamp` < ? ", [$this->old_data]);
+            Database::query("DELETE FROM `" . self::TABLE_LOC .     "` WHERE `timestamp` < ? ", [$this->old_data]);
+            Database::query("DELETE FROM `" . self::TABLE_UTM .     "` WHERE `timestamp` < ? ", [$this->old_data]);
         }
 
         $id = Database::fetchValue("SELECT `id` FROM `" . self::TABLE_DAY . "` WHERE `day` = ? ", [$this->day]);
