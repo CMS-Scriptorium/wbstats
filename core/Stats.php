@@ -93,8 +93,6 @@ class Stats extends Config
         $result['visitors'] = $res[0]['visitors'];
         $result['visits'] = $res[0]['visits'];
 
-        // $result['online']  = Database::fetchValue("SELECT count(id) from `".self::TABLE_IPS."` WHERE `session`!='ignore' AND `online` >= ?", [$this->online]);
-
         $result['online_title'] = '';
         $queryResult = Database::query("SELECT `ip`,`online`,`last_page` from `" . self::TABLE_IPS . "` WHERE `session`!='ignore' AND `online` >= ?", [$this->online]);
 
