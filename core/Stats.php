@@ -117,17 +117,17 @@ class Stats extends Config
             $result['total'] = 1;
         }
         // [3] --
-        $result['onepage'] = $database->get_one("SELECT count(id) from ".self::TABLE_IPS." WHERE `session`!='ignore' AND `online` = `time` ");
+        $result['onepage'] = $database->get_one("SELECT count(id) from `".self::TABLE_IPS."` WHERE `session`!='ignore' AND `online` = `time` ");
         $result['bounced']  = $this->safeRound(($result['onepage']/$result['total'])*100,1);		
 
         $from_day_7 = date("Ymd", $this->time - (7 * 24 * 60 * 60)); // 7 days
         $from_day_30 = date("Ymd", $this->time - (30 * 24 * 60 * 60)); // 30 days
         $to_day = date("Ymd", $this->time - (24 * 60 * 60));
-        $query = $database->query("SELECT AVG(user) avgu, (sum(view)/sum(user)) pages FROM ".self::TABLE_DAY." WHERE `day`>='$from_day_7' AND `day`<='$to_day'");
+        $query = $database->query("SELECT AVG(user) avgu, (sum(view)/sum(user)) pages FROM `".self::TABLE_DAY."` WHERE `day`>='$from_day_7' AND `day`<='$to_day'");
 		if($res = $query->fetchRow()) {
 			$result['avg_7'] = $this->safeRound($res['avgu'],2);
 			$result['page_user'] = $this->safeRound($res['pages'],1);
-			$result['avg_30'] = $this->safeRound($database->get_one ("SELECT AVG(user) from ".self::TABLE_DAY." WHERE `day`>='$from_day_30' AND `day`<='$to_day'"),2);
+			$result['avg_30'] = $this->safeRound($database->get_one ("SELECT AVG(user) from `".self::TABLE_DAY."` WHERE `day`>='$from_day_30' AND `day`<='$to_day'"),2);
 		} else {
 			$result['avg_7'] = 0;
 			$result['page_user'] = 0;
@@ -135,7 +135,7 @@ class Stats extends Config
 		}
 
 		$today = date("Ymd", time()); // mktime(0, 0, 0, date("n"), date("j"), date("Y")));
-		$query = $database->query("SELECT user, view, bots, suspected, refspam FROM ".self::TABLE_DAY." where `day`='$today'");
+		$query = $database->query("SELECT user, view, bots, suspected, refspam FROM `".self::TABLE_DAY."` where `day`='$today'");
 		if($res = $query->fetchRow()) {
 			$result['today']= (int)$res['user'];
 			$result['ptoday']= (int)$res['view'];
@@ -150,7 +150,7 @@ class Stats extends Config
 		
 
 		$yesterday = date("Ymd", time() - (24*60*60));
-		$query = $database->query("SELECT user, view, bots, suspected, refspam FROM ".self::TABLE_DAY." where `day`='$yesterday'");
+		$query = $database->query("SELECT user, view, bots, suspected, refspam FROM `".self::TABLE_DAY."` where `day`='$yesterday'");
 		if($res = $query->fetchRow()) {
 			$result['yesterday']= (int)$res['user'];
 			$result['pyesterday']= (int)$res['view'];
@@ -167,13 +167,13 @@ class Stats extends Config
 		for($hour=23; $hour>=0; $hour--) {
 			$start = mktime(date("H")-$hour, 0, 0, (int)date("n"), (int)date("j"), (int)date("Y")) ;
 			$end = mktime(date("H")-$hour, 59, 59, (int)date("n"), (int)date("j"), (int)date("Y")) ;
-			$result['bar'][$hour]['data'] = $database->get_one("SELECT count(id) FROM ".self::TABLE_IPS." WHERE `session`!='ignore' AND `time`>='$start' AND `time`<=$end");
+			$result['bar'][$hour]['data'] = $database->get_one("SELECT count(id) FROM `".self::TABLE_IPS."` WHERE `session`!='ignore' AND `time`>='$start' AND `time`<=$end");
 			$result['bar'][$hour]['title'] = date("H:i",$start+TIMEZONE)." - ".date("G:i",$end+TIMEZONE);			
 		}
 		// last 30 days
 		for($day=29; $day>=0; $day--) {
 			$theday = date("Ymd", mktime(0, 0, 0, (int)date("n"), (int)date("j")-$day, (int)date("Y")) );
-			$query = $database->query("SELECT user, view, bots, suspected FROM ".self::TABLE_DAY." WHERE `day` = '$theday'");
+			$query = $database->query("SELECT user, view, bots, suspected FROM `".self::TABLE_DAY."` WHERE `day` = '$theday'");
 			if($query && $query->numRows()) {
 				$res = $query->fetchRow();
 				$result['days'][$day]['data'] = (int)$res['user'];
@@ -192,14 +192,15 @@ class Stats extends Config
 		return $result;
 	}
 	
-	public function getVisitors($top = 10) {
+	public function getVisitors(int $top = 10)
+    {
 		global $database;
 		$result = [];
 
-		$totals = $database->get_one("SELECT sum(view) FROM ".self::TABLE_REF);
+		$totals = $database->get_one("SELECT sum(view) FROM `".self::TABLE_REF."`");
 		//top referers
 		$nr = 1;
-		$query = $database->query("SELECT referer, SUM(view) AS views from ".self::TABLE_REF." WHERE `spam`='0' GROUP BY referer ORDER BY views DESC LIMIT 0, $top");
+		$query = $database->query("SELECT referer, SUM(view) AS views from `".self::TABLE_REF."` WHERE `spam`='0' GROUP BY referer ORDER BY views DESC LIMIT 0, $top");
 		while($res = $query->fetchRow()) {
 			$referer = htmlspecialchars($res['referer']);
 			$short = (strlen($referer) > 55) ? substr($referer,0,50)."...": $referer;
