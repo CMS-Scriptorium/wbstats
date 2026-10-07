@@ -208,10 +208,20 @@
     color: #333;
     font-style: italic;
     font-size: 80%;
+    width: 40px;
 }
 .fbar {
     margin: 3px 0;
     text-align: center;
+    width: 30px;
+}
+.w70 {
+    width: 70px;
+}
+
+th:nth-child(2),
+th:nth-child(3) {
+    text-align: left;
 }
 .bar:hover, .vbar:hover {
     margin-right:1px;

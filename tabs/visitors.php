@@ -45,7 +45,7 @@ $WS = $stats->accessLanguage();
     <h3><span><?php echo $WS['TOP'] . ' ' . $top . ' - ' ?></span><?php echo $WS['PAGETOP'] ?></h3>
     <table style="width: 100%; padding: 3px; border-spacing: 0px;">
         <tr>
-            <th class="fbar" style="width:30px;"><strong><?php echo $WS['NUMBER'] ?></strong></th>
+            <th class="fbar"><strong><?php echo $WS['NUMBER'] ?></strong></th>
             <th ><strong><?php echo $WS['PAGES'] ?></strong></th>
             <th style="width:70px;"><strong><?php echo $WS['PERCENT'] ?></strong></th>
             <th class="tbar" style="width:40px;"><strong>##</strong></th>
@@ -56,7 +56,7 @@ $WS = $stats->accessLanguage();
             $counter = 1;
             foreach ($r['pages'] as $key => $data)
             {
-                $display = $stats->handleDisplay($counter, $top); //$stats->handleDisplay($counter, $top);
+                $display = $stats->handleDisplay($counter, $top);
                 ?>
                 <tr<?= $display ?>>
                     <td class="fbar"><?php echo $key ?></td>
@@ -74,10 +74,10 @@ $WS = $stats->accessLanguage();
     <h3><span><?php echo $WS['TOP'] . ' ' . $top . ' - ' ?></span><?php echo $WS['ENTRYTOP'] ?></h3>
     <table style="width: 100%; padding: 3px; border-spacing: 0px;">
         <tr>
-            <th class="fbar" style="width: 30px;"><strong><?php echo $WS['NUMBER'] ?></strong></th>
+            <th class="fbar"><strong><?php echo $WS['NUMBER'] ?></strong></th>
             <th ><strong><?php echo $WS['PAGES'] ?></strong></th>
-            <th style="width:70px;"><strong><?php echo $WS['PERCENT'] ?></strong></th>
-            <th class="tbar" style="width:40px;"><strong>##</strong></th>
+            <th class="w70"><strong><?php echo $WS['PERCENT'] ?></strong></th>
+            <th class="tbar"><strong>##</strong></th>
         </tr>
         <?php
         if (isset($r['entry']) && is_array($r['entry']))
@@ -101,10 +101,10 @@ $WS = $stats->accessLanguage();
     <h3><span><?php echo $WS['TOP'].' '.$top.' - ' ?></span><?php echo $WS['EXITTOP'] ?></h3>
 	<table style="width: 100%; padding: 3px; border-spacing: 0px;">
 		<tr>
-			<th class="fbar" style="width: 30px;"><strong><?php echo $WS['NUMBER'] ?></strong></th>
+			<th class="fbar"><strong><?php echo $WS['NUMBER'] ?></strong></th>
 			<th ><strong><?php echo $WS['PAGES'] ?></strong></th>
-			<th style="width: 70px;"><strong><?php echo $WS['PERCENT'] ?></strong></th>
-			<th class="tbar" style="width: 40px;"><strong>##</strong></th>
+			<th class="w70"><strong><?php echo $WS['PERCENT'] ?></strong></th>
+			<th class="tbar"><strong>##</strong></th>
 		</tr>
 		<?php if(isset($r['exit']) && is_array($r['exit'])) {
 			$counter = 1;
@@ -125,10 +125,10 @@ $WS = $stats->accessLanguage();
 	<h3><span><?php echo $WS['TOP'].' '.$top.' - '?></span><?php echo $WS['REFTOP'] ?></h3>
 	<table style="width: 100%; padding: 3px; border-spacing: 0px;">
 		<tr>
-			<th class="fbar" style="width: 30px;"><strong><?php echo $WS['NUMBER'] ?></strong></th>
+			<th class="fbar"><strong><?php echo $WS['NUMBER'] ?></strong></th>
 			<th ><strong><?php echo $WS['REFERER'] ?></strong></th>
-			<th style="width: 70px;"><strong><?php echo $WS['PERCENT'] ?></strong></th>
-			<th class="tbar" style="width: 40px;"><strong>##</strong></th>
+			<th class="w70""><strong><?php echo $WS['PERCENT'] ?></strong></th>
+			<th class="tbar"><strong>##</strong></th>
 		</tr>
 		<?php if(isset($r['referer']) && is_array($r['referer'])) {
 			$counter = 1;
@@ -152,10 +152,10 @@ $WS = $stats->accessLanguage();
     <h3><span><?php echo $WS['TOP'].' '.$top.' - ' ?></span><?php echo $WS['KEYSTOP'] ?></h3>
 	<table style="width: 100%; padding: 3px; border-spacing: 0px;">
 		<tr>
-			<th class="fbar" style="width: 30px;"><strong><?php echo $WS['NUMBER'] ?></strong></th>
+			<th class="fbar"><strong><?php echo $WS['NUMBER'] ?></strong></th>
 			<th ><strong><?php echo $WS['KEYWORDS'] ?></strong></th>
-			<th style="width: 70px;"><strong><?php echo $WS['PERCENT'] ?></strong></th>
-			<th class="tbar" style="width: 40px;"><strong>##</strong></th>
+			<th class="w70"><strong><?php echo $WS['PERCENT'] ?></strong></th>
+			<th class="tbar"><strong>##</strong></th>
 		</tr>
 		<?php if(isset($r['keyword']) && is_array($r['keyword'])) {
 			$counter = 1;
@@ -177,10 +177,10 @@ $WS = $stats->accessLanguage();
     <h3><span><?php echo $WS['TOP'].' '.$top.' - ' ?></span><?php echo $WS['LANGTOP'] ?></h3>
 	<table style="width: 100%; padding: 3px; border-spacing: 0px;">
 		<tr>
-			<th class="fbar" style="width: 30px;"><strong><?php echo $WS['NUMBER'] ?></strong></th>
+			<th class="fbar"><strong><?php echo $WS['NUMBER'] ?></strong></th>
 			<th ><strong><?php echo $WS['LANGUAGES'] ?></strong></th>
-			<th style="width: 70px;"><strong><?php echo $WS['PERCENT'] ?></strong></th>
-			<th class="tbar" style="width: 40px;"><strong>##</strong></th>
+			<th class="w70"><strong><?php echo $WS['PERCENT'] ?></strong></th>
+			<th class="tbar"><strong>##</strong></th>
 		</tr>
 		<?php if(isset($r['language']) && is_array($r['language'])) {
 			$counter = 1;
@@ -201,10 +201,10 @@ $WS = $stats->accessLanguage();
     <h3><span><?php echo $WS['TOP'].' '.$top.' - ' ?></span><?php echo $WS['BROWSERTOP'] ?></h3>
 	<table style="width: 100%; padding: 3px; border-spacing: 0px;">
 		<tr>
-			<th class="fbar" style="width: 30px;"><strong><?php echo $WS['NUMBER'] ?></strong></th>
+			<th class="fbar"><strong><?php echo $WS['NUMBER'] ?></strong></th>
 			<th ><strong><?php echo $WS['BROWSER'] ?></strong></th>
-			<th style="width: 70px;"><strong><?php echo $WS['PERCENT'] ?></strong></th>
-			<th class="tbar" style="width: 40px;"><strong>##</strong></th>
+			<th class="w70"><strong><?php echo $WS['PERCENT'] ?></strong></th>
+			<th class="tbar"><strong>##</strong></th>
 		</tr>
 		<?php if(isset($r['browser']) && is_array($r['browser'])) {
 			$counter = 1;
@@ -225,10 +225,10 @@ $WS = $stats->accessLanguage();
     <h3><span><?php echo $WS['TOP'].' '.$top.' - ' ?></span><?php echo $WS['OSTOP'] ?></h3>
 	<table style="width: 100%; padding: 3px; border-spacing: 0px;">
 		<tr>
-			<th class="fbar" style="width: 30px;"><strong><?php echo $WS['NUMBER'] ?></strong></th>
+			<th class="fbar"><strong><?php echo $WS['NUMBER'] ?></strong></th>
 			<th ><strong><?php echo $WS['OS'] ?></strong></th>
-			<th style="width: 70px;"><strong><?php echo $WS['PERCENT'] ?></strong></th>
-			<th class="tbar" style="width: 40px;"><strong>##</strong></th>
+			<th class="w70"><strong><?php echo $WS['PERCENT'] ?></strong></th>
+			<th class="tbar"><strong>##</strong></th>
 		</tr>
 		<?php if(isset($r['os']) && is_array($r['os'])) {
 			$counter = 1;
@@ -251,10 +251,10 @@ $WS = $stats->accessLanguage();
     <h3><span><?php echo $WS['TOP'].' '.$top.' - ' ?></span><?php echo $WS['COUNTRYTOP'] ?></h3>
 	<table style="width: 100%; padding: 3px; border-spacing: 0px;">
 		<tr>
-			<th class="fbar" style="width: 30px;"><strong><?php echo $WS['NUMBER'] ?></strong></th>
+			<th class="fbar"><strong><?php echo $WS['NUMBER'] ?></strong></th>
 			<th ><strong><?php echo $WS['COUNTRIES'] ?></strong></th>
-			<th style="width: 70px;"><strong><?php echo $WS['PERCENT'] ?></strong></th>
-			<th class="tbar" style="width: 40px;"><strong>##</strong></th>
+			<th class="w70"><strong><?php echo $WS['PERCENT'] ?></strong></th>
+			<th class="tbar"><strong>##</strong></th>
 		</tr>
 		<?php if(isset($r['country']) && is_array($r['country'])) {
 			$counter = 1;
@@ -275,10 +275,10 @@ $WS = $stats->accessLanguage();
     <h3><span><?php echo $WS['TOP'].' '.$top.' - ' ?></span><?php echo $WS['LOCTOP'] ?></h3>
 	<table style="width: 100%; padding: 3px; border-spacing: 0px;">
 		<tr>
-			<th class="fbar" style="width: 30px;"><strong><?php echo $WS['NUMBER'] ?></strong></th>
+			<th class="fbar"><strong><?php echo $WS['NUMBER'] ?></strong></th>
 			<th ><strong><?php echo $WS['LOCATIONS'] ?></strong></th>
-			<th style="width: 70px;"><strong><?php echo $WS['PERCENT'] ?></strong></th>
-			<th class="tbar" style="width: 40px;"><strong>##</strong></th>
+			<th class="w70"><strong><?php echo $WS['PERCENT'] ?></strong></th>
+			<th class="tbar"><strong>##</strong></th>
 		</tr>
 		<?php if(isset($r['location']) && is_array($r['location'])) {
 			$counter = 1;
@@ -301,8 +301,8 @@ $WS = $stats->accessLanguage();
 	<div class="cloud-container">
 		<?php 
 		if(isset($r['pageviews']) && is_array($r['pageviews'])) {
-			$tmp = $r['pageviews'];
-			$tmp = $stats->shuffle_assoc($tmp);
+			$tmp_1 = $r['pageviews'];
+			$tmp = $stats->shuffle_assoc($tmp_1);
 			$maxval = max($tmp)+1; $minfont = 10; $maxfont = 28;
 			if(log($maxval)>0){
 				foreach ($tmp as $key => $data) { 
@@ -310,9 +310,9 @@ $WS = $stats->accessLanguage();
 					if($data) {
 						echo '<span title="'.$data.' '.$WS['VISITORS'].'" style="font-size:'.$fontsize.'px" class="expand wordcloud">'.$pages_cloud[$key].'</span> ';
 					}
-				} 
+				}
 			}
-		} 
+		}
 		?>
 	</div>		
 </div>		
@@ -321,18 +321,21 @@ $WS = $stats->accessLanguage();
 	<div class="cloud-container">
 		<?php 
 		if(isset($r['seconds']) && is_array($r['seconds'])) {
-			$tmp = $r['seconds'];
-			$tmp = $stats->shuffle_assoc($tmp);
+			$tmp_2 = $r['seconds'];
+			$tmp = $stats->shuffle_assoc($tmp_2);
 			$maxval = max($tmp)+1;
             $minfont = 10;
             $maxfont = 28;
-			if(log($maxval)>0){
-				foreach ($tmp as $key => $data) { 
+			if (log($maxval) > 0)
+            {
+				foreach ($tmp as $key => $data)
+                { 
 					$fontsize = round((log($data) / log($maxval)) * ($maxfont - $minfont) + $minfont);
-					if($data) {
-						echo '<span title="'.$data.' '.$WS['VISITORS'].'" style="font-size:'.$fontsize.'px" class="expand wordcloud">'.$second_cloud[$key].'</span> ';
-					}
-				}
+					if ($data)
+                    {
+                        echo '<span title="' . $data . ' ' . $WS['VISITORS'] . '" style="font-size:' . $fontsize . 'px" class="expand wordcloud">' . $second_cloud[$key] . '</span> ';
+                    }
+                }
 			} 
 		} 
 		?>
