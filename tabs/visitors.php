@@ -43,7 +43,7 @@ $WS = $stats->accessLanguage();
 
 <div class="full h265" id="pages">
     <h3><span><?php echo $WS['TOP'] . ' ' . $top . ' - ' ?></span><?php echo $WS['PAGETOP'] ?></h3>
-    <table style="width: 100%; padding: 3px; border-spacing: 0px;">
+    <table class="default">
         <tr>
             <th class="fbar"><strong><?php echo $WS['NUMBER'] ?></strong></th>
             <th ><strong><?php echo $WS['PAGES'] ?></strong></th>
@@ -55,10 +55,8 @@ $WS = $stats->accessLanguage();
         {
             $counter = 1;
             foreach ($r['pages'] as $key => $data)
-            {
-                $display = $stats->handleDisplay($counter, $top);
-                ?>
-                <tr<?= $display ?>>
+            { ?>
+                <tr<?php echo $stats->handleDisplay($counter, $top) ?>>
                     <td class="fbar"><?php echo $key ?></td>
                     <td><div class="expand" title="<?php echo htmlspecialchars($data['name']) ?>"><?php echo $data['short'] ?></div></td>
                     <td class="nowrap"><div class="vbar" style="width:<?php echo $data['width'] ?>px;" title="<?php echo $data['views'] ?> <?php echo $WS['REQUESTS'] ?>" >&nbsp;<?php echo $data['percent'] ?>%</div></td>
@@ -72,7 +70,7 @@ $WS = $stats->accessLanguage();
 
 <div class="middle h265" id="entry">
     <h3><span><?php echo $WS['TOP'] . ' ' . $top . ' - ' ?></span><?php echo $WS['ENTRYTOP'] ?></h3>
-    <table style="width: 100%; padding: 3px; border-spacing: 0px;">
+    <table class="default">
         <tr>
             <th class="fbar"><strong><?php echo $WS['NUMBER'] ?></strong></th>
             <th ><strong><?php echo $WS['PAGES'] ?></strong></th>
@@ -84,10 +82,8 @@ $WS = $stats->accessLanguage();
         {
             $counter = 1;
             foreach ($r['entry'] as $key => $data)
-            {
-                $display = $stats->handleDisplay($counter, $top);
-                ?>
-                <tr<?= $display ?>>
+            { ?>
+                <tr<?php echo $stats->handleDisplay($counter, $top); ?>>
                     <td class="fbar"><?php echo $key ?></td>
                     <td><div class="expand" title="<?php echo htmlspecialchars($data['name']) ?>"><?php echo $data['short'] ?></div></td>
                     <td class="nowrap"><div class="vbar" style="width:<?php echo $data['width'] ?>px;" title="<?php echo $data['views'] ?> <?php echo $WS['VISITORS'] ?>" >&nbsp;<?php echo $data['percent'] ?>%</div></td>
@@ -99,58 +95,60 @@ $WS = $stats->accessLanguage();
 </div>
 <div class="middle h265" id="exit">
     <h3><span><?php echo $WS['TOP'].' '.$top.' - ' ?></span><?php echo $WS['EXITTOP'] ?></h3>
-	<table style="width: 100%; padding: 3px; border-spacing: 0px;">
+	<table class="default">
 		<tr>
 			<th class="fbar"><strong><?php echo $WS['NUMBER'] ?></strong></th>
 			<th ><strong><?php echo $WS['PAGES'] ?></strong></th>
 			<th class="w70"><strong><?php echo $WS['PERCENT'] ?></strong></th>
 			<th class="tbar"><strong>##</strong></th>
 		</tr>
-		<?php if(isset($r['exit']) && is_array($r['exit'])) {
-			$counter = 1;
-			foreach($r['exit'] as $key => $data) {
-				$display = $counter++ > $top ? ' class="hidden"':'';
-				?>
-		<tr<?=$display?>>
-			<td class="fbar"><?php echo $key ?></td>
-			<td><div class="expand" title="<?php echo htmlspecialchars($data['name']) ?>"><?php echo $data['short'] ?></div></td>
-			<td class="nowrap"><div class="vbar" style="width:<?php echo $data['width'] ?>px;" title="<?php echo $data['views'] ?> <?php echo $WS['VISITORS'] ?>" >&nbsp;<?php echo $data['percent'] ?>%</div></td>
-			<td class="nowrap"><div class="tbar"><?php echo $data['views'] ?></div></td>
-		</tr>
-		<?php }} ?>
+		<?php
+        if (isset($r['exit']) && is_array($r['exit']))
+        {
+            $counter = 1;
+            foreach ($r['exit'] as $key => $data)
+            { ?>
+                <tr<?php echo $stats->handleDisplay($counter, $top); ?>>
+                    <td class="fbar"><?php echo $key ?></td>
+                    <td><div class="expand" title="<?php echo htmlspecialchars($data['name']) ?>"><?php echo $data['short'] ?></div></td>
+                    <td class="nowrap"><div class="vbar" style="width:<?php echo $data['width'] ?>px;" title="<?php echo $data['views'] ?> <?php echo $WS['VISITORS'] ?>" >&nbsp;<?php echo $data['percent'] ?>%</div></td>
+                    <td class="nowrap"><div class="tbar"><?php echo $data['views'] ?></div></td>
+                </tr>
+    <?php }
+} ?>
 	</table>
 </div>
 <div style="clear:both"></div>
 <div class="middle h265" id="referer">
 	<h3><span><?php echo $WS['TOP'].' '.$top.' - '?></span><?php echo $WS['REFTOP'] ?></h3>
-	<table style="width: 100%; padding: 3px; border-spacing: 0px;">
+	<table class="default">
 		<tr>
 			<th class="fbar"><strong><?php echo $WS['NUMBER'] ?></strong></th>
 			<th ><strong><?php echo $WS['REFERER'] ?></strong></th>
 			<th class="w70""><strong><?php echo $WS['PERCENT'] ?></strong></th>
 			<th class="tbar"><strong>##</strong></th>
 		</tr>
-		<?php if(isset($r['referer']) && is_array($r['referer'])) {
-			$counter = 1;
-			foreach($r['referer'] as $key => $data) { 
-				$display = $stats->handleDisplay($counter, $top);
-				?>
-		<tr<?=$display?>>
-			<td class="fbar"><?php echo $key ?></td>
-			<td><div class="expand" title="<?php echo htmlspecialchars($data['name']) ?>"><?php echo $data['short'] ?></div></td>
-			<td class="nowrap"><div class="vbar" style="width:<?php echo $data['width'] ?>px;" title="<?php echo $data['views'] ?> <?php echo $WS['VISITORS'] ?>" >&nbsp;<?php echo $data['percent'] ?>%</div></td>
-			<td class="nowrap"><div class="tbar"><?php echo $data['views'] ?></div></td>
-		</tr>
-		<?php }} ?>
+		<?php
+        if (isset($r['referer']) && is_array($r['referer']))
+        {
+            $counter = 1;
+            foreach ($r['referer'] as $key => $data)
+            { ?>
+                <tr<?php echo $stats->handleDisplay($counter, $top); ?>>
+                    <td class="fbar"><?php echo $key ?></td>
+                    <td><div class="expand" title="<?php echo htmlspecialchars($data['name']) ?>"><?php echo $data['short'] ?></div></td>
+                    <td class="nowrap"><div class="vbar" style="width:<?php echo $data['width'] ?>px;" title="<?php echo $data['views'] ?> <?php echo $WS['VISITORS'] ?>" >&nbsp;<?php echo $data['percent'] ?>%</div></td>
+                    <td class="nowrap"><div class="tbar"><?php echo $data['views'] ?></div></td>
+                </tr>
+    <?php }
+} ?>
     </table>
 </div>
-  
-
 
 
 <div class="middle h265" id="keys">
     <h3><span><?php echo $WS['TOP'].' '.$top.' - ' ?></span><?php echo $WS['KEYSTOP'] ?></h3>
-	<table style="width: 100%; padding: 3px; border-spacing: 0px;">
+	<table class="default">
 		<tr>
 			<th class="fbar"><strong><?php echo $WS['NUMBER'] ?></strong></th>
 			<th ><strong><?php echo $WS['KEYWORDS'] ?></strong></th>
@@ -159,10 +157,9 @@ $WS = $stats->accessLanguage();
 		</tr>
 		<?php if(isset($r['keyword']) && is_array($r['keyword'])) {
 			$counter = 1;
-			foreach($r['keyword'] as $key => $data) { 
-				$display = $stats->handleDisplay($counter, $top);
-				?>
-		<tr<?=$display?>>
+			foreach($r['keyword'] as $key => $data)
+            { ?>
+		<tr<?php echo $stats->handleDisplay($counter, $top); ?>>
 			<td class="fbar"><?php echo $key ?></td>
 			<td><div class="expand" title="<?php echo htmlspecialchars($data['name']) ?>"><?php echo $data['short'] ?></div></td>
 			<td class="nowrap"><div class="vbar" style="width:<?php echo $data['width'] ?>px;" title="<?php echo $data['views'] ?> <?php echo $WS['VISITORS'] ?>" >&nbsp;<?php echo $data['percent'] ?>%</div></td>
@@ -175,7 +172,7 @@ $WS = $stats->accessLanguage();
 <div style="clear:both"></div>
 <div class="third h265" id="lang">
     <h3><span><?php echo $WS['TOP'].' '.$top.' - ' ?></span><?php echo $WS['LANGTOP'] ?></h3>
-	<table style="width: 100%; padding: 3px; border-spacing: 0px;">
+	<table class="default">
 		<tr>
 			<th class="fbar"><strong><?php echo $WS['NUMBER'] ?></strong></th>
 			<th ><strong><?php echo $WS['LANGUAGES'] ?></strong></th>
@@ -184,10 +181,9 @@ $WS = $stats->accessLanguage();
 		</tr>
 		<?php if(isset($r['language']) && is_array($r['language'])) {
 			$counter = 1;
-			foreach($r['language'] as $key => $data) { 
-				$display = $stats->handleDisplay($counter, $top);
-				?>
-		<tr<?=$display?>>
+			foreach($r['language'] as $key => $data)
+            { ?>
+		<tr<?php echo $stats->handleDisplay($counter, $top); ?>>
 			<td class="fbar"><?php echo $key ?></td>
 			<td><div class="expand" title="<?php echo htmlspecialchars($data['name']) ?>"><?php echo $data['short'] ?></div></td>
 			<td class="nowrap"><div class="vbar" style="width:<?php echo $data['width'] ?>px;" title="<?php echo $data['views'] ?> <?php echo $WS['VISITORS'] ?>" >&nbsp;<?php echo $data['percent'] ?>%</div></td>
@@ -199,7 +195,7 @@ $WS = $stats->accessLanguage();
 
 <div class="third h265" id="browser">
     <h3><span><?php echo $WS['TOP'].' '.$top.' - ' ?></span><?php echo $WS['BROWSERTOP'] ?></h3>
-	<table style="width: 100%; padding: 3px; border-spacing: 0px;">
+	<table class="default">
 		<tr>
 			<th class="fbar"><strong><?php echo $WS['NUMBER'] ?></strong></th>
 			<th ><strong><?php echo $WS['BROWSER'] ?></strong></th>
@@ -208,10 +204,9 @@ $WS = $stats->accessLanguage();
 		</tr>
 		<?php if(isset($r['browser']) && is_array($r['browser'])) {
 			$counter = 1;
-			foreach($r['browser'] as $key => $data) {
-				$display = $stats->handleDisplay($counter, $top);
-				?>
-		<tr<?=$display?>>
+			foreach($r['browser'] as $key => $data)
+            { ?>
+		<tr<?php echo $stats->handleDisplay($counter, $top);?>>
 			<td class="fbar"><?php echo $key ?></td>
 			<td><div class="expand" title="<?php echo htmlspecialchars($data['name']) ?>"><?php echo $data['name'] ?></div></td>
 			<td class="nowrap"><div class="vbar" style="width:<?php echo $data['width'] ?>px;" title="<?php echo $data['views'] ?> <?php echo $WS['VISITORS'] ?>" >&nbsp;<?php echo $data['percent'] ?>%</div></td>
@@ -223,7 +218,7 @@ $WS = $stats->accessLanguage();
 
 <div class="third h265" id="os">
     <h3><span><?php echo $WS['TOP'].' '.$top.' - ' ?></span><?php echo $WS['OSTOP'] ?></h3>
-	<table style="width: 100%; padding: 3px; border-spacing: 0px;">
+	<table class="default">
 		<tr>
 			<th class="fbar"><strong><?php echo $WS['NUMBER'] ?></strong></th>
 			<th ><strong><?php echo $WS['OS'] ?></strong></th>
@@ -232,10 +227,9 @@ $WS = $stats->accessLanguage();
 		</tr>
 		<?php if(isset($r['os']) && is_array($r['os'])) {
 			$counter = 1;
-			foreach($r['os'] as $key => $data) {
-				$display = $stats->handleDisplay($counter, $top);
-				?>
-		<tr<?=$display?>>
+			foreach($r['os'] as $key => $data)
+            { ?>
+		<tr<?php echo $stats->handleDisplay($counter, $top);?>>
 			<td class="fbar"><?php echo $key ?></td>
 			<td><div class="expand" title="<?php echo htmlspecialchars($data['name']) ?>"><?php echo $data['name'] ?></div></td>
 			<td class="nowrap"><div class="vbar" style="width:<?php echo $data['width'] ?>px;" title="<?php echo $data['views'] ?> <?php echo $WS['VISITORS'] ?>" >&nbsp;<?php echo $data['percent'] ?>%</div></td>
@@ -249,7 +243,7 @@ $WS = $stats->accessLanguage();
 
 <div class="middle h265" id="countries">
     <h3><span><?php echo $WS['TOP'].' '.$top.' - ' ?></span><?php echo $WS['COUNTRYTOP'] ?></h3>
-	<table style="width: 100%; padding: 3px; border-spacing: 0px;">
+	<table class="default">
 		<tr>
 			<th class="fbar"><strong><?php echo $WS['NUMBER'] ?></strong></th>
 			<th ><strong><?php echo $WS['COUNTRIES'] ?></strong></th>
@@ -258,10 +252,9 @@ $WS = $stats->accessLanguage();
 		</tr>
 		<?php if(isset($r['country']) && is_array($r['country'])) {
 			$counter = 1;
-			foreach($r['country'] as $key => $data) {
-				$display = $stats->handleDisplay($counter, $top);
-				?>
-		<tr<?=$display?>>
+			foreach($r['country'] as $key => $data)
+            { ?>
+		<tr<?php echo $stats->handleDisplay($counter, $top);?>>
 			<td class="fbar"><?php echo $key ?></td>
 			<td><div class="expand" title="<?php echo htmlspecialchars($data['name']) ?>"><?php echo $data['name'] ?></div></td>
 			<td class="nowrap"><div class="vbar" style="width:<?php echo $data['width'] ?>px;" title="<?php echo $data['views'] ?> <?php echo $WS['VISITORS'] ?>" >&nbsp;<?php echo $data['percent'] ?>%</div></td>
@@ -273,7 +266,7 @@ $WS = $stats->accessLanguage();
 
 <div class="middle h265" id="location">
     <h3><span><?php echo $WS['TOP'].' '.$top.' - ' ?></span><?php echo $WS['LOCTOP'] ?></h3>
-	<table style="width: 100%; padding: 3px; border-spacing: 0px;">
+	<table class="default">
 		<tr>
 			<th class="fbar"><strong><?php echo $WS['NUMBER'] ?></strong></th>
 			<th ><strong><?php echo $WS['LOCATIONS'] ?></strong></th>
@@ -282,10 +275,9 @@ $WS = $stats->accessLanguage();
 		</tr>
 		<?php if(isset($r['location']) && is_array($r['location'])) {
 			$counter = 1;
-			foreach($r['location'] as $key => $data) {
-				$display = $stats->handleDisplay($counter, $top);
-				?>
-		<tr<?=$display?>>
+			foreach($r['location'] as $key => $data)
+            { ?>
+		<tr<?php echo $stats->handleDisplay($counter, $top);?>>
 			<td class="fbar"><?php echo $key ?></td>
 			<td><div class="expand" title="<?php echo htmlspecialchars($data['name']) ?>"><?php echo $data['name'] ?></div></td>
 			<td class="nowrap"><div class="vbar" style="width:<?php echo $data['width'] ?>px;" title="<?php echo $data['views'] ?> <?php echo $WS['VISITORS'] ?>" >&nbsp;<?php echo $data['percent'] ?>%</div></td>

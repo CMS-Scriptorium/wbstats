@@ -218,11 +218,16 @@
 .w70 {
     width: 70px;
 }
-
 th:nth-child(2),
 th:nth-child(3) {
     text-align: left;
 }
+table.default {
+    width: 100%;
+    padding: 3px;
+    border-spacing: 0px;
+}
+
 .bar:hover, .vbar:hover {
     margin-right:1px;
     z-index:1;
