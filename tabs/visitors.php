@@ -57,6 +57,7 @@ $oTWIG->registerModule("wbstats", "wbstats");
         "@wbstats/table_header.twig",
         [
             'fbar'      => $WS['NUMBER'],
+            'id'        => 10896501,
             'title'     => $WS['PAGES'],
             'percent'   => $WS['PERCENT']
         ]
@@ -88,6 +89,7 @@ $oTWIG->registerModule("wbstats", "wbstats");
         "@wbstats/table_header.twig",
         [
             'fbar'      => $WS['NUMBER'],
+            'id'        => 10896502,
             'title'     => $WS['PAGES'],
             'percent'   => $WS['PERCENT']
         ]
@@ -116,6 +118,7 @@ $oTWIG->registerModule("wbstats", "wbstats");
         "@wbstats/table_header.twig",
         [
             'fbar'      => $WS['NUMBER'],
+            'id'        => 10896503,
             'title'     => $WS['PAGES'],
             'percent'   => $WS['PERCENT']
         ]
@@ -145,6 +148,7 @@ $oTWIG->registerModule("wbstats", "wbstats");
         "@wbstats/table_header.twig",
         [
             'fbar'      => $WS['NUMBER'],
+            'id'        => 10896504,
             'title'     => $WS['REFERER'],
             'percent'   => $WS['PERCENT']
         ]
@@ -175,6 +179,7 @@ $oTWIG->registerModule("wbstats", "wbstats");
         "@wbstats/table_header.twig",
         [
             'fbar'      => $WS['NUMBER'],
+            'id'        => 10896505,
             'title'     => $WS['KEYWORDS'],
             'percent'   => $WS['PERCENT']
         ]
