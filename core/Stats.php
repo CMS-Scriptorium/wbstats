@@ -770,6 +770,11 @@ class Stats extends Config
       return $this->secondCloud;
     }
 
+    public function handleDisplay(int &$counter, int &$top): string
+    {
+        return $counter++ > $top ? ' class="hidden"' : '';
+    }
+
     protected function getLanguage(): void
     {
         // Overwritten by the language file.

@@ -56,7 +56,7 @@ $WS = $stats->accessLanguage();
             $counter = 1;
             foreach ($r['pages'] as $key => $data)
             {
-                $display = $counter++ > $top ? ' class="hidden"' : '';
+                $display = $stats->handleDisplay($counter, $top); //$stats->handleDisplay($counter, $top);
                 ?>
                 <tr<?= $display ?>>
                     <td class="fbar"><?php echo $key ?></td>
@@ -85,7 +85,7 @@ $WS = $stats->accessLanguage();
             $counter = 1;
             foreach ($r['entry'] as $key => $data)
             {
-                $display = $counter++ > $top ? ' class="hidden"' : '';
+                $display = $stats->handleDisplay($counter, $top);
                 ?>
                 <tr<?= $display ?>>
                     <td class="fbar"><?php echo $key ?></td>
@@ -133,7 +133,7 @@ $WS = $stats->accessLanguage();
 		<?php if(isset($r['referer']) && is_array($r['referer'])) {
 			$counter = 1;
 			foreach($r['referer'] as $key => $data) { 
-				$display = $counter++ > $top ? ' class="hidden"':'';
+				$display = $stats->handleDisplay($counter, $top);
 				?>
 		<tr<?=$display?>>
 			<td class="fbar"><?php echo $key ?></td>
@@ -160,7 +160,7 @@ $WS = $stats->accessLanguage();
 		<?php if(isset($r['keyword']) && is_array($r['keyword'])) {
 			$counter = 1;
 			foreach($r['keyword'] as $key => $data) { 
-				$display = $counter++ > $top ? ' class="hidden"':'';
+				$display = $stats->handleDisplay($counter, $top);
 				?>
 		<tr<?=$display?>>
 			<td class="fbar"><?php echo $key ?></td>
@@ -185,7 +185,7 @@ $WS = $stats->accessLanguage();
 		<?php if(isset($r['language']) && is_array($r['language'])) {
 			$counter = 1;
 			foreach($r['language'] as $key => $data) { 
-				$display = $counter++ > $top ? ' class="hidden"':'';
+				$display = $stats->handleDisplay($counter, $top);
 				?>
 		<tr<?=$display?>>
 			<td class="fbar"><?php echo $key ?></td>
@@ -209,7 +209,7 @@ $WS = $stats->accessLanguage();
 		<?php if(isset($r['browser']) && is_array($r['browser'])) {
 			$counter = 1;
 			foreach($r['browser'] as $key => $data) {
-				$display = $counter++ > $top ? ' class="hidden"':'';
+				$display = $stats->handleDisplay($counter, $top);
 				?>
 		<tr<?=$display?>>
 			<td class="fbar"><?php echo $key ?></td>
@@ -233,7 +233,7 @@ $WS = $stats->accessLanguage();
 		<?php if(isset($r['os']) && is_array($r['os'])) {
 			$counter = 1;
 			foreach($r['os'] as $key => $data) {
-				$display = $counter++ > $top ? ' class="hidden"':'';
+				$display = $stats->handleDisplay($counter, $top);
 				?>
 		<tr<?=$display?>>
 			<td class="fbar"><?php echo $key ?></td>
@@ -259,7 +259,7 @@ $WS = $stats->accessLanguage();
 		<?php if(isset($r['country']) && is_array($r['country'])) {
 			$counter = 1;
 			foreach($r['country'] as $key => $data) {
-				$display = $counter++ > $top ? ' class="hidden"':'';
+				$display = $stats->handleDisplay($counter, $top);
 				?>
 		<tr<?=$display?>>
 			<td class="fbar"><?php echo $key ?></td>
@@ -283,7 +283,7 @@ $WS = $stats->accessLanguage();
 		<?php if(isset($r['location']) && is_array($r['location'])) {
 			$counter = 1;
 			foreach($r['location'] as $key => $data) {
-				$display = $counter++ > $top ? ' class="hidden"':'';
+				$display = $stats->handleDisplay($counter, $top);
 				?>
 		<tr<?=$display?>>
 			<td class="fbar"><?php echo $key ?></td>
