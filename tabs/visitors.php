@@ -27,6 +27,13 @@ $pages_cloud = $stats->accessPagesCloud();
 $second_cloud = $stats->accessSecondCloud();
 $WS = $stats->accessLanguage();
 
+/**
+ * experimental at this time
+ */
+
+$oTWIG = \Subway\core\template\Twigbox::getInstance();
+$oTWIG->registerModule("wbstats", "wbstats");
+
 ?>
 <div class="sysmenu small">
   <a href="#" class="pop" data-sec="pages"><?php echo $WS['PAGETOP']  ?></a>
@@ -44,13 +51,17 @@ $WS = $stats->accessLanguage();
 <div class="full h265" id="pages">
     <h3><span><?php echo $WS['TOP'] . ' ' . $top . ' - ' ?></span><?php echo $WS['PAGETOP'] ?></h3>
     <table class="default">
-        <tr>
-            <th class="fbar"><strong><?php echo $WS['NUMBER'] ?></strong></th>
-            <th ><strong><?php echo $WS['PAGES'] ?></strong></th>
-            <th class="w70"><strong><?php echo $WS['PERCENT'] ?></strong></th>
-            <th class="tbar"><strong>##</strong></th>
-        </tr>
-        <?php
+<?php
+
+    echo $oTWIG->render(
+        "@wbstats/table_header.twig",
+        [
+            'fbar'      => $WS['NUMBER'],
+            'title'     => $WS['PAGES'],
+            'percent'   => $WS['PERCENT']
+        ]
+    );
+
         if (isset($r['pages']) && is_array($r['pages']))
         {
             $counter = 1;
@@ -71,13 +82,16 @@ $WS = $stats->accessLanguage();
 <div class="middle h265" id="entry">
     <h3><span><?php echo $WS['TOP'] . ' ' . $top . ' - ' ?></span><?php echo $WS['ENTRYTOP'] ?></h3>
     <table class="default">
-        <tr>
-            <th class="fbar"><strong><?php echo $WS['NUMBER'] ?></strong></th>
-            <th ><strong><?php echo $WS['PAGES'] ?></strong></th>
-            <th class="w70"><strong><?php echo $WS['PERCENT'] ?></strong></th>
-            <th class="tbar"><strong>##</strong></th>
-        </tr>
-        <?php
+<?php
+
+    echo $oTWIG->render(
+        "@wbstats/table_header.twig",
+        [
+            'fbar'      => $WS['NUMBER'],
+            'title'     => $WS['PAGES'],
+            'percent'   => $WS['PERCENT']
+        ]
+    );
         if (isset($r['entry']) && is_array($r['entry']))
         {
             $counter = 1;
@@ -96,13 +110,16 @@ $WS = $stats->accessLanguage();
 <div class="middle h265" id="exit">
     <h3><span><?php echo $WS['TOP'].' '.$top.' - ' ?></span><?php echo $WS['EXITTOP'] ?></h3>
     <table class="default">
-        <tr>
-            <th class="fbar"><strong><?php echo $WS['NUMBER'] ?></strong></th>
-            <th ><strong><?php echo $WS['PAGES'] ?></strong></th>
-            <th class="w70"><strong><?php echo $WS['PERCENT'] ?></strong></th>
-            <th class="tbar"><strong>##</strong></th>
-        </tr>
-        <?php
+<?php
+
+    echo $oTWIG->render(
+        "@wbstats/table_header.twig",
+        [
+            'fbar'      => $WS['NUMBER'],
+            'title'     => $WS['PAGES'],
+            'percent'   => $WS['PERCENT']
+        ]
+    );
         if (isset($r['exit']) && is_array($r['exit']))
         {
             $counter = 1;
@@ -116,19 +133,22 @@ $WS = $stats->accessLanguage();
                 </tr>
     <?php }
 } ?>
-	</table>
+    </table>
 </div>
 <div style="clear:both"></div>
 <div class="middle h265" id="referer">
 	<h3><span><?php echo $WS['TOP'].' '.$top.' - '?></span><?php echo $WS['REFTOP'] ?></h3>
 	<table class="default">
-		<tr>
-			<th class="fbar"><strong><?php echo $WS['NUMBER'] ?></strong></th>
-			<th ><strong><?php echo $WS['REFERER'] ?></strong></th>
-			<th class="w70""><strong><?php echo $WS['PERCENT'] ?></strong></th>
-			<th class="tbar"><strong>##</strong></th>
-		</tr>
-		<?php
+<?php
+
+    echo $oTWIG->render(
+        "@wbstats/table_header.twig",
+        [
+            'fbar'      => $WS['NUMBER'],
+            'title'     => $WS['REFERER'],
+            'percent'   => $WS['PERCENT']
+        ]
+    );
         if (isset($r['referer']) && is_array($r['referer']))
         {
             $counter = 1;
@@ -149,25 +169,31 @@ $WS = $stats->accessLanguage();
 <div class="middle h265" id="keys">
     <h3><span><?php echo $WS['TOP'].' '.$top.' - ' ?></span><?php echo $WS['KEYSTOP'] ?></h3>
 	<table class="default">
-		<tr>
-			<th class="fbar"><strong><?php echo $WS['NUMBER'] ?></strong></th>
-			<th ><strong><?php echo $WS['KEYWORDS'] ?></strong></th>
-			<th class="w70"><strong><?php echo $WS['PERCENT'] ?></strong></th>
-			<th class="tbar"><strong>##</strong></th>
-		</tr>
-		<?php if(isset($r['keyword']) && is_array($r['keyword'])) {
-			$counter = 1;
-			foreach($r['keyword'] as $key => $data)
+<?php
+
+    echo $oTWIG->render(
+        "@wbstats/table_header.twig",
+        [
+            'fbar'      => $WS['NUMBER'],
+            'title'     => $WS['KEYWORDS'],
+            'percent'   => $WS['PERCENT']
+        ]
+    );
+    
+    if(isset($r['keyword']) && is_array($r['keyword']))
+    {
+            $counter = 1;
+            foreach($r['keyword'] as $key => $data)
             { ?>
-		<tr<?php echo $stats->handleDisplay($counter, $top); ?>>
-			<td class="fbar"><?php echo $key ?></td>
-			<td><div class="expand" title="<?php echo htmlspecialchars($data['name']) ?>"><?php echo $data['short'] ?></div></td>
-			<td class="nowrap"><div class="vbar" style="width:<?php echo $data['width'] ?>px;" title="<?php echo $data['views'] ?> <?php echo $WS['VISITORS'] ?>" >&nbsp;<?php echo $data['percent'] ?>%</div></td>
-			<td class="nowrap"><div class="tbar"><?php echo $data['views'] ?></div></td>
-		</tr>
-			<?php }
+        <tr<?php echo $stats->handleDisplay($counter, $top); ?>>
+            <td class="fbar"><?php echo $key ?></td>
+            <td><div class="expand" title="<?php echo htmlspecialchars($data['name']) ?>"><?php echo $data['short'] ?></div></td>
+            <td class="nowrap"><div class="vbar" style="width:<?php echo $data['width'] ?>px;" title="<?php echo $data['views'] ?> <?php echo $WS['VISITORS'] ?>" >&nbsp;<?php echo $data['percent'] ?>%</div></td>
+            <td class="nowrap"><div class="tbar"><?php echo $data['views'] ?></div></td>
+        </tr>
+            <?php }
         } ?>
-	</table>
+    </table>
 </div>
 
 <div style="clear:both"></div>
