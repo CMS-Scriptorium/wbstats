@@ -47,8 +47,8 @@ $WS = $stats->accessLanguage();
         <tr>
             <th class="fbar"><strong><?php echo $WS['NUMBER'] ?></strong></th>
             <th ><strong><?php echo $WS['PAGES'] ?></strong></th>
-            <th style="width:70px;"><strong><?php echo $WS['PERCENT'] ?></strong></th>
-            <th class="tbar" style="width:40px;"><strong>##</strong></th>
+            <th class="w70"><strong><?php echo $WS['PERCENT'] ?></strong></th>
+            <th class="tbar"><strong>##</strong></th>
         </tr>
         <?php
         if (isset($r['pages']) && is_array($r['pages']))
@@ -95,14 +95,14 @@ $WS = $stats->accessLanguage();
 </div>
 <div class="middle h265" id="exit">
     <h3><span><?php echo $WS['TOP'].' '.$top.' - ' ?></span><?php echo $WS['EXITTOP'] ?></h3>
-	<table class="default">
-		<tr>
-			<th class="fbar"><strong><?php echo $WS['NUMBER'] ?></strong></th>
-			<th ><strong><?php echo $WS['PAGES'] ?></strong></th>
-			<th class="w70"><strong><?php echo $WS['PERCENT'] ?></strong></th>
-			<th class="tbar"><strong>##</strong></th>
-		</tr>
-		<?php
+    <table class="default">
+        <tr>
+            <th class="fbar"><strong><?php echo $WS['NUMBER'] ?></strong></th>
+            <th ><strong><?php echo $WS['PAGES'] ?></strong></th>
+            <th class="w70"><strong><?php echo $WS['PERCENT'] ?></strong></th>
+            <th class="tbar"><strong>##</strong></th>
+        </tr>
+        <?php
         if (isset($r['exit']) && is_array($r['exit']))
         {
             $counter = 1;
@@ -165,7 +165,8 @@ $WS = $stats->accessLanguage();
 			<td class="nowrap"><div class="vbar" style="width:<?php echo $data['width'] ?>px;" title="<?php echo $data['views'] ?> <?php echo $WS['VISITORS'] ?>" >&nbsp;<?php echo $data['percent'] ?>%</div></td>
 			<td class="nowrap"><div class="tbar"><?php echo $data['views'] ?></div></td>
 		</tr>
-			<?php }} ?>
+			<?php }
+        } ?>
 	</table>
 </div>
 
@@ -189,7 +190,8 @@ $WS = $stats->accessLanguage();
 			<td class="nowrap"><div class="vbar" style="width:<?php echo $data['width'] ?>px;" title="<?php echo $data['views'] ?> <?php echo $WS['VISITORS'] ?>" >&nbsp;<?php echo $data['percent'] ?>%</div></td>
 			<td class="nowrap"><div class="tbar"><?php echo $data['views'] ?></div></td>
 		</tr>
-		<?php }} ?>
+		<?php }
+        } ?>
 	</table>
 </div>
 
@@ -212,7 +214,8 @@ $WS = $stats->accessLanguage();
 			<td class="nowrap"><div class="vbar" style="width:<?php echo $data['width'] ?>px;" title="<?php echo $data['views'] ?> <?php echo $WS['VISITORS'] ?>" >&nbsp;<?php echo $data['percent'] ?>%</div></td>
 			<td class="nowrap"><div class="tbar"><?php echo $data['views'] ?></div></td>
 		</tr>
-		<?php }} ?>
+		<?php }
+        } ?>
 	</table>
 </div>
 
@@ -235,7 +238,8 @@ $WS = $stats->accessLanguage();
 			<td class="nowrap"><div class="vbar" style="width:<?php echo $data['width'] ?>px;" title="<?php echo $data['views'] ?> <?php echo $WS['VISITORS'] ?>" >&nbsp;<?php echo $data['percent'] ?>%</div></td>
 			<td class="nowrap"><div class="tbar"><?php echo $data['views'] ?></div></td>
 		</tr>
-		<?php }} ?>
+		<?php }
+        } ?>
 	</table>
 </div>
 
@@ -260,7 +264,8 @@ $WS = $stats->accessLanguage();
 			<td class="nowrap"><div class="vbar" style="width:<?php echo $data['width'] ?>px;" title="<?php echo $data['views'] ?> <?php echo $WS['VISITORS'] ?>" >&nbsp;<?php echo $data['percent'] ?>%</div></td>
 			<td class="nowrap"><div class="tbar"><?php echo $data['views'] ?></div></td>
 		</tr>
-		<?php }} ?>
+		<?php }
+        } ?>
 	</table>
 </div>
 
@@ -283,53 +288,59 @@ $WS = $stats->accessLanguage();
 			<td class="nowrap"><div class="vbar" style="width:<?php echo $data['width'] ?>px;" title="<?php echo $data['views'] ?> <?php echo $WS['VISITORS'] ?>" >&nbsp;<?php echo $data['percent'] ?>%</div></td>
 			<td class="nowrap"><div class="tbar"><?php echo $data['views'] ?></div></td>
 		</tr>
-		<?php }} ?>
+		<?php }
+        } ?>
 	</table>
 </div>
 
 <div style="clear:both"></div>
 <div class="middle h265">
     <h3><?php echo $WS['PAGES_CLOUD'] ?></h3>
-	<div class="cloud-container">
-		<?php 
-		if(isset($r['pageviews']) && is_array($r['pageviews'])) {
-			$tmp_1 = $r['pageviews'];
-			$tmp = $stats->shuffle_assoc($tmp_1);
-			$maxval = max($tmp)+1; $minfont = 10; $maxfont = 28;
-			if(log($maxval)>0){
-				foreach ($tmp as $key => $data) { 
-					$fontsize = round((log($data) / log($maxval)) * ($maxfont - $minfont) + $minfont);
-					if($data) {
-						echo '<span title="'.$data.' '.$WS['VISITORS'].'" style="font-size:'.$fontsize.'px" class="expand wordcloud">'.$pages_cloud[$key].'</span> ';
-					}
-				}
-			}
-		}
-		?>
-	</div>		
-</div>		
+    <div class="cloud-container">
+        <?php 
+        if(isset($r['pageviews']) && is_array($r['pageviews']))
+        {
+            $tmp_1 = $r['pageviews'];
+            $tmp = $stats->shuffle_assoc($tmp_1);
+            $maxval = max($tmp)+1; $minfont = 10; $maxfont = 28;
+            if (log($maxval)>0)
+            {
+                foreach ($tmp as $key => $data)
+                {
+                    $fontsize = round((log($data) / log($maxval)) * ($maxfont - $minfont) + $minfont);
+                    if($data)
+                    {
+                        echo '<span title="'.$data.' '.$WS['VISITORS'].'" style="font-size:'.$fontsize.'px" class="expand wordcloud">'.$pages_cloud[$key].'</span> ';
+                    }
+                }
+            }
+        }
+        ?>
+    </div>
+</div>
 <div class="middle h265">
     <h3><?php echo $WS['SECONDS_CLOUD'] ?></h3>
-	<div class="cloud-container">
-		<?php 
-		if(isset($r['seconds']) && is_array($r['seconds'])) {
-			$tmp_2 = $r['seconds'];
-			$tmp = $stats->shuffle_assoc($tmp_2);
-			$maxval = max($tmp)+1;
+    <div class="cloud-container">
+        <?php 
+        if(isset($r['seconds']) && is_array($r['seconds']))
+        {
+            $tmp_2 = $r['seconds'];
+            $tmp = $stats->shuffle_assoc($tmp_2);
+            $maxval = max($tmp)+1;
             $minfont = 10;
             $maxfont = 28;
-			if (log($maxval) > 0)
+            if (log($maxval) > 0)
             {
-				foreach ($tmp as $key => $data)
+                foreach ($tmp as $key => $data)
                 { 
-					$fontsize = round((log($data) / log($maxval)) * ($maxfont - $minfont) + $minfont);
-					if ($data)
+                    $fontsize = round((log($data) / log($maxval)) * ($maxfont - $minfont) + $minfont);
+                    if ($data)
                     {
                         echo '<span title="' . $data . ' ' . $WS['VISITORS'] . '" style="font-size:' . $fontsize . 'px" class="expand wordcloud">' . $second_cloud[$key] . '</span> ';
                     }
                 }
-			} 
-		} 
-		?>
-	</div>
+            }
+        }
+        ?>
+    </div>
 </div>
