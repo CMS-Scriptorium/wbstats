@@ -61,8 +61,8 @@ $WS = $stats->accessLanguage();
                 <tr<?= $display ?>>
                     <td class="fbar"><?php echo $key ?></td>
                     <td><div class="expand" title="<?php echo htmlspecialchars($data['name']) ?>"><?php echo $data['short'] ?></div></td>
-                    <td nowrap><div class="vbar" style="width:<?php echo $data['width'] ?>px;" title="<?php echo $data['views'] ?> <?php echo $WS['REQUESTS'] ?>" >&nbsp;<?php echo $data['percent'] ?>%</div></td>
-                    <td nowrap><div class="tbar"><?php echo $data['views'] ?></div></td>
+                    <td class="nowrap"><div class="vbar" style="width:<?php echo $data['width'] ?>px;" title="<?php echo $data['views'] ?> <?php echo $WS['REQUESTS'] ?>" >&nbsp;<?php echo $data['percent'] ?>%</div></td>
+                    <td class="nowrap"><div class="tbar"><?php echo $data['views'] ?></div></td>
                 </tr>
     <?php }
 } ?>
@@ -90,8 +90,8 @@ $WS = $stats->accessLanguage();
                 <tr<?= $display ?>>
                     <td class="fbar"><?php echo $key ?></td>
                     <td><div class="expand" title="<?php echo htmlspecialchars($data['name']) ?>"><?php echo $data['short'] ?></div></td>
-                    <td nowrap><div class="vbar" style="width:<?php echo $data['width'] ?>px;" title="<?php echo $data['views'] ?> <?php echo $WS['VISITORS'] ?>" >&nbsp;<?php echo $data['percent'] ?>%</div></td>
-                    <td nowrap><div class="tbar"><?php echo $data['views'] ?></div></td>
+                    <td class="nowrap"><div class="vbar" style="width:<?php echo $data['width'] ?>px;" title="<?php echo $data['views'] ?> <?php echo $WS['VISITORS'] ?>" >&nbsp;<?php echo $data['percent'] ?>%</div></td>
+                    <td class="nowrap"><div class="tbar"><?php echo $data['views'] ?></div></td>
                 </tr>
     <?php }
 } ?>
@@ -114,8 +114,8 @@ $WS = $stats->accessLanguage();
 		<tr<?=$display?>>
 			<td class="fbar"><?php echo $key ?></td>
 			<td><div class="expand" title="<?php echo htmlspecialchars($data['name']) ?>"><?php echo $data['short'] ?></div></td>
-			<td nowrap><div class="vbar" style="width:<?php echo $data['width'] ?>px;" title="<?php echo $data['views'] ?> <?php echo $WS['VISITORS'] ?>" >&nbsp;<?php echo $data['percent'] ?>%</div></td>
-			<td nowrap><div class="tbar"><?php echo $data['views'] ?></div></td>
+			<td class="nowrap"><div class="vbar" style="width:<?php echo $data['width'] ?>px;" title="<?php echo $data['views'] ?> <?php echo $WS['VISITORS'] ?>" >&nbsp;<?php echo $data['percent'] ?>%</div></td>
+			<td class="nowrap"><div class="tbar"><?php echo $data['views'] ?></div></td>
 		</tr>
 		<?php }} ?>
 	</table>
@@ -138,8 +138,8 @@ $WS = $stats->accessLanguage();
 		<tr<?=$display?>>
 			<td class="fbar"><?php echo $key ?></td>
 			<td><div class="expand" title="<?php echo htmlspecialchars($data['name']) ?>"><?php echo $data['short'] ?></div></td>
-			<td nowrap><div class="vbar" style="width:<?php echo $data['width'] ?>px;" title="<?php echo $data['views'] ?> <?php echo $WS['VISITORS'] ?>" >&nbsp;<?php echo $data['percent'] ?>%</div></td>
-			<td nowrap><div class="tbar"><?php echo $data['views'] ?></div></td>
+			<td class="nowrap"><div class="vbar" style="width:<?php echo $data['width'] ?>px;" title="<?php echo $data['views'] ?> <?php echo $WS['VISITORS'] ?>" >&nbsp;<?php echo $data['percent'] ?>%</div></td>
+			<td class="nowrap"><div class="tbar"><?php echo $data['views'] ?></div></td>
 		</tr>
 		<?php }} ?>
     </table>
@@ -165,8 +165,8 @@ $WS = $stats->accessLanguage();
 		<tr<?=$display?>>
 			<td class="fbar"><?php echo $key ?></td>
 			<td><div class="expand" title="<?php echo htmlspecialchars($data['name']) ?>"><?php echo $data['short'] ?></div></td>
-			<td nowrap><div class="vbar" style="width:<?php echo $data['width'] ?>px;" title="<?php echo $data['views'] ?> <?php echo $WS['VISITORS'] ?>" >&nbsp;<?php echo $data['percent'] ?>%</div></td>
-			<td nowrap><div class="tbar"><?php echo $data['views'] ?></div></td>
+			<td class="nowrap"><div class="vbar" style="width:<?php echo $data['width'] ?>px;" title="<?php echo $data['views'] ?> <?php echo $WS['VISITORS'] ?>" >&nbsp;<?php echo $data['percent'] ?>%</div></td>
+			<td class="nowrap"><div class="tbar"><?php echo $data['views'] ?></div></td>
 		</tr>
 			<?php }} ?>
 	</table>
@@ -190,8 +190,8 @@ $WS = $stats->accessLanguage();
 		<tr<?=$display?>>
 			<td class="fbar"><?php echo $key ?></td>
 			<td><div class="expand" title="<?php echo htmlspecialchars($data['name']) ?>"><?php echo $data['short'] ?></div></td>
-			<td nowrap><div class="vbar" style="width:<?php echo $data['width'] ?>px;" title="<?php echo $data['views'] ?> <?php echo $WS['VISITORS'] ?>" >&nbsp;<?php echo $data['percent'] ?>%</div></td>
-			<td nowrap><div class="tbar"><?php echo $data['views'] ?></div></td>
+			<td class="nowrap"><div class="vbar" style="width:<?php echo $data['width'] ?>px;" title="<?php echo $data['views'] ?> <?php echo $WS['VISITORS'] ?>" >&nbsp;<?php echo $data['percent'] ?>%</div></td>
+			<td class="nowrap"><div class="tbar"><?php echo $data['views'] ?></div></td>
 		</tr>
 		<?php }} ?>
 	</table>
@@ -214,8 +214,8 @@ $WS = $stats->accessLanguage();
 		<tr<?=$display?>>
 			<td class="fbar"><?php echo $key ?></td>
 			<td><div class="expand" title="<?php echo htmlspecialchars($data['name']) ?>"><?php echo $data['name'] ?></div></td>
-			<td nowrap><div class="vbar" style="width:<?php echo $data['width'] ?>px;" title="<?php echo $data['views'] ?> <?php echo $WS['VISITORS'] ?>" >&nbsp;<?php echo $data['percent'] ?>%</div></td>
-			<td nowrap><div class="tbar"><?php echo $data['views'] ?></div></td>
+			<td class="nowrap"><div class="vbar" style="width:<?php echo $data['width'] ?>px;" title="<?php echo $data['views'] ?> <?php echo $WS['VISITORS'] ?>" >&nbsp;<?php echo $data['percent'] ?>%</div></td>
+			<td class="nowrap"><div class="tbar"><?php echo $data['views'] ?></div></td>
 		</tr>
 		<?php }} ?>
 	</table>
@@ -238,8 +238,8 @@ $WS = $stats->accessLanguage();
 		<tr<?=$display?>>
 			<td class="fbar"><?php echo $key ?></td>
 			<td><div class="expand" title="<?php echo htmlspecialchars($data['name']) ?>"><?php echo $data['name'] ?></div></td>
-			<td nowrap><div class="vbar" style="width:<?php echo $data['width'] ?>px;" title="<?php echo $data['views'] ?> <?php echo $WS['VISITORS'] ?>" >&nbsp;<?php echo $data['percent'] ?>%</div></td>
-			<td nowrap><div class="tbar"><?php echo $data['views'] ?></div></td>
+			<td class="nowrap"><div class="vbar" style="width:<?php echo $data['width'] ?>px;" title="<?php echo $data['views'] ?> <?php echo $WS['VISITORS'] ?>" >&nbsp;<?php echo $data['percent'] ?>%</div></td>
+			<td class="nowrap"><div class="tbar"><?php echo $data['views'] ?></div></td>
 		</tr>
 		<?php }} ?>
 	</table>
@@ -264,8 +264,8 @@ $WS = $stats->accessLanguage();
 		<tr<?=$display?>>
 			<td class="fbar"><?php echo $key ?></td>
 			<td><div class="expand" title="<?php echo htmlspecialchars($data['name']) ?>"><?php echo $data['name'] ?></div></td>
-			<td nowrap><div class="vbar" style="width:<?php echo $data['width'] ?>px;" title="<?php echo $data['views'] ?> <?php echo $WS['VISITORS'] ?>" >&nbsp;<?php echo $data['percent'] ?>%</div></td>
-			<td nowrap><div class="tbar"><?php echo $data['views'] ?></div></td>
+			<td class="nowrap"><div class="vbar" style="width:<?php echo $data['width'] ?>px;" title="<?php echo $data['views'] ?> <?php echo $WS['VISITORS'] ?>" >&nbsp;<?php echo $data['percent'] ?>%</div></td>
+			<td class="nowrap"><div class="tbar"><?php echo $data['views'] ?></div></td>
 		</tr>
 		<?php }} ?>
 	</table>
@@ -288,8 +288,8 @@ $WS = $stats->accessLanguage();
 		<tr<?=$display?>>
 			<td class="fbar"><?php echo $key ?></td>
 			<td><div class="expand" title="<?php echo htmlspecialchars($data['name']) ?>"><?php echo $data['name'] ?></div></td>
-			<td nowrap><div class="vbar" style="width:<?php echo $data['width'] ?>px;" title="<?php echo $data['views'] ?> <?php echo $WS['VISITORS'] ?>" >&nbsp;<?php echo $data['percent'] ?>%</div></td>
-			<td nowrap><div class="tbar"><?php echo $data['views'] ?></div></td>
+			<td class="nowrap"><div class="vbar" style="width:<?php echo $data['width'] ?>px;" title="<?php echo $data['views'] ?> <?php echo $WS['VISITORS'] ?>" >&nbsp;<?php echo $data['percent'] ?>%</div></td>
+			<td class="nowrap"><div class="tbar"><?php echo $data['views'] ?></div></td>
 		</tr>
 		<?php }} ?>
 	</table>
