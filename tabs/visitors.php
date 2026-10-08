@@ -137,127 +137,93 @@ $WS = $stats->accessLanguage();
 <div style="clear:both"></div>
 <div class="third h265" id="lang">
     <h3><span><?php echo $WS['TOP'].' '.$top.' - ' ?></span><?php echo $WS['LANGTOP'] ?></h3>
-	<table class="default">
-		<tr>
-			<th class="fbar"><strong><?php echo $WS['NUMBER'] ?></strong></th>
-			<th ><strong><?php echo $WS['LANGUAGES'] ?></strong></th>
-			<th class="w70"><strong><?php echo $WS['PERCENT'] ?></strong></th>
-			<th class="tbar"><strong>##</strong></th>
-		</tr>
-		<?php if(isset($r['language']) && is_array($r['language'])) {
-			$counter = 1;
-			foreach($r['language'] as $key => $data)
-            { ?>
-		<tr<?php echo $stats->handleDisplay($counter, $top); ?>>
-			<td class="fbar"><?php echo $key ?></td>
-			<td><div class="expand" title="<?php echo htmlspecialchars($data['name']) ?>"><?php echo $data['short'] ?></div></td>
-			<td class="nowrap"><div class="vbar" style="width:<?php echo $data['width'] ?>px;" title="<?php echo $data['views'] ?> <?php echo $WS['VISITORS'] ?>" >&nbsp;<?php echo $data['percent'] ?>%</div></td>
-			<td class="nowrap"><div class="tbar"><?php echo $data['views'] ?></div></td>
-		</tr>
-		<?php }
-        } ?>
-	</table>
+<?php 
+    echo $stats->handleTwigTemplate(
+        [
+            'top'       => $top,
+            'fbar'      => $WS['NUMBER'],
+            'title'     => $WS['LANGUAGES'],
+            'percent'   => $WS['PERCENT'],
+            'data'      => $r['language'],
+            'ws_REQUESTS' => $WS['VISITORS'], // [1]
+            'h265'        => true
+        ]
+    );
+?>
 </div>
 
 <div class="third h265" id="browser">
     <h3><span><?php echo $WS['TOP'].' '.$top.' - ' ?></span><?php echo $WS['BROWSERTOP'] ?></h3>
-	<table class="default">
-		<tr>
-			<th class="fbar"><strong><?php echo $WS['NUMBER'] ?></strong></th>
-			<th ><strong><?php echo $WS['BROWSER'] ?></strong></th>
-			<th class="w70"><strong><?php echo $WS['PERCENT'] ?></strong></th>
-			<th class="tbar"><strong>##</strong></th>
-		</tr>
-		<?php if(isset($r['browser']) && is_array($r['browser'])) {
-			$counter = 1;
-			foreach($r['browser'] as $key => $data)
-            { ?>
-		<tr<?php echo $stats->handleDisplay($counter, $top);?>>
-			<td class="fbar"><?php echo $key ?></td>
-			<td><div class="expand" title="<?php echo htmlspecialchars($data['name']) ?>"><?php echo $data['name'] ?></div></td>
-			<td class="nowrap"><div class="vbar" style="width:<?php echo $data['width'] ?>px;" title="<?php echo $data['views'] ?> <?php echo $WS['VISITORS'] ?>" >&nbsp;<?php echo $data['percent'] ?>%</div></td>
-			<td class="nowrap"><div class="tbar"><?php echo $data['views'] ?></div></td>
-		</tr>
-		<?php }
-        } ?>
-	</table>
+<?php 
+    echo $stats->handleTwigTemplate(
+        [
+            'top'       => $top,
+            'fbar'      => $WS['NUMBER'],
+            'title'     => $WS['BROWSER'],
+            'percent'   => $WS['PERCENT'],
+            'data'      => $r['browser'],
+            'ws_REQUESTS' => $WS['VISITORS'], // [1]
+            'h265'        => true
+        ]
+    );
+?>
 </div>
 
 <div class="third h265" id="os">
     <h3><span><?php echo $WS['TOP'].' '.$top.' - ' ?></span><?php echo $WS['OSTOP'] ?></h3>
-	<table class="default">
-		<tr>
-			<th class="fbar"><strong><?php echo $WS['NUMBER'] ?></strong></th>
-			<th ><strong><?php echo $WS['OS'] ?></strong></th>
-			<th class="w70"><strong><?php echo $WS['PERCENT'] ?></strong></th>
-			<th class="tbar"><strong>##</strong></th>
-		</tr>
-		<?php if(isset($r['os']) && is_array($r['os'])) {
-			$counter = 1;
-			foreach($r['os'] as $key => $data)
-            { ?>
-		<tr<?php echo $stats->handleDisplay($counter, $top);?>>
-			<td class="fbar"><?php echo $key ?></td>
-			<td><div class="expand" title="<?php echo htmlspecialchars($data['name']) ?>"><?php echo $data['name'] ?></div></td>
-			<td class="nowrap"><div class="vbar" style="width:<?php echo $data['width'] ?>px;" title="<?php echo $data['views'] ?> <?php echo $WS['VISITORS'] ?>" >&nbsp;<?php echo $data['percent'] ?>%</div></td>
-			<td class="nowrap"><div class="tbar"><?php echo $data['views'] ?></div></td>
-		</tr>
-		<?php }
-        } ?>
-	</table>
+<?php 
+    echo $stats->handleTwigTemplate(
+        [
+            'top'       => $top,
+            'fbar'      => $WS['NUMBER'],
+            'title'     => $WS['OS'],
+            'percent'   => $WS['PERCENT'],
+            'data'      => $r['os'],
+            'ws_REQUESTS' => $WS['VISITORS'], // [1]
+            'h265'        => true
+        ]
+    );
+?>
 </div>
 
 <div style="clear:both"></div>
 
 <div class="middle h265" id="countries">
     <h3><span><?php echo $WS['TOP'].' '.$top.' - ' ?></span><?php echo $WS['COUNTRYTOP'] ?></h3>
-	<table class="default">
-		<tr>
-			<th class="fbar"><strong><?php echo $WS['NUMBER'] ?></strong></th>
-			<th ><strong><?php echo $WS['COUNTRIES'] ?></strong></th>
-			<th class="w70"><strong><?php echo $WS['PERCENT'] ?></strong></th>
-			<th class="tbar"><strong>##</strong></th>
-		</tr>
-		<?php if(isset($r['country']) && is_array($r['country'])) {
-			$counter = 1;
-			foreach($r['country'] as $key => $data)
-            { ?>
-		<tr<?php echo $stats->handleDisplay($counter, $top);?>>
-			<td class="fbar"><?php echo $key ?></td>
-			<td><div class="expand" title="<?php echo htmlspecialchars($data['name']) ?>"><?php echo $data['name'] ?></div></td>
-			<td class="nowrap"><div class="vbar" style="width:<?php echo $data['width'] ?>px;" title="<?php echo $data['views'] ?> <?php echo $WS['VISITORS'] ?>" >&nbsp;<?php echo $data['percent'] ?>%</div></td>
-			<td class="nowrap"><div class="tbar"><?php echo $data['views'] ?></div></td>
-		</tr>
-		<?php }
-        } ?>
-	</table>
+<?php 
+    echo $stats->handleTwigTemplate(
+        [
+            'top'       => $top,
+            'fbar'      => $WS['NUMBER'],
+            'title'     => $WS['COUNTRIES'],
+            'percent'   => $WS['PERCENT'],
+            'data'      => $r['country'],
+            'ws_REQUESTS' => $WS['VISITORS'], // [1]
+            'h265'        => true
+        ]
+    );
+?>
 </div>
 
 <div class="middle h265" id="location">
     <h3><span><?php echo $WS['TOP'].' '.$top.' - ' ?></span><?php echo $WS['LOCTOP'] ?></h3>
-	<table class="default">
-		<tr>
-			<th class="fbar"><strong><?php echo $WS['NUMBER'] ?></strong></th>
-			<th ><strong><?php echo $WS['LOCATIONS'] ?></strong></th>
-			<th class="w70"><strong><?php echo $WS['PERCENT'] ?></strong></th>
-			<th class="tbar"><strong>##</strong></th>
-		</tr>
-		<?php if(isset($r['location']) && is_array($r['location'])) {
-			$counter = 1;
-			foreach($r['location'] as $key => $data)
-            { ?>
-		<tr<?php echo $stats->handleDisplay($counter, $top);?>>
-			<td class="fbar"><?php echo $key ?></td>
-			<td><div class="expand" title="<?php echo htmlspecialchars($data['name']) ?>"><?php echo $data['name'] ?></div></td>
-			<td class="nowrap"><div class="vbar" style="width:<?php echo $data['width'] ?>px;" title="<?php echo $data['views'] ?> <?php echo $WS['VISITORS'] ?>" >&nbsp;<?php echo $data['percent'] ?>%</div></td>
-			<td class="nowrap"><div class="tbar"><?php echo $data['views'] ?></div></td>
-		</tr>
-		<?php }
-        } ?>
-	</table>
+<?php 
+    echo $stats->handleTwigTemplate(
+        [
+            'top'       => $top,
+            'fbar'      => $WS['NUMBER'],
+            'title'     => $WS['LOCATIONS'],
+            'percent'   => $WS['PERCENT'],
+            'data'      => $r['location'],
+            'ws_REQUESTS' => $WS['VISITORS'], // [1]
+            'h265'        => true
+        ]
+    );
+?>
 </div>
 
 <div style="clear:both"></div>
+
 <div class="middle h265">
     <h3><?php echo $WS['PAGES_CLOUD'] ?></h3>
     <div class="cloud-container">
