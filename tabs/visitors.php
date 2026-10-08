@@ -50,95 +50,66 @@ $oTWIG->registerModule("wbstats", "wbstats");
 
 <div class="full h265" id="pages">
     <h3><span><?php echo $WS['TOP'] . ' ' . $top . ' - ' ?></span><?php echo $WS['PAGETOP'] ?></h3>
-    <table class="default">
 <?php
 
     echo $oTWIG->render(
         "@wbstats/table_header.twig",
         [
+            'top'       => $top,
             'fbar'      => $WS['NUMBER'],
-            'id'        => 10896501,
             'title'     => $WS['PAGES'],
-            'percent'   => $WS['PERCENT']
+            'percent'   => $WS['PERCENT'],
+            'data'      => $r['pages'],
+            'ws_REQUESTS' => $WS['REQUESTS']
         ]
     );
-
-        if (isset($r['pages']) && is_array($r['pages']))
-        {
-            $counter = 1;
-            foreach ($r['pages'] as $key => $data)
-            { ?>
-                <tr<?php echo $stats->handleDisplay($counter, $top) ?>>
-                    <td class="fbar"><?php echo $key ?></td>
-                    <td><div class="expand" title="<?php echo htmlspecialchars($data['name']) ?>"><?php echo $data['short'] ?></div></td>
-                    <td class="nowrap"><div class="vbar" style="width:<?php echo $data['width'] ?>px;" title="<?php echo $data['views'] ?> <?php echo $WS['REQUESTS'] ?>" >&nbsp;<?php echo $data['percent'] ?>%</div></td>
-                    <td class="nowrap"><div class="tbar"><?php echo $data['views'] ?></div></td>
-                </tr>
-    <?php }
-} ?>
-    </table>
+?>
 </div>
+
 
 
 <div class="middle h265" id="entry">
     <h3><span><?php echo $WS['TOP'] . ' ' . $top . ' - ' ?></span><?php echo $WS['ENTRYTOP'] ?></h3>
-    <table class="default">
 <?php
 
     echo $oTWIG->render(
         "@wbstats/table_header.twig",
         [
+            'top'       => $top,
             'fbar'      => $WS['NUMBER'],
-            'id'        => 10896502,
             'title'     => $WS['PAGES'],
-            'percent'   => $WS['PERCENT']
+            'percent'   => $WS['PERCENT'],
+            'data'      => $r['entry'],
+            'ws_REQUESTS' => $WS['VISITORS'], // [1]
+            'h265'        => true
         ]
     );
-        if (isset($r['entry']) && is_array($r['entry']))
-        {
-            $counter = 1;
-            foreach ($r['entry'] as $key => $data)
-            { ?>
-                <tr<?php echo $stats->handleDisplay($counter, $top); ?>>
-                    <td class="fbar"><?php echo $key ?></td>
-                    <td><div class="expand" title="<?php echo htmlspecialchars($data['name']) ?>"><?php echo $data['short'] ?></div></td>
-                    <td class="nowrap"><div class="vbar" style="width:<?php echo $data['width'] ?>px;" title="<?php echo $data['views'] ?> <?php echo $WS['VISITORS'] ?>" >&nbsp;<?php echo $data['percent'] ?>%</div></td>
-                    <td class="nowrap"><div class="tbar"><?php echo $data['views'] ?></div></td>
-                </tr>
-    <?php }
-} ?>
-    </table>
+?>
 </div>
+
 <div class="middle h265" id="exit">
     <h3><span><?php echo $WS['TOP'].' '.$top.' - ' ?></span><?php echo $WS['EXITTOP'] ?></h3>
-    <table class="default">
 <?php
 
     echo $oTWIG->render(
         "@wbstats/table_header.twig",
         [
+            'top'       => $top,
             'fbar'      => $WS['NUMBER'],
-            'id'        => 10896503,
             'title'     => $WS['PAGES'],
-            'percent'   => $WS['PERCENT']
+            'percent'   => $WS['PERCENT'],
+            'data'      => $r['exit'],
+            'ws_REQUESTS' => $WS['VISITORS'], // [1]
+            'h265'        => true
         ]
     );
-        if (isset($r['exit']) && is_array($r['exit']))
-        {
-            $counter = 1;
-            foreach ($r['exit'] as $key => $data)
-            { ?>
-                <tr<?php echo $stats->handleDisplay($counter, $top); ?>>
-                    <td class="fbar"><?php echo $key ?></td>
-                    <td><div class="expand" title="<?php echo htmlspecialchars($data['name']) ?>"><?php echo $data['short'] ?></div></td>
-                    <td class="nowrap"><div class="vbar" style="width:<?php echo $data['width'] ?>px;" title="<?php echo $data['views'] ?> <?php echo $WS['VISITORS'] ?>" >&nbsp;<?php echo $data['percent'] ?>%</div></td>
-                    <td class="nowrap"><div class="tbar"><?php echo $data['views'] ?></div></td>
-                </tr>
-    <?php }
-} ?>
-    </table>
+?>
 </div>
+</div>
+<?php return true; ?>
+
 <div style="clear:both"></div>
+
 <div class="middle h265" id="referer">
 	<h3><span><?php echo $WS['TOP'].' '.$top.' - '?></span><?php echo $WS['REFTOP'] ?></h3>
 	<table class="default">
@@ -148,7 +119,6 @@ $oTWIG->registerModule("wbstats", "wbstats");
         "@wbstats/table_header.twig",
         [
             'fbar'      => $WS['NUMBER'],
-            'id'        => 10896504,
             'title'     => $WS['REFERER'],
             'percent'   => $WS['PERCENT']
         ]
@@ -179,7 +149,6 @@ $oTWIG->registerModule("wbstats", "wbstats");
         "@wbstats/table_header.twig",
         [
             'fbar'      => $WS['NUMBER'],
-            'id'        => 10896505,
             'title'     => $WS['KEYWORDS'],
             'percent'   => $WS['PERCENT']
         ]

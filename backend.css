@@ -200,11 +200,14 @@
 .vbar {
     background-color:#CBCFD8;
     cursor: pointer;
-    margin: 3px 0
+    margin: 2px;
+    text-align: right;
+    padding-right: 10px;
 }
 .tbar {
     margin: 3px 0;
-    text-align: center;
+    text-align: right;
+    padding-right: 12px;
     color: #333;
     font-style: italic;
     font-size: 80%;
@@ -236,7 +239,17 @@ table.default {
 }
 .expand,.expandunder {
     cursor: pointer;
+    margin-left: 3px;
 }
+.expand {
+    min-width: 800px;
+}
+.expand_small {
+    overflow: hidden;
+    white-space: nowrap;
+    margin-left: 3px;
+}
+
 .timeline {
     border-left:1px #DDDDDD solid;
     font-size:0.8em !important;

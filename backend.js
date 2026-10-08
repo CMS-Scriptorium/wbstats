@@ -1,5 +1,5 @@
 $(function(){
-	$('.bar, .vbar, .expand').poshytip({
+	$('.bar, .vbar, .expand, .expand_small').poshytip({
 		className: 'tip-twitter',
 		showTimeout: 1,
 		alignTo: 'cursor',

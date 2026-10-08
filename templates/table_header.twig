@@ -1,8 +1,18 @@
 {% autoescape false %}
-<tr>
-    <th class="fbar"><strong>{{ fbar }}</strong></th>
-    <th id="{{ id }}"><strong>{{ title }}</strong></th>
-    <th class="w70"><strong>{{ percent }}</strong></th>
-    <th class="tbar"><strong>|##</strong></th>
-</tr>
+<table class="default">
+    <tr>
+        <th class="fbar"><strong>{{ fbar }}</strong></th>
+        <th><strong>{{ title }}</strong></th>
+        <th class="w70"><strong>{{ percent }}</strong></th>
+        <th class="tbar"><strong>|##</strong></th>
+    </tr>
+    {% for key, value in data %}
+    <tr {% if (loop.index0 >= top) %}class="hidden"{% endif %}>
+        <td class="fbar">{{ key }}</td>
+        <td><div class="expand{% if(h265) %}_small{% endif %}" title="{{ value['name'] }}">{{ value['short'] }}</div></td>
+        <td class="nowrap"><div class="vbar" style="width{{ value['width'] }}px;" title="{{ value['views']}} {{ ws_REQUESTS }}" >{{ value.percent }}%</div></td>
+        <td class="nowrap"><div class="tbar">{{ value['views'] }}</div></td>
+    </tr>
+    {% endfor %}
+</table>
 {% endautoescape %}
