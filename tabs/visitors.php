@@ -27,13 +27,6 @@ $pages_cloud = $stats->accessPagesCloud();
 $second_cloud = $stats->accessSecondCloud();
 $WS = $stats->accessLanguage();
 
-/**
- * experimental at this time
- */
-
-$oTWIG = \Subway\core\template\Twigbox::getInstance();
-$oTWIG->registerModule("wbstats", "wbstats");
-
 ?>
 <div class="sysmenu small">
   <a href="#" class="pop" data-sec="pages"><?php echo $WS['PAGETOP']  ?></a>
@@ -52,8 +45,7 @@ $oTWIG->registerModule("wbstats", "wbstats");
     <h3><span><?php echo $WS['TOP'] . ' ' . $top . ' - ' ?></span><?php echo $WS['PAGETOP'] ?></h3>
 <?php
 
-    echo $oTWIG->render(
-        "@wbstats/table_header.twig",
+    echo $stats->handleTwigTemplate(
         [
             'top'       => $top,
             'fbar'      => $WS['NUMBER'],
@@ -72,8 +64,7 @@ $oTWIG->registerModule("wbstats", "wbstats");
     <h3><span><?php echo $WS['TOP'] . ' ' . $top . ' - ' ?></span><?php echo $WS['ENTRYTOP'] ?></h3>
 <?php
 
-    echo $oTWIG->render(
-        "@wbstats/table_header.twig",
+    echo $stats->handleTwigTemplate(
         [
             'top'       => $top,
             'fbar'      => $WS['NUMBER'],
@@ -91,8 +82,7 @@ $oTWIG->registerModule("wbstats", "wbstats");
     <h3><span><?php echo $WS['TOP'].' '.$top.' - ' ?></span><?php echo $WS['EXITTOP'] ?></h3>
 <?php
 
-    echo $oTWIG->render(
-        "@wbstats/table_header.twig",
+    echo $stats->handleTwigTemplate(
         [
             'top'       => $top,
             'fbar'      => $WS['NUMBER'],
@@ -115,8 +105,7 @@ $oTWIG->registerModule("wbstats", "wbstats");
 	<table class="default">
 <?php
 
-    echo $oTWIG->render(
-        "@wbstats/table_header.twig",
+    echo $stats->handleTwigTemplate(
         [
             'fbar'      => $WS['NUMBER'],
             'title'     => $WS['REFERER'],
@@ -145,8 +134,7 @@ $oTWIG->registerModule("wbstats", "wbstats");
 	<table class="default">
 <?php
 
-    echo $oTWIG->render(
-        "@wbstats/table_header.twig",
+    echo $stats->handleTwigTemplate(
         [
             'fbar'      => $WS['NUMBER'],
             'title'     => $WS['KEYWORDS'],

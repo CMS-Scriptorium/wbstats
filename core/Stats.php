@@ -18,8 +18,19 @@ declare(strict_types=1);
 
 namespace wbstats\core;
 
+use DateTime;
+use Subway\core\template\TwigBox;
+
+use const DATE_FORMAT;
+use const LANGUAGE;
+use const TIME_FORMAT;
+use const TIMEZONE;
+use const WB_PATH;
+
 class Stats extends Config
 {
+    const DEFAULT_TWIG_TABLE = "@wbstats/table_header.twig";
+
     private $ip;
     private $referer;
     private $host;
@@ -40,6 +51,8 @@ class Stats extends Config
     protected array $pagesCloud = [];
     protected array $secondCloud = [];
 
+    protected object|null $oTWIG = null;
+
     public function __construct($do_clean = true)
     {
         $this->getLanguage();
@@ -51,7 +64,7 @@ class Stats extends Config
         $this->day = date("Ymd", $time);
         $this->month = date("Ym", $time);
 
-        $oNOW = new \DateTime();
+        $oNOW = new DateTime();
         $oNOW->modify("-90 day");
         $this->old_data = $oNOW->getTimestamp(); // 90 days
         $this->old_date = date("Ymd", $this->old_data);
@@ -62,6 +75,10 @@ class Stats extends Config
         {
             $this->cleanup();
         }
+
+        $this->oTWIG = TwigBox::getInstance();
+        $this->oTWIG->registerModule("wbstats", "wbstats");
+
     }
 
     public function cleanup()
@@ -773,6 +790,13 @@ class Stats extends Config
     public function handleDisplay(int &$counter, int &$top): string
     {
         return $counter++ > $top ? ' class="hidden"' : '';
+    }
+
+    public function handleTwigTemplate(array $data, string $template = ""): string
+    {
+        return $this->oTWIG->render(
+            (empty($template) ? self::DEFAULT_TWIG_TABLE : $template),
+            $data);
     }
 
     protected function getLanguage(): void
