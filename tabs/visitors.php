@@ -95,67 +95,43 @@ $WS = $stats->accessLanguage();
     );
 ?>
 </div>
-</div>
-<?php return true; ?>
+
 
 <div style="clear:both"></div>
 
 <div class="middle h265" id="referer">
-	<h3><span><?php echo $WS['TOP'].' '.$top.' - '?></span><?php echo $WS['REFTOP'] ?></h3>
-	<table class="default">
+    <h3><span><?php echo $WS['TOP'].' '.$top.' - '?></span><?php echo $WS['REFTOP'] ?></h3>
 <?php
 
     echo $stats->handleTwigTemplate(
         [
+            'top'       => $top,
             'fbar'      => $WS['NUMBER'],
             'title'     => $WS['REFERER'],
-            'percent'   => $WS['PERCENT']
+            'percent'   => $WS['PERCENT'],
+            'data'      => $r['referer'],
+            'ws_REQUESTS' => $WS['VISITORS'], // [1]
+            'h265'        => true
         ]
     );
-        if (isset($r['referer']) && is_array($r['referer']))
-        {
-            $counter = 1;
-            foreach ($r['referer'] as $key => $data)
-            { ?>
-                <tr<?php echo $stats->handleDisplay($counter, $top); ?>>
-                    <td class="fbar"><?php echo $key ?></td>
-                    <td><div class="expand" title="<?php echo htmlspecialchars($data['name']) ?>"><?php echo $data['short'] ?></div></td>
-                    <td class="nowrap"><div class="vbar" style="width:<?php echo $data['width'] ?>px;" title="<?php echo $data['views'] ?> <?php echo $WS['VISITORS'] ?>" >&nbsp;<?php echo $data['percent'] ?>%</div></td>
-                    <td class="nowrap"><div class="tbar"><?php echo $data['views'] ?></div></td>
-                </tr>
-    <?php }
-} ?>
-    </table>
+?>
 </div>
-
 
 <div class="middle h265" id="keys">
     <h3><span><?php echo $WS['TOP'].' '.$top.' - ' ?></span><?php echo $WS['KEYSTOP'] ?></h3>
-	<table class="default">
 <?php
-
     echo $stats->handleTwigTemplate(
         [
+            'top'       => $top,
             'fbar'      => $WS['NUMBER'],
             'title'     => $WS['KEYWORDS'],
-            'percent'   => $WS['PERCENT']
+            'percent'   => $WS['PERCENT'],
+            'data'      => $r['keyword'],
+            'ws_REQUESTS' => $WS['VISITORS'], // [1]
+            'h265'        => true
         ]
     );
-    
-    if(isset($r['keyword']) && is_array($r['keyword']))
-    {
-            $counter = 1;
-            foreach($r['keyword'] as $key => $data)
-            { ?>
-        <tr<?php echo $stats->handleDisplay($counter, $top); ?>>
-            <td class="fbar"><?php echo $key ?></td>
-            <td><div class="expand" title="<?php echo htmlspecialchars($data['name']) ?>"><?php echo $data['short'] ?></div></td>
-            <td class="nowrap"><div class="vbar" style="width:<?php echo $data['width'] ?>px;" title="<?php echo $data['views'] ?> <?php echo $WS['VISITORS'] ?>" >&nbsp;<?php echo $data['percent'] ?>%</div></td>
-            <td class="nowrap"><div class="tbar"><?php echo $data['views'] ?></div></td>
-        </tr>
-            <?php }
-        } ?>
-    </table>
+?>
 </div>
 
 <div style="clear:both"></div>
