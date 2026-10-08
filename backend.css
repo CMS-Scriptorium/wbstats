@@ -14,8 +14,7 @@
 .btn,
 .sysmenu a {
     border-color: #FFFFFF00;
-    background-color: #303641;
-    background-color: #335566;
+    background-color: #46505f;
     padding: 10px !important;
     color: #fff;
     text-decoration: none;
@@ -72,7 +71,7 @@
 #container h3,
 #container h4 {
     font-family: arial, sans-serif;
-    background-color:#335566;
+    background-color:#46505f;
     color:#fff;
     padding:5px 10px;
     margin:0px;
