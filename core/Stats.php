@@ -233,47 +233,56 @@ class Stats extends Config
 
     public function getVisitors(int $top = 10)
     {
-		global $database;
-		$result = [];
+        global $database;
+        $result = [];
 
-		$totals = $database->get_one("SELECT sum(view) FROM `".self::TABLE_REF."`");
-		//top referers
-		$nr = 1;
-		$query = $database->query("SELECT referer, SUM(view) AS views from `".self::TABLE_REF."` WHERE `spam`='0' GROUP BY referer ORDER BY views DESC LIMIT 0, $top");
-		while($res = $query->fetchRow()) {
-			$referer = htmlspecialchars($res['referer']);
-			$short = (strlen($referer) > 55) ? substr($referer,0,50)."...": $referer;
-			$views = $res['views'];
-			$percent = (100 / $totals) * $views;
-			$percent = ($percent < 0.1 ) ? $this->safeRound($percent,2) : $this->safeRound($percent,1);
-			$bar_width = $this->safeRound((100/$totals)*$views);
-			$result['referer'][$nr]['short'] = $short;
-			$result['referer'][$nr]['name'] = $referer;
-			$result['referer'][$nr]['views'] = $views;
-			$result['referer'][$nr]['percent'] = $percent;
-			$result['referer'][$nr]['width'] = $bar_width;
-			$nr++;
-		}
+        // [1] top referers
+        $totals = Database::fetchValue("SELECT sum(view) FROM `" . self::TABLE_REF . "`", []);
+        $nr = 1;
+        $queryRes = Database::query(
+            "SELECT referer, SUM(view) AS views from `" . self::TABLE_REF . "` WHERE `spam`='0' GROUP BY referer ORDER BY views DESC LIMIT 0, ? ",
+            [$top]);
 
-		$totals = $database->get_one("SELECT sum(view) FROM ".self::TABLE_PAGES);
-		$nr = 1;
-		$query = $database->query("SELECT page, SUM(view) AS views from ".self::TABLE_PAGES." GROUP BY page ORDER BY views DESC LIMIT 0, $top");
-		while($res = $query->fetchRow()) {
-			$page = htmlspecialchars($res['page']);
-			$short = (strlen($page) > 55) ? substr($page,0,50)."...": $page;
-			$views = $res['views'];
-			$percent = (100 / $totals) * $views;
-			$percent = ($percent < 0.1 ) ? $this->safeRound($percent,2) : $this->safeRound($percent,1);
-			$bar_width = $this->safeRound((100/$totals)*$views);
-			$result['pages'][$nr]['short'] = $short;
-			$result['pages'][$nr]['name'] = $page;
-			$result['pages'][$nr]['views'] = $views;
-			$result['pages'][$nr]['percent'] = $percent;
-			$result['pages'][$nr]['width'] = $bar_width;
-			$nr++;
-		}
+        foreach ($queryRes as $res)
+        {
+            $referer    = htmlspecialchars($res['referer']);
+            $short      = (strlen($referer) > 55) ? substr($referer, 0, 50) . "..." : $referer;
+            $views      = $res['views'];
+            $percent    = (100 / $totals) * $views;
+            $percent    = ($percent < 0.1) ? $this->safeRound($percent, 2) : $this->safeRound($percent, 1);
+            $bar_width  = $this->safeRound((100 / $totals) * $views);
+            $result['referer'][$nr]['short']    = $short;
+            $result['referer'][$nr]['name']     = $referer;
+            $result['referer'][$nr]['views']    = $views;
+            $result['referer'][$nr]['percent']  = $percent;
+            $result['referer'][$nr]['width']    = $bar_width;
+            $nr++;
+        }
 
-		$totals = $database->get_one("SELECT sum(view) FROM ".self::TABLE_KEY);
+        // [2]
+        $totals = Database::fetchValue("SELECT sum(view) FROM `" . self::TABLE_PAGES . "`", []);
+        $nr = 1;
+        $queryRes2 = Database::query(
+            "SELECT page, SUM(view) AS views from ".self::TABLE_PAGES." GROUP BY page ORDER BY views DESC LIMIT 0, ? ",
+            [$top]);
+
+        foreach ($queryRes as $res)
+        {
+            $page = htmlspecialchars($res['page']);
+            $short = (strlen($page) > 55) ? substr($page, 0, 50) . "..." : $page;
+            $views = $res['views'];
+            $percent = (100 / $totals) * $views;
+            $percent = ($percent < 0.1) ? $this->safeRound($percent, 2) : $this->safeRound($percent, 1);
+            $bar_width = $this->safeRound((100 / $totals) * $views);
+            $result['pages'][$nr]['short'] = $short;
+            $result['pages'][$nr]['name'] = $page;
+            $result['pages'][$nr]['views'] = $views;
+            $result['pages'][$nr]['percent'] = $percent;
+            $result['pages'][$nr]['width'] = $bar_width;
+            $nr++;
+        }
+
+        $totals = $database->get_one("SELECT sum(view) FROM ".self::TABLE_KEY);
 		$nr = 1;
 		$query = $database->query("SELECT keyword, SUM(view) AS views from ".self::TABLE_KEY." GROUP BY keyword ORDER BY views DESC LIMIT 0, $top");
 		while($res = $query->fetchRow()) {
@@ -680,17 +689,15 @@ class Stats extends Config
 		}
 		return $result;
 	}
-	
-	public function getIgnores()
+
+    public function getIgnores()
     {
-        global $database;
         $result = [];
-        if ($query = $database->query("SELECT `ip` from " . self::TABLE_IPS . " WHERE `session` = 'ignore'"))
+        $queryResult = Database::query("SELECT `ip` from `" . self::TABLE_IPS . "` WHERE `session` = 'ignore'", []);
+
+        foreach ($queryResult as $res)
         {
-            while ($res = $query->fetchRow())
-            {
-                $result[] = $res['ip'];
-            }
+            $result[] = $res['ip'];
         }
         return $result;
     }
@@ -737,8 +744,7 @@ class Stats extends Config
     {
         $count1 = $num_amount / $num_total;
         $count2 = $count1 * 100;
-        $count = number_format($count2, 0);
-        return $count;
+        return number_format($count2, 0);
     }
 
     public function shuffle_assoc($list)
