@@ -102,8 +102,6 @@ class Stats extends Config
 
     public function getStats()
     {
-        global $database;
-
         $result = [];
         $res = Database::query("SELECT sum(user) visitors, sum(view) visits FROM `" . self::TABLE_DAY . "`", []);
 
@@ -126,88 +124,114 @@ class Stats extends Config
             $result['online_title'] = htmlspecialchars($result['online_title']);
         }
         // [2] --
-        $result['total']   = Database::fetchValue("SELECT count(id) from `".self::TABLE_IPS."` WHERE `session`!='ignore'", []);
+        $result['total']   = Database::fetchValue("SELECT count(id) from `" . self::TABLE_IPS . "` WHERE `session`!='ignore'", []);
         if (!$result['total'])
         {
             $result['total'] = 1;
         }
         // [3] --
-        $result['onepage'] = $database->get_one("SELECT count(id) from `".self::TABLE_IPS."` WHERE `session`!='ignore' AND `online` = `time` ");
+        $result['onepage'] = Database::fetchValue("SELECT count(id) from `" . self::TABLE_IPS . "` WHERE `session`!='ignore' AND `online` = `time` ", []);
+
         $result['bounced']  = $this->safeRound(($result['onepage']/$result['total'])*100,1);		
 
         $from_day_7 = date("Ymd", $this->time - (7 * 24 * 60 * 60)); // 7 days
         $from_day_30 = date("Ymd", $this->time - (30 * 24 * 60 * 60)); // 30 days
         $to_day = date("Ymd", $this->time - (24 * 60 * 60));
-        $query = $database->query("SELECT AVG(user) avgu, (sum(view)/sum(user)) pages FROM `".self::TABLE_DAY."` WHERE `day`>='$from_day_7' AND `day`<='$to_day'");
-		if($res = $query->fetchRow()) {
-			$result['avg_7'] = $this->safeRound($res['avgu'],2);
-			$result['page_user'] = $this->safeRound($res['pages'],1);
-			$result['avg_30'] = $this->safeRound($database->get_one ("SELECT AVG(user) from `".self::TABLE_DAY."` WHERE `day`>='$from_day_30' AND `day`<='$to_day'"),2);
-		} else {
-			$result['avg_7'] = 0;
-			$result['page_user'] = 0;
-			$result['avg_30'] = 0;
-		}
+        $queryRes = Database::query(
+            "SELECT AVG(user) avgu, (sum(view)/sum(user)) pages FROM `" . self::TABLE_DAY . "` WHERE `day`>= ? AND `day` <= ? ",
+            [$from_day_7, $to_day]);
 
-		$today = date("Ymd", time()); // mktime(0, 0, 0, date("n"), date("j"), date("Y")));
-		$query = $database->query("SELECT user, view, bots, suspected, refspam FROM `".self::TABLE_DAY."` where `day`='$today'");
-		if($res = $query->fetchRow()) {
-			$result['today']= (int)$res['user'];
-			$result['ptoday']= (int)$res['view'];
-			$result['btoday']= (int)$res['bots']+(int)$res['suspected'];
-			$result['rtoday']= (int)$res['refspam'];
-		} else {
-			$result['today']= 0;
-			$result['ptoday']= 0;
-			$result['btoday']= 0;
-			$result['rtoday']= 0;
-		}
-		
+        if ($queryRes[0])
+        {
+            $result['avg_7']        = $this->safeRound($queryRes[0]['avgu'],2);
+            $result['page_user']    = $this->safeRound($queryRes[0]['pages'],1);
+            $result['avg_30']       = $this->safeRound(
+                Database::fetchValue(
+                    "SELECT AVG(user) from `" . self::TABLE_DAY . "` WHERE `day` >= ?  AND `day` <= ? ",
+                    [$from_day_30, $to_day]),
+                2);
+        } else {
+            $result['avg_7']        = 0;
+            $result['page_user']    = 0;
+            $result['avg_30']       = 0;
+        }
 
-		$yesterday = date("Ymd", time() - (24*60*60));
-		$query = $database->query("SELECT user, view, bots, suspected, refspam FROM `".self::TABLE_DAY."` where `day`='$yesterday'");
-		if($res = $query->fetchRow()) {
-			$result['yesterday']= (int)$res['user'];
-			$result['pyesterday']= (int)$res['view'];
-			$result['byesterday']= (int)$res['bots'] + (int)@$res['suspected'];
-			$result['ryesterday']= (int)$res['refspam'];
-		} else {
-			$result['yesterday'] = 0;
-			$result['pyesterday'] = 0;
-			$result['byesterday'] = 0;
-			$result['ryesterday'] = 0;
-		}
+        $today = date("Ymd", time()); // mktime(0, 0, 0, date("n"), date("j"), date("Y")));
+        $queryRes2 = Database::query(
+            "SELECT user, view, bots, suspected, refspam FROM `" . self::TABLE_DAY . "` where `day`= ? ",
+            [$today]);
 
-		// last 24 hours
-		for($hour=23; $hour>=0; $hour--) {
-			$start = mktime(date("H")-$hour, 0, 0, (int)date("n"), (int)date("j"), (int)date("Y")) ;
-			$end = mktime(date("H")-$hour, 59, 59, (int)date("n"), (int)date("j"), (int)date("Y")) ;
-			$result['bar'][$hour]['data'] = $database->get_one("SELECT count(id) FROM `".self::TABLE_IPS."` WHERE `session`!='ignore' AND `time`>='$start' AND `time`<=$end");
-			$result['bar'][$hour]['title'] = date("H:i",$start+TIMEZONE)." - ".date("G:i",$end+TIMEZONE);			
-		}
-		// last 30 days
-		for($day=29; $day>=0; $day--) {
-			$theday = date("Ymd", mktime(0, 0, 0, (int)date("n"), (int)date("j")-$day, (int)date("Y")) );
-			$query = $database->query("SELECT user, view, bots, suspected FROM `".self::TABLE_DAY."` WHERE `day` = '$theday'");
-			if($query && $query->numRows()) {
-				$res = $query->fetchRow();
-				$result['days'][$day]['data'] = (int)$res['user'];
-				$result['days'][$day]['views'] = (int)$res['view'];
-				$result['days'][$day]['tooltip'] = '<br/>'.$res['user'].' '.$this->WS['VISITORS'].'<br/>'.$res['view'].' '.$this->WS['PAGES'].' ';
-				$result['days'][$day]['title'] = date("Y-m-d", mktime(0, 0, 0, (int)date("n"), (int)date("j")-$day, (int)date("Y")));
-			} else {
-				$result['days'][$day]['data'] = 0;
-				$result['days'][$day]['views'] = 0;
-				$result['days'][$day]['tooltip'] = '';
-				$result['days'][$day]['title'] = date("Y-m-d", mktime(0, 0, 0, (int)date("n"), (int)date("j")-$day, (int)date("Y")));
-			}
-		}
-		
-		
-		return $result;
-	}
-	
-	public function getVisitors(int $top = 10)
+        if ($queryRes2[0])
+        {
+            $result['today']  = (int) $queryRes2[0]['user'];
+            $result['ptoday'] = (int) $queryRes2[0]['view'];
+            $result['btoday'] = (int) $queryRes2[0]['bots'] + (int) $queryRes2[0]['suspected'];
+            $result['rtoday'] = (int) $queryRes2[0]['refspam'];
+        } else
+        {
+            $result['today']  = 0;
+            $result['ptoday'] = 0;
+            $result['btoday'] = 0;
+            $result['rtoday'] = 0;
+        }
+
+
+        $yesterday = date("Ymd", time() - (24*60*60));
+
+        $queryRes3 = Database::query(
+            "SELECT user, view, bots, suspected, refspam FROM `" . self::TABLE_DAY . "` where `day`= ? ",
+            [$yesterday]);
+
+        if ($queryRes3[0])
+        {
+            $result['yesterday']  = (int) $queryRes3[0]['user'];
+            $result['pyesterday'] = (int) $queryRes3[0]['view'];
+            $result['byesterday'] = (int) $queryRes3[0]['bots'] + (int) ($queryRes3[0]['suspected'] ?? 0);
+            $result['ryesterday'] = (int) $queryRes3[0]['refspam'];
+        } else
+        {
+            $result['yesterday']  = 0;
+            $result['pyesterday'] = 0;
+            $result['byesterday'] = 0;
+            $result['ryesterday'] = 0;
+        }
+
+        // last 24 hours
+        for ($hour = 23; $hour >= 0; $hour--)
+        {
+            $start = mktime(date("H")-$hour, 0, 0, (int)date("n"), (int)date("j"), (int)date("Y"));
+            $end   = mktime(date("H")-$hour, 59, 59, (int)date("n"), (int)date("j"), (int)date("Y"));
+            $result['bar'][$hour]['data'] = Database::fetchValue(
+                    "SELECT count(id) FROM `" . self::TABLE_IPS . "` WHERE `session` != 'ignore' AND `time` >= ?  AND `time` <= ? ",
+                    [$start, $end]);
+            $result['bar'][$hour]['title'] = date("H:i", $start + TIMEZONE) . " - " . date("G:i", $end + TIMEZONE);
+        }
+        // last 30 days
+        for ($day = 29; $day >= 0; $day--)
+        {
+            $theday = date("Ymd", mktime(0, 0, 0, (int)date("n"), (int)date("j")-$day, (int)date("Y")) );
+            $queryRes4 = Database::query(
+                "SELECT user, view, bots, suspected FROM `" . self::TABLE_DAY . "` WHERE `day` = ? ",
+                [$theday]);
+
+            if (isset($queryRes4[0]))
+            {
+                $result['days'][$day]['data']    = (int) $queryRes4[0]['user'];
+                $result['days'][$day]['views']   = (int) $queryRes4[0]['view'];
+                $result['days'][$day]['tooltip'] = '<br/>' . $queryRes4[0]['user'] . ' ' . $this->WS['VISITORS'] . '<br/>' . $queryRes4[0]['view'] . ' ' . $this->WS['PAGES'] . ' ';
+                $result['days'][$day]['title']   = date("Y-m-d", mktime(0, 0, 0, (int) date("n"), (int) date("j") - $day, (int) date("Y")));
+            } else
+            {
+                $result['days'][$day]['data']    = 0;
+                $result['days'][$day]['views']   = 0;
+                $result['days'][$day]['tooltip'] = '';
+                $result['days'][$day]['title']   = date("Y-m-d", mktime(0, 0, 0, (int) date("n"), (int) date("j") - $day, (int) date("Y")));
+            }
+        }
+        return $result;
+    }
+
+    public function getVisitors(int $top = 10)
     {
 		global $database;
 		$result = [];
@@ -518,12 +542,12 @@ class Stats extends Config
 		}
 		return $result;
 	}
-	
-	public function hasCampaigns()
+
+    public function hasCampaigns()
     {
-		$count = Database::fetchValue("SELECT count(*) from `".self::TABLE_UTM . "`", []);
-		return $count ? true : false;
-	}
+        $count = Database::fetchValue("SELECT count(*) from `".self::TABLE_UTM . "`", []);
+        return $count ? true : false;
+    }
 	
 	public function getCampaigns()
     {
@@ -613,7 +637,7 @@ class Stats extends Config
 		$start = ($page - 1) * 50;
 		$result = [];
 		if($query  = $database->query("SELECT *, max(`online`) as online from ".self::TABLE_IPS." WHERE `session`!='ignore' GROUP BY `ip` ORDER BY `online` DESC  LIMIT $start, 50")) {
-		while($res = $query->fetchRow()) {			
+		while($res = $query->fetchRow()) {
 				$tmp = [];
 				$tmp['vis'] = $res['online'] >= $this->online ? 'online':'old';
 				$tmp['date'] = date(DATE_FORMAT,$res['online']+TIMEZONE);
@@ -684,33 +708,40 @@ class Stats extends Config
         }
     }
 
-    public function seconds2human($ss) {
-		$s = $ss % 60;
-		$m = (floor(($ss % 3600)/60)>0)?floor(($ss%3600)/60).' min':'';
-		$h = (floor(($ss % 86400) / 3600)>0)?floor(($ss % 86400) / 3600).' hrs':'';
-		$d = (floor(($ss % 2592000) / 86400)>0)?floor(($ss % 2592000) / 86400).' days':'';
-		$M = (floor($ss / 2592000)>0)?floor($ss / 2592000).' months':'';
+    public function seconds2human($ss)
+    {
+        $s = $ss % 60;
+        $m = (floor(($ss % 3600) / 60)       > 0) ? floor(($ss % 3600) / 60) . ' min' : '';
+        $h = (floor(($ss % 86400) / 3600)    > 0) ? floor(($ss % 86400) / 3600) . ' hrs' : '';
+        $d = (floor(($ss % 2592000) / 86400) > 0) ? floor(($ss % 2592000) / 86400) . ' days' : '';
+        $M = (floor($ss / 2592000)           > 0) ? floor($ss / 2592000) . ' months' : '';
 
-		return "$M $d $h $m $s sec";
-	}
-	
-	public function safeRound($number,$precision = 0, $mode = PHP_ROUND_HALF_UP) {
-		if(!$number) $number = 0;
-		return round(intval($number),$precision,$mode);
-	}
-	
-	public function mkDay($day) {
-		return substr($day,0,4).'-'.substr($day,4,2).'-'.substr($day,-2);
-	}
+        return "$M $d $h $m $s sec";
+    }
 
-	public function calc_percentage($num_amount, $num_total) {
-		$count1 = $num_amount / $num_total;
-		$count2 = $count1 * 100;
-		$count = number_format($count2, 0);
-		return $count;
-	}
+    public function safeRound($number, $precision = 0, $mode = PHP_ROUND_HALF_UP)
+    {
+        if (!$number)
+        {
+            $number = 0;
+        }
+        return round(intval($number), $precision, $mode);
+    }
 
-	public function shuffle_assoc($list)
+    public function mkDay($day)
+    {
+        return substr($day, 0, 4) . '-' . substr($day, 4, 2) . '-' . substr($day, -2);
+    }
+
+    public function calc_percentage($num_amount, $num_total)
+    {
+        $count1 = $num_amount / $num_total;
+        $count2 = $count1 * 100;
+        $count = number_format($count2, 0);
+        return $count;
+    }
+
+    public function shuffle_assoc($list)
     {
         if (!is_array($list))
         {
