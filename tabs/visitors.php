@@ -42,16 +42,17 @@ $WS = $stats->accessLanguage();
 </div>
 
 <div class="full h265" id="pages">
-    <h3><span><?php echo $WS['TOP'] . ' ' . $top . ' - ' ?></span><?php echo $WS['PAGETOP'] ?></h3>
 <?php
 // [1]
     echo $stats->handleTwigTemplate(
         [
+            'ws_top'    => $WS['TOP'],
+            'ws_table'  => $WS['PAGETOP'],      // c1
             'top'       => $top,
             'fbar'      => $WS['NUMBER'],
-            'title'     => $WS['PAGES'],
+            'title'     => $WS['PAGES'],        // c2
             'percent'   => $WS['PERCENT'],
-            'data'      => $r['pages'],
+            'data'      => $r['pages'],         // c3
             'ws_REQUESTS' => $WS['REQUESTS']
         ]
     );
@@ -59,17 +60,18 @@ $WS = $stats->accessLanguage();
 </div>
 
 <div class="middle h265" id="entry">
-    <h3><span><?php echo $WS['TOP'] . ' ' . $top . ' - ' ?></span><?php echo $WS['ENTRYTOP'] ?></h3>
 <?php
 // [2]
     echo $stats->handleTwigTemplate(
         [
+            'ws_top'    => $WS['TOP'],
+            'ws_table'  => $WS['ENTRYTOP'],      // c1
             'top'       => $top,
             'fbar'      => $WS['NUMBER'],
-            'title'     => $WS['PAGES'],
+            'title'     => $WS['PAGES'],         // c2
             'percent'   => $WS['PERCENT'],
-            'data'      => $r['entry'],
-            'ws_REQUESTS' => $WS['VISITORS'], // [1]
+            'data'      => $r['entry'],          // c3
+            'ws_REQUESTS' => $WS['VISITORS'],    // [1]
             'h265'        => true
         ]
     );
@@ -77,11 +79,12 @@ $WS = $stats->accessLanguage();
 </div>
 
 <div class="middle h265" id="exit">
-    <h3><span><?php echo $WS['TOP'].' '.$top.' - ' ?></span><?php echo $WS['EXITTOP'] ?></h3>
 <?php
 // [3]
     echo $stats->handleTwigTemplate(
         [
+            'ws_top'    => $WS['TOP'],
+            'ws_table'  => $WS['EXITTOP'],
             'top'       => $top,
             'fbar'      => $WS['NUMBER'],
             'title'     => $WS['PAGES'],
@@ -98,11 +101,12 @@ $WS = $stats->accessLanguage();
 <div style="clear:both"></div>
 
 <div class="middle h265" id="referer">
-    <h3><span><?php echo $WS['TOP'].' '.$top.' - '?></span><?php echo $WS['REFTOP'] ?></h3>
 <?php
 // [4]
     echo $stats->handleTwigTemplate(
         [
+            'ws_top'    => $WS['TOP'],
+            'ws_table'  => $WS['REFTOP'],
             'top'       => $top,
             'fbar'      => $WS['NUMBER'],
             'title'     => $WS['REFERER'],
@@ -116,11 +120,12 @@ $WS = $stats->accessLanguage();
 </div>
 
 <div class="middle h265" id="keys">
-    <h3><span><?php echo $WS['TOP'].' '.$top.' - ' ?></span><?php echo $WS['KEYSTOP'] ?></h3>
 <?php
 // [5]
     echo $stats->handleTwigTemplate(
         [
+            'ws_top'    => $WS['TOP'],
+            'ws_table'  => $WS['KEYSTOP'],
             'top'       => $top,
             'fbar'      => $WS['NUMBER'],
             'title'     => $WS['KEYWORDS'],
@@ -135,11 +140,12 @@ $WS = $stats->accessLanguage();
 
 <div style="clear:both"></div>
 <div class="third h265" id="lang">
-    <h3><span><?php echo $WS['TOP'].' '.$top.' - ' ?></span><?php echo $WS['LANGTOP'] ?></h3>
 <?php
 // [6]
     echo $stats->handleTwigTemplate(
         [
+            'ws_top'    => $WS['TOP'],
+            'ws_table'  => $WS['LANGTOP'],
             'top'       => $top,
             'fbar'      => $WS['NUMBER'],
             'title'     => $WS['LANGUAGES'],
@@ -153,11 +159,12 @@ $WS = $stats->accessLanguage();
 </div>
 
 <div class="third h265" id="browser">
-    <h3><span><?php echo $WS['TOP'].' '.$top.' - ' ?></span><?php echo $WS['BROWSERTOP'] ?></h3>
 <?php
 // [7]
     echo $stats->handleTwigTemplate(
         [
+            'ws_top'    => $WS['TOP'],
+            'ws_table'  => $WS['BROWSERTOP'],
             'top'       => $top,
             'fbar'      => $WS['NUMBER'],
             'title'     => $WS['BROWSER'],
@@ -171,11 +178,12 @@ $WS = $stats->accessLanguage();
 </div>
 
 <div class="third h265" id="os">
-    <h3><span><?php echo $WS['TOP'].' '.$top.' - ' ?></span><?php echo $WS['OSTOP'] ?></h3>
 <?php
 // [8]
     echo $stats->handleTwigTemplate(
         [
+            'ws_top'    => $WS['TOP'],
+            'ws_table'  => $WS['OSTOP'],
             'top'       => $top,
             'fbar'      => $WS['NUMBER'],
             'title'     => $WS['OS'],
@@ -191,11 +199,12 @@ $WS = $stats->accessLanguage();
 <div style="clear:both"></div>
 
 <div class="middle h265" id="countries">
-    <h3><span><?php echo $WS['TOP'].' '.$top.' - ' ?></span><?php echo $WS['COUNTRYTOP'] ?></h3>
 <?php
 // [9]
     echo $stats->handleTwigTemplate(
         [
+            'ws_top'    => $WS['TOP'],
+            'ws_table'  => $WS['COUNTRYTOP'],
             'top'       => $top,
             'fbar'      => $WS['NUMBER'],
             'title'     => $WS['COUNTRIES'],
@@ -209,11 +218,12 @@ $WS = $stats->accessLanguage();
 </div>
 
 <div class="middle h265" id="location">
-    <h3><span><?php echo $WS['TOP'].' '.$top.' - ' ?></span><?php echo $WS['LOCTOP'] ?></h3>
 <?php
 // [10]
     echo $stats->handleTwigTemplate(
         [
+            'ws_top'    => $WS['TOP'],
+            'ws_table'  => $WS['LOCTOP'],
             'top'       => $top,
             'fbar'      => $WS['NUMBER'],
             'title'     => $WS['LOCATIONS'],
