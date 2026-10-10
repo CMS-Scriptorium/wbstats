@@ -290,7 +290,6 @@ table.default {
     padding: 10px 25px 15px 18px;
     margin: 5px;
     white-space: nowrap;
-    display: inline-block;
 }
 
 .hidden {

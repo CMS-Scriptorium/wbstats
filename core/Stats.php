@@ -196,20 +196,26 @@ class Stats extends Config
             $result['ryesterday'] = 0;
         }
 
+        $now_H = intval(date("H"));
+        $now_n = intval(date("n"));
+        $now_j = intval(date("j"));
+        $now_Y = intval(date("Y"));
         // last 24 hours
         for ($hour = 23; $hour >= 0; $hour--)
         {
-            $start = mktime(date("H")-$hour, 0, 0, (int)date("n"), (int)date("j"), (int)date("Y"));
-            $end   = mktime(date("H")-$hour, 59, 59, (int)date("n"), (int)date("j"), (int)date("Y"));
+            $start = mktime($now_H - $hour,  0,  0, $now_n, $now_j, $now_Y);
+            $end   = mktime($now_H - $hour, 59, 59, $now_n, $now_j, $now_Y);
             $result['bar'][$hour]['data'] = Database::fetchValue(
                     "SELECT count(id) FROM `" . self::TABLE_IPS . "` WHERE `session` != 'ignore' AND `time` >= ?  AND `time` <= ? ",
                     [$start, $end]);
             $result['bar'][$hour]['title'] = date("H:i", $start + TIMEZONE) . " - " . date("G:i", $end + TIMEZONE);
         }
         // last 30 days
+        $oNOW = new DateTime();
+        $oNOW->modify("-29 day");
         for ($day = 29; $day >= 0; $day--)
         {
-            $theday = date("Ymd", mktime(0, 0, 0, (int)date("n"), (int)date("j")-$day, (int)date("Y")) );
+            $theday = $oNOW->format("Ymd");
             $queryRes4 = Database::query(
                 "SELECT user, view, bots, suspected FROM `" . self::TABLE_DAY . "` WHERE `day` = ? ",
                 [$theday]);
@@ -219,14 +225,15 @@ class Stats extends Config
                 $result['days'][$day]['data']    = (int) $queryRes4[0]['user'];
                 $result['days'][$day]['views']   = (int) $queryRes4[0]['view'];
                 $result['days'][$day]['tooltip'] = '<br/>' . $queryRes4[0]['user'] . ' ' . $this->WS['VISITORS'] . '<br/>' . $queryRes4[0]['view'] . ' ' . $this->WS['PAGES'] . ' ';
-                $result['days'][$day]['title']   = date("Y-m-d", mktime(0, 0, 0, (int) date("n"), (int) date("j") - $day, (int) date("Y")));
+                $result['days'][$day]['title']   = $oNOW->format("Y-m-d");
             } else
             {
                 $result['days'][$day]['data']    = 0;
                 $result['days'][$day]['views']   = 0;
                 $result['days'][$day]['tooltip'] = '';
-                $result['days'][$day]['title']   = date("Y-m-d", mktime(0, 0, 0, (int) date("n"), (int) date("j") - $day, (int) date("Y")));
+                $result['days'][$day]['title']   = $oNOW->format("Y-m-d");
             }
+            $oNOW->modify("+1 day");
         }
         return $result;
     }
@@ -266,7 +273,7 @@ class Stats extends Config
             "SELECT page, SUM(view) AS views from ".self::TABLE_PAGES." GROUP BY page ORDER BY views DESC LIMIT 0, ? ",
             [$top]);
 
-        foreach ($queryRes as $res)
+        foreach ($queryRes2 as $res)
         {
             $page = htmlspecialchars($res['page']);
             $short = (strlen($page) > 55) ? substr($page, 0, 50) . "..." : $page;
