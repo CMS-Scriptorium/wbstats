@@ -250,6 +250,7 @@ class Stats extends Config
             "SELECT referer, SUM(view) AS views from `" . self::TABLE_REF . "` WHERE `spam`='0' GROUP BY referer ORDER BY views DESC LIMIT 0, ? ",
             [$top]);
 
+        $result['referer'] = [];
         foreach ($queryRes as $res)
         {
             $referer    = htmlspecialchars($res['referer']);
@@ -387,6 +388,7 @@ class Stats extends Config
 			$nr++;
 		}		
 		// Countries
+        $result['country'] = [];
 		$totals = $database->get_one("SELECT count(*) FROM ".self::TABLE_IPS." WHERE `country`!='' AND `session`!='ignore'");
 		//$q = "SELECT session as location, COUNT(*) AS total FROM ".$table_ips." WHERE session != '' AND `session`!='ignore' GROUP BY session ORDER BY total DESC LIMIT 0,$top";
 		$q = "SELECT country, COUNT(*) AS total FROM ".self::TABLE_IPS." WHERE country != '' AND `session`!='ignore' GROUP BY country ORDER BY total DESC LIMIT 0,$top";
